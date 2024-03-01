@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Ignore for now
+.github/workflows/aravis-detecor-linux.yml
