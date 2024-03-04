@@ -31,5 +31,11 @@
 *.out
 *.app
 
+# build and temporary files
+build
+
+
 # Ignore for now
 .github/workflows/aravis-detecor-linux.yml
+.github/workflows/doc_build.yml
+cpp/cmake
