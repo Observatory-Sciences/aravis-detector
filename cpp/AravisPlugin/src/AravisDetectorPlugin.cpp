@@ -65,28 +65,28 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
   LOG4CXX_INFO(logger_, "Test message: configurations were received. They are ignored but they were received");
 }
 
-// int AravisDetectorPlugin::get_version_major()
-// {
-//   return ODIN_DATA_VERSION_MAJOR;
-// }
+int AravisDetectorPlugin::get_version_major()
+{
+  return ODIN_DATA_VERSION_MAJOR;
+}
 
-// int AravisDetectorPlugin::get_version_minor()
-// {
-//   return ODIN_DATA_VERSION_MINOR;
-// }
+int AravisDetectorPlugin::get_version_minor()
+{
+  return ODIN_DATA_VERSION_MINOR;
+}
 
-// int AravisDetectorPlugin::get_version_patch()
-// {
-//   return ODIN_DATA_VERSION_PATCH;
-// }
+int AravisDetectorPlugin::get_version_patch()
+{
+  return ODIN_DATA_VERSION_PATCH;
+}
 
-// std::string AravisDetectorPlugin::get_version_short()
-// {
-//   return ODIN_DATA_VERSION_STR_SHORT;
-// }
+std::string AravisDetectorPlugin::get_version_short()
+{
+  return ODIN_DATA_VERSION_STR_SHORT;
+}
 
-// std::string AravisDetectorPlugin::get_version_long()
-// {
-//   return ODIN_DATA_VERSION_STR;
-// }
+std::string AravisDetectorPlugin::get_version_long()
+{
+  return ODIN_DATA_VERSION_STR;
+}
 }
