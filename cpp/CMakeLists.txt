@@ -38,7 +38,7 @@ message("-- major:${VERSION_MAJOR} minor:${VERSION_MINOR} patch:${VERSION_PATCH}
 message("-- short version: ${VERSION_SHORT}")
 
 set(COMMON_DIR ${SOURCE_DIR}/common)
-set(DATA_DIR ${SOURCE_DIR}/data)
+set(DATA_DIR ${SOURCE_DIR}/AravisPlugin)
 
 # Add configure output include directory to include path
 configure_file(${COMMON_DIR}/include/version.h.in "${CMAKE_BINARY_DIR}/include/version.h")
@@ -46,4 +46,3 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 # Add subdirectories
 add_subdirectory(${DATA_DIR})
-

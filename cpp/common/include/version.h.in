@@ -1,11 +1,3 @@
-/**
- * @file version.h
- * @brief 
- * @date 2024-03-04
- * 
- * Define version values from git tags
- */
-
 #ifndef VERSION_H
 #define VERSION_H
 
