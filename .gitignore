@@ -39,3 +39,4 @@ build
 .github/workflows/aravis-detecor-linux.yml
 .github/workflows/doc_build.yml
 
+docs/Doxyfile
