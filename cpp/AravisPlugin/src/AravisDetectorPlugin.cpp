@@ -9,7 +9,6 @@
  * @copyright Copyright (c) 2024
  * 
  */
-
 #include "AravisDetectorPlugin.h"
 #include "version.h"
 #include <boost/algorithm/string.hpp>
@@ -23,7 +22,7 @@ namespace FrameProcessor
 
 /**
  * @brief Construct for the plugin
- * Currently it only displays a message when the plugin is loaded
+ * Connects to the first available camera, or it crashes.
  */
 AravisDetectorPlugin::AravisDetectorPlugin()
 {
@@ -34,13 +33,12 @@ AravisDetectorPlugin::AravisDetectorPlugin()
     camera =  arv_camera_new(NULL, &error);
     if (ARV_IS_CAMERA (camera)) {
       printf("Found camera '%s'\n", arv_camera_get_model_name (camera, NULL));
-    }else{throw(error);}
+    }else{
+      printf("Error: \n '%s' \n Encountered when connecting to first available camera \n", error->message);}
   }
   catch(GError error){
     LOG4CXX_ERROR(logger_, "Aravis camera not connected");
-    }
-  
-
+  }
 
   logger_ = Logger::getLogger("FP.AravisDetectorPlugin");
   LOG4CXX_INFO(logger_, "AravisDetectorPlugin loaded");
