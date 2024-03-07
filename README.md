@@ -2,9 +2,52 @@
 
 An Odin detector for aravis compatible cameras.
 
+## Important Note
+
+**Before you start the plugin you need to start Aravis fake camera**
+
+In theory it should work with a normal aravis camera but I can't test that right now.
+
+Here is how to quickly start the camera:
+
+Install [Aravis](https://aravisproject.github.io/aravis/building.html):
+
+```shell
+cd your/workdir
+git clone https://github.com/AravisProject/aravis
+```
+
+Change to version 0.8.30.
+This is the last stable version of Aravis and the one I use. You can skip this step, but then
+you need to change the name of the fake camera command to 0.10 and also change FindAravis.cmake
+to look for 0.10. But I tested it and it works.
+
+```shell
+cd aravis
+git checkout 96cea98
+```
+
+Build it:
+
+```shell
+meson setup build
+cd build
+ninja
+ninja install
+```
+
+Run camera in a separate terminal:
+
+```shell
+cd your/workdir/build
+cd src
+arv-fake-gv-camera-0.8 -s GV02 -d all
+```
+
 ---
 
 - [Aravis detector](#aravis-detector)
+  - [Important Note](#important-note)
   - [Install](#install)
   - [Dependencies](#dependencies)
   - [Docs](#docs)
