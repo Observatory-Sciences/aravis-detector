@@ -43,9 +43,7 @@ jobs:
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          meson --buildtype=plain -Ddocumentation=enabled -Dgst-plugin=enabled -Dintrospection=enabled -Dusb=disabled -Dviewer=enabled . ./build
-          ninja -C ./build
-          meson configure -Dusb=enabled build
+          meson setup --buildtype=plain -Ddocumentation=disabled -Dgst-plugin=disabled -Dintrospection=disabled -Dusb=disabled -Dviewer=disabled . ./build
           ninja -C ./build
       - name: Build aravis-detector
         run: |
