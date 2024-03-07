@@ -9,7 +9,7 @@ env:
   INSTALL_PREFIX: ${{ github.workspace }}/prefix
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,8 +43,8 @@ jobs:
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          meson setup --buildtype=plain -Ddocumentation=disabled -Dgst-plugin=disabled -Dintrospection=disabled -Dusb=disabled -Dviewer=disabled . ./build
-          ninja -C ./build
+          meson setup build
+          meson compile
       - name: Build aravis-detector
         run: |
           mkdir build && cd build

@@ -56,6 +56,7 @@ Install [Aravis](https://aravisproject.github.io/aravis/building.html):
 ```shell
 cd your/workdir
 git clone https://github.com/AravisProject/aravis
+sudo apt install meson ninja-build
 ```
 
 Change to version 0.8.30.
