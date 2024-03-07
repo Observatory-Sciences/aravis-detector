@@ -14,10 +14,12 @@
 #include "version.h"
 #include <boost/algorithm/string.hpp>
 
+
 namespace FrameProcessor
 {
 
   // Default values and names TBA
+  ;
 
 /**
  * @brief Construct for the plugin
@@ -25,6 +27,21 @@ namespace FrameProcessor
  */
 AravisDetectorPlugin::AravisDetectorPlugin()
 {
+
+  try{
+    // Open a connection to the first camera available 
+    // If you change the first value from NULL to a valid ip/camera model you can select different models
+    camera =  arv_camera_new(NULL, &error);
+    if (ARV_IS_CAMERA (camera)) {
+      printf("Found camera '%s'\n", arv_camera_get_model_name (camera, NULL));
+    }else{throw(error);}
+  }
+  catch(GError error){
+    LOG4CXX_ERROR(logger_, "Aravis camera not connected");
+    }
+  
+
+
   logger_ = Logger::getLogger("FP.AravisDetectorPlugin");
   LOG4CXX_INFO(logger_, "AravisDetectorPlugin loaded");
 }
@@ -36,7 +53,6 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
 {
   LOG4CXX_TRACE(logger_, "AravisDetectorPlugin destructor.");
 }
-
 
 /**
  * @brief Currently the function doesn't process the frame. It simply logs different messages depending if the plugin is connected or not
