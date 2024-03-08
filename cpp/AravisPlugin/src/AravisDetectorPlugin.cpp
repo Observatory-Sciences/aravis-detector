@@ -76,6 +76,18 @@ void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
  * @param[out] reply - Response IpcMessage
  */
 void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply){
+    try{
+    // Open a connection to the first camera available 
+    // If you change the first value from NULL to a valid ip/camera model you can select different models
+    camera =  arv_camera_new(NULL, &error);
+    if (ARV_IS_CAMERA (camera)) {
+      printf("Found camera '%s'\n", arv_camera_get_model_name (camera, NULL));
+    }else{
+      printf("Error: \n '%s' \n Encountered when connecting to first available camera \n", error->message);}
+  }
+  catch(GError error){
+    LOG4CXX_ERROR(logger_, "Aravis camera not connected");
+  }
   LOG4CXX_INFO(logger_, "Test message: configurations were received. They are ignored but they were received");
 }
 
