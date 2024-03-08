@@ -11,6 +11,9 @@
 #ifndef FRAMEPROCESSOR_ARAVISDETECTORPLUGIN_H_
 #define FRAMEPROCESSOR_ARAVISDETECTORPLUGIN_H_
 
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/propertyconfigurator.h>
@@ -34,6 +37,7 @@ public:
     virtual ~AravisDetectorPlugin();
     void process_frame(boost::shared_ptr<Frame> frame);
     void configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply);
+    void status_task();
     int get_version_major();
     int get_version_minor();
     int get_version_patch();
@@ -43,8 +47,10 @@ private:
 
     /** Pointer to logger */
     LoggerPtr logger_;
-    /**Boolean that shows if the plugin has a successfully bound ZMQ endpoint*/
-    bool is_bound_;
+    /** Pointer to status thread */
+    boost::thread *thread_;
+    /** Is the status thread working */
+    bool working_;
 
     /**Pointer to GError object defined as NULL so that it can save error when making a new camera object*/
     GError *error = NULL;

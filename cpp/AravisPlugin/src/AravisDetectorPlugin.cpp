@@ -12,6 +12,7 @@
 
 #include "AravisDetectorPlugin.h"
 #include "version.h"
+#include "logging.h"
 #include <boost/algorithm/string.hpp>
 
 
@@ -25,7 +26,8 @@ namespace FrameProcessor
  * @brief Construct for the plugin
  * Currently it only displays a message when the plugin is loaded
  */
-AravisDetectorPlugin::AravisDetectorPlugin()
+AravisDetectorPlugin::AravisDetectorPlugin() :
+  working_(true)
 {
 
   try{
@@ -40,7 +42,8 @@ AravisDetectorPlugin::AravisDetectorPlugin()
     LOG4CXX_ERROR(logger_, "Aravis camera not connected");
     }
   
-
+  // Start the status thread to monitor the camera
+  thread_ = new boost::thread(&AravisDetectorPlugin::status_task, this);
 
   logger_ = Logger::getLogger("FP.AravisDetectorPlugin");
   LOG4CXX_INFO(logger_, "AravisDetectorPlugin loaded");
@@ -61,12 +64,7 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
  */
 void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
 {
-  if(is_bound_){
-    LOG4CXX_INFO(logger_, "Test message: this is where I would put my frame processor, if I had one");
-  }
-  else{
-    LOG4CXX_WARN(logger_, "Socket is UNBOUND");
-  }
+  LOG4CXX_INFO(logger_, "Test message: this is where I would put my frame processor, if I had one");
   LOG4CXX_TRACE(logger_, "Pushing Data Frame");
   this->push(frame);
 }
@@ -79,6 +77,38 @@ void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
  */
 void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply){
   LOG4CXX_INFO(logger_, "Test message: configurations were received. They are ignored but they were received");
+}
+
+/** Status execution thread for this class.
+ *
+ * The thread executes in a continuous loop until the working_ flag is set to false.
+ * This thread queries the camera status
+ */
+void AravisDetectorPlugin::status_task()
+{
+  // Error return value
+	GError *error = NULL;
+  // Configure logging for this thread
+  OdinData::configure_logging_mdc(OdinData::app_path.c_str());
+
+  // Main worker task of this callback
+  // Check the queue for messages
+  while (working_) {
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+    // Lock the camera object if required here
+
+    if (ARV_IS_CAMERA(camera)) {
+      // TODO: Change this example
+      const char *pixel_format;
+      // Read out camera status items here and store to member variable cache
+      pixel_format = arv_camera_get_pixel_format_as_string (camera, &error);
+
+      if (error == NULL) {
+        LOG4CXX_INFO(logger_, "Pixel format = " << pixel_format);
+      }
+    }
+  }
 }
 
 int AravisDetectorPlugin::get_version_major()
