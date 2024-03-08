@@ -3,12 +3,13 @@ name: 'Build Cpp'
 on:
   push: 
     branches: [main, gsc-dev]
+  workflow_dispatch:
 
 env:
   INSTALL_PREFIX: ${{ github.workspace }}/prefix
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,6 +21,9 @@ jobs:
         run: |
             sudo apt -y update
             sudo apt install cmake
+            pip3 install meson ninja 
+            sudo apt update
+            sudo apt install python3 libusb-1.0-0-dev gobject-introspection valgrind libgstreamer-plugins-bad1.0-dev libgtk-3-dev libgirepository1.0-dev python3-gi libunwind-dev gettext
             sudo apt install libboost-program-options-dev libboost-filesystem-dev libboost-date-time-dev libboost-dev  libboost-system-dev libboost-test-dev libboost-thread-dev libboost-regex-dev
             sudo apt install libzmq3-dev libpcap-dev liblog4cxx-dev libblosc-dev libhdf5-dev librdkafka-dev
 
@@ -34,7 +38,14 @@ jobs:
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
           cd ..
-
+      - name: Build aravis
+        run: |
+          git clone https://github.com/AravisProject/aravis
+          cd aravis
+          git checkout 96cea98
+          mkdir build && cd build
+          meson setup build
+          meson compile
       - name: Build aravis-detector
         run: |
           mkdir build && cd build
