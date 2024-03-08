@@ -1,10 +1,7 @@
 /**
  * @file AravisDetectorPlugin.h
- * @brief An Odin plugin for Aravis cameras
+ * @brief Header file for the Aravis Plugin
  * @date 2024-03-04
- * 
- * Currently a very simple version.
- * 
  * Adapted from odin-data, LiveViewPlugin.h by Ashley Neaves
  */
 
@@ -38,30 +35,39 @@ public:
     void process_frame(boost::shared_ptr<Frame> frame);
     void configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply);
     void status_task();
+    void change_exposure();
+    void display_aravis_cameras();
+    void connect_aravis_camera(std::string ip);
     int get_version_major();
     int get_version_minor();
     int get_version_patch();
     std::string get_version_short();
     std::string get_version_long();
+
+    /**Default Config Values*/
+    static const std::string DEFAULT_CAMERA_IP; ///< Ip address of the current camera
+    static const int32_t     DEFAULT_EXPOSURE_TIME;  ///< Exposure time in miliseconds?
+
+    /*Config names*/
+    static const std::string LIST_DEVICES;      ///< list available devices
+    static const std::string CONFIG_CAMERA_IP;  ///< set camera IP
+    static const std::string CONFIG_EXPOSURE;   ///< set exposure time
+
+
 private:
 
-    /** Pointer to logger */
-    LoggerPtr logger_;
-    /** Pointer to status thread */
-    boost::thread *thread_;
-    /** Is the status thread working */
-    bool working_;
+    LoggerPtr logger_;      ///< Pointer to logger object for displaying info in terminal
 
-    /**Pointer to GError object defined as NULL so that it can save error when making a new camera object*/
-    GError *error = NULL;
-    /**Pointer to ArvCamera object that will hold the connection*/
-    ArvCamera *camera;
-	/**Pointer to ArvBuffer object. It holds frames/packets from the camera*/
-	ArvBuffer *buffer;
-    /**Image size information, irrelevant for now*/
-    size_t img_size = 512*512;
+    boost::thread *thread_; ///< Pointer to status thread
+    bool working_;          ///< Is the status thread working?
+
+    GError *error = NULL;   ///< Pointer to GError object for aravis camera errors
+    ArvCamera *camera;      ///< Pointer to ArvCamera object
+	ArvBuffer *buffer;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
+
+    unsigned int number_of_cameras; ///< 
+
 };
 
 } // namespace 
-
 #endif /* FRAMEPROCESSOR_ARAVISDETECTORPLUGIN_H_*/
