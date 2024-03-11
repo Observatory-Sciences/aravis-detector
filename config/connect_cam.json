@@ -1,0 +1,6 @@
+{ "aravis":
+    { "camera_address": "000",
+        "list_devices": "true",
+        "exposure_time": "127"
+    }
+}
