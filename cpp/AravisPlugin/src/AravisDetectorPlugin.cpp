@@ -160,6 +160,7 @@ void AravisDetectorPlugin::change_exposure(){
 void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
   LOG4CXX_INFO(logger_, "Connecting to camera");
   
+  arv_update_device_list();
   number_of_cameras = arv_get_n_devices();
   if(number_of_cameras == 0){
     LOG4CXX_ERROR(logger_, "No aravis cameras found");
@@ -190,13 +191,13 @@ void AravisDetectorPlugin::display_aravis_cameras(){
   arv_update_device_list();
   number_of_cameras = arv_get_n_devices();
   if(number_of_cameras==0){
-    LOG4CXX_WARN(logger_, "No cameras were detected by AravisDetectorPlugin ");
+    LOG4CXX_WARN(logger_, "No cameras were detected. Please confirm camera is connected");
   }else{
     LOG4CXX_INFO(logger_, ("%i cameras were detected: \n ", number_of_cameras));
     for(int i=0; i<number_of_cameras; i++){
       const char* device_id = arv_get_device_id(i);
       const char* device_address = arv_get_device_address(i);
-      printf("Device index %i has the id %s  and address %s\n", i, device_id, device_address);
+      LOG4CXX_INFO(logger_,("Device index %i has the id %s  and address %s\n", i, device_id, device_address));
     }
   }
 }

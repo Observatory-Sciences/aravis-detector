@@ -1,8 +1,6 @@
 name: 'Build Cpp'
 
 on:
-  push: 
-    branches: [main, gsc-dev]
   workflow_dispatch:
 
 env:
