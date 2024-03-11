@@ -65,7 +65,7 @@ private:
     ArvCamera *camera;      ///< Pointer to ArvCamera object
 	ArvBuffer *buffer;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
 
-    unsigned int number_of_cameras; ///< 
+    unsigned int number_of_cameras; ///< total number of cameras connected.
 
 };
 

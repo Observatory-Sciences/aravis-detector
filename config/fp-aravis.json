@@ -16,8 +16,8 @@
 	  }
 	},
 	{
-	  "aravis":{
-			"camera_address": "000"
+		"aravis":{
+			"list_devices": true
 	  }
 	}
   ]

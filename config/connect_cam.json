@@ -1,6 +1,6 @@
 { "aravis":
     { "camera_address": "000",
-        "list_devices": "true",
-        "exposure_time": "127"
+        "exposure_time": "127",
+        "ip_address": "127.0.0.1"
     }
 }

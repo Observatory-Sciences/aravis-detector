@@ -23,7 +23,7 @@ make -j8 && make install
 \warning Make sure you replace fp.aravis.json with your own config file.
 
 ```shell
-/home/gsc/Github/RFI_Odin/prefix/bin/frameProcessor \
+${WORK_DIR}/prefix/bin/frameProcessor \
   --ctrl tcp://0.0.0.0:5004 \
   --config ${WORK_DIR}/prefix/test_config/fp-aravis.json \
   --log-config ${WORK_DIR}/prefix/test_config/fp_log4cxx.xml 

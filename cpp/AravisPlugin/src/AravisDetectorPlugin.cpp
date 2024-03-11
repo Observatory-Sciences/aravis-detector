@@ -86,7 +86,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
       display_aravis_cameras();
     }
     if (config.has_param(CONFIG_CAMERA_IP)){
-      connect_aravis_camera(config.get_param<std::string>(DEFAULT_CAMERA_IP));
+      connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     }
     if (config.has_param(CONFIG_EXPOSURE)){
       change_exposure();
@@ -142,24 +142,39 @@ void AravisDetectorPlugin::change_exposure(){
 
 /** @brief Connects to a camera using the ip address
  * 
- * \remark Currently just connects to the first camera
+ * Can in theory work with any of the following names:
  * 
- * @param ip ip address string
+ * - <vendor>-<model>-<serial>
+ * - <vendor_alias>-<serial>
+ * - <vendor>-<serial>
+ * - <user_id>
+ * - <ip_address>
+ * - <mac_address>
+ *  
+ * The function checks for the number of devices connected. If it's zero it logs an error.
+ * If not then it replaces the camera object with a new camera connection. Reports back if 
+ * it was successful or not.
+ *  
+ * @param ip std::string of ip address
  */
 void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
   LOG4CXX_INFO(logger_, "Connecting to camera");
-
+  
   number_of_cameras = arv_get_n_devices();
   if(number_of_cameras == 0){
     LOG4CXX_ERROR(logger_, "No aravis cameras found");
   }else{
-     // Open a connection to the first camera available 
-     // If you change the first value from NULL to a valid ip/camera model you can select different models
-     camera =  arv_camera_new(NULL, &error);
+      // there might be a better way to do this
+      // arv_camera_new needs a char pointer, so I'm changing the string to a char
+      const char *ip_copy = ip.c_str();
+      try{
+        camera = arv_camera_new(ip_copy, &error);
+      }catch(GError error){
+        LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
+      }
      if (ARV_IS_CAMERA (camera)) {
-       printf("Found camera '%s'\n", arv_camera_get_model_name (camera, NULL));
-     }else{
-       printf("Error: \n '%s' \n Encountered when connecting to first available camera \n", error->message);}
+       LOG4CXX_INFO(logger_,("Connected to camera '%s'\n", arv_camera_get_model_name (camera, NULL)));
+     }
    }
 }
 
