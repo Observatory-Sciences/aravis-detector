@@ -43,7 +43,6 @@ jobs:
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          mkdir build && cd build
           meson setup build
           meson compile
       - name: Build aravis-detector
