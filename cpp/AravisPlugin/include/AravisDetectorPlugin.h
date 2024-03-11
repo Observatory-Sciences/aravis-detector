@@ -35,7 +35,7 @@ public:
     void process_frame(boost::shared_ptr<Frame> frame);
     void configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply);
     void status_task();
-    void change_exposure();
+    void set_exposure(float exposure_time_us);
     void display_aravis_cameras();
     void connect_aravis_camera(std::string ip);
     int get_version_major();
@@ -46,7 +46,7 @@ public:
 
     /**Default Config Values*/
     static const std::string DEFAULT_CAMERA_IP; ///< Ip address of the current camera
-    static const int32_t     DEFAULT_EXPOSURE_TIME;  ///< Exposure time in miliseconds?
+    static const float    DEFAULT_EXPOSURE_TIME;  ///< Exposure time in microseconds
 
     /*Config names*/
     static const std::string LIST_DEVICES;      ///< list available devices

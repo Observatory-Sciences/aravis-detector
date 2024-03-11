@@ -18,7 +18,7 @@ namespace FrameProcessor
 {
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP = "tcp://127.0.0.1:3956";
-  const int32_t     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
+  const float     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
 
   /** Config names*/
   const std::string AravisDetectorPlugin::LIST_DEVICES = "list_devices";
@@ -89,7 +89,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
       connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     }
     if (config.has_param(CONFIG_EXPOSURE)){
-      change_exposure();
+      set_exposure(config.get_param<float>(CONFIG_EXPOSURE));
     }
   }
   catch (std::runtime_error& e)
@@ -136,8 +136,13 @@ void AravisDetectorPlugin::status_task()
 /** @brief Change exposure time in miliseconds
  * 
  */
-void AravisDetectorPlugin::change_exposure(){
-  LOG4CXX_INFO(logger_, "Change exposure time");
+void AravisDetectorPlugin::set_exposure(float exposure_time_us){
+  try{
+    arv_camera_set_exposure_time(camera, exposure_time_us, &error);
+    LOG4CXX_INFO(logger_, ("Setting exposure time to %f", exposure_time_us));
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, ("When setting exposure time the following error ocurred: %s", error.message));
+  }
 }
 
 /** @brief Connects to a camera using the ip address
