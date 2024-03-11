@@ -44,6 +44,7 @@ jobs:
           cd aravis
           git checkout 96cea98
           meson setup build
+          cd build
           meson compile
       - name: Build aravis-detector
         run: |
