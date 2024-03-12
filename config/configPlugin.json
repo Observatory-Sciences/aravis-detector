@@ -1,9 +1,0 @@
-{ "aravis":
-    {
-        "ip_address": "127.0.0.1",
-        "get_config": true,
-        "frame_count": 1,
-        "frame_rate": 30,
-        "exposure": 1000
-    }
-}

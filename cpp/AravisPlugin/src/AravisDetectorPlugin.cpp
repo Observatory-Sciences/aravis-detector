@@ -17,10 +17,12 @@
 namespace FrameProcessor
 {
   /** Default configurations */
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP = "tcp://127.0.0.1:3956";
-  const float     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
-  const float     AravisDetectorPlugin::DEFAULT_FRAME_RATE = 60;
-  const float     AravisDetectorPlugin::DEFAULT_FRAME_COUNT = 1;
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "tcp://127.0.0.1:3956";
+  const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
+  const float     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME   = 1000.0;
+  const float     AravisDetectorPlugin::DEFAULT_FRAME_RATE      = 60;
+  const float     AravisDetectorPlugin::DEFAULT_FRAME_COUNT     = 1;
+  
 
   /** Config names*/
   
@@ -30,6 +32,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
+  const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
 
 
 /**
@@ -86,6 +89,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
    4. frame count
    5. Data type (bit depth)
    */
+
   try{
     /** List all devices*/
     if (config.has_param(LIST_DEVICES))
@@ -96,7 +100,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
       connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     }
     if (config.has_param(CONFIG_EXPOSURE)){
-      set_exposure(config.get_param<int32_t>(CONFIG_EXPOSURE));
+      set_exposure(config.get_param<double>(CONFIG_EXPOSURE));
     }
     if (config.has_param(CONFIG_FRAME_RATE)){
       set_frame_rate(config.get_param<int32_t>(CONFIG_FRAME_RATE));
@@ -104,8 +108,11 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(CONFIG_FRAME_COUNT)){
       set_frame_count(config.get_param<int32_t>(CONFIG_FRAME_COUNT));
     }
+    if (config.has_param(CONFIG_PIXEL_FORMAT)){
+      set_pixel_format(config.get_param<std::string>(CONFIG_PIXEL_FORMAT));
+    }
     if (config.has_param(GET_CONFIG)){
-      get_config();
+      get_config(config.get_param<int32_t>(GET_CONFIG));
     }
   }
   catch (std::runtime_error& e)
@@ -119,14 +126,33 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
 
 /** @brief Queries the Aravis Camera for config info
  * In progress
- * Gets config info and stores it until needed by the user
+ * Gets config info and displays it.
  * 
+ * In the future it send queries at a preset frequency and stor the info locally.
+ * Users will only be able to get the local info
  */
-void AravisDetectorPlugin::get_config(){
-    LOG4CXX_WARN(logger_, " \n --------------------- \n Function still in development");
-    get_exposure();
-    get_frame_rate();
-    get_frame_count();
+void AravisDetectorPlugin::get_config(int32_t display_option){
+    switch(display_option){
+      case 1:
+        get_exposure();
+        break;
+      case 2:
+        get_frame_rate();
+        break;
+      case 3:
+        get_frame_count();
+        break;
+      case 4:
+        get_pixel_format();
+      case 0:
+        get_frame_count();
+        get_frame_rate();
+        get_exposure();
+        get_pixel_format();
+        break;
+      default:
+        LOG4CXX_WARN(logger_, "Please check get_frame parameter for spelling mistakes");
+    }
 }
 
 /** @brief Status execution thread for this class.
@@ -147,13 +173,11 @@ void AravisDetectorPlugin::status_task()
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
     // Lock the camera object if required here
-
-    if (ARV_IS_CAMERA(camera)) {
+    if (ARV_IS_CAMERA(camera_)) {
       // TODO: Change this example
       const char *pixel_format;
       // Read out camera status items here and store to member variable cache
-      pixel_format = arv_camera_get_pixel_format_as_string (camera, &error);
-
+      pixel_format = arv_camera_get_pixel_format_as_string (camera_, &error);
       if (error == NULL) {
         LOG4CXX_INFO(logger_, "Pixel format = " << pixel_format);
       }
@@ -166,17 +190,17 @@ void AravisDetectorPlugin::status_task()
  * On success prints:
  *  Setting exposure time to <exposure_time_us>
  * On failure:
- *  When setting exposure time the following error ocurred: <error.message>
+ *  When setting exposure time the following error ocurred: <error->message>
  * 
  * @param exposure_time_us
  */
-void AravisDetectorPlugin::set_exposure(float exposure_time_us){
+void AravisDetectorPlugin::set_exposure(double exposure_time_us){
   GError *error = NULL;
-  try{
-    arv_camera_set_exposure_time(camera, exposure_time_us, &error);
-    LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error.message);
+  arv_camera_set_exposure_time(camera_, exposure_time_us, &error);
+  if(error==NULL){
+  LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
+  }else{
+    LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error->message);
   }
 }
 
@@ -185,15 +209,15 @@ void AravisDetectorPlugin::set_exposure(float exposure_time_us){
  * On success prints:
  *  Exposure time is <exposure_time_us>
  * On failure:
- *  When reading exposure time the following error ocurred: <error.message>
+ *  When reading exposure time the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_exposure(){
   GError *error = NULL;
-  try{
-    double exposure_time_us = arv_camera_get_exposure_time(camera, &error);
+  double exposure_time_us = arv_camera_get_exposure_time(camera_, &error);
+  if(error==NULL){
     LOG4CXX_INFO(logger_, "Exposure time is " << exposure_time_us);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When reading exposure time the following error ocurred: \n" << error.message);
+  }else{
+    LOG4CXX_ERROR(logger_, "When reading exposure time the following error ocurred: \n" << error->message);
   }
 }
 
@@ -202,17 +226,18 @@ void AravisDetectorPlugin::get_exposure(){
  * On success prints:
  *  Setting frame rate to <frame_rate_hz>
  * On failure:
- *  When setting frame rate the following error ocurred: <error.message>
+ *  When setting frame rate the following error ocurred: <error->message>
  * 
  * @param frame_rate_hz
  */
 void AravisDetectorPlugin::set_frame_rate(float frame_rate_hz){
   GError *error = NULL;
-  try{
-    arv_camera_set_frame_rate(camera, frame_rate_hz, &error);
+
+  arv_camera_set_frame_rate(camera_, frame_rate_hz, &error);
+  if(error==NULL){
     LOG4CXX_INFO(logger_, "Setting frame rate to "<< frame_rate_hz);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When setting frame rate the following error ocurred: \n" << error.message);
+  }else{
+    LOG4CXX_ERROR(logger_, "When setting frame rate the following error ocurred: \n" << error->message);
   }
 }
 
@@ -221,15 +246,15 @@ void AravisDetectorPlugin::set_frame_rate(float frame_rate_hz){
  * On success prints:
  *  Frame rate is <frame_rate_hz>
  * On failure:
- *  When reading frame rate the following error ocurred: <error.message>
+ *  When reading frame rate the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_frame_rate(){
   GError *error = NULL;
-  try{
-    double frame_rate_hz = arv_camera_get_frame_rate(camera, &error);
+  double frame_rate_hz = arv_camera_get_frame_rate(camera_, &error);
+  if(error==NULL){
     LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When reading frame rate the following error ocurred: \n" << error.message);
+  }else{
+    LOG4CXX_ERROR(logger_, "When reading frame rate the following error ocurred: \n" << error->message);
   }
 }
 
@@ -238,17 +263,17 @@ void AravisDetectorPlugin::get_frame_rate(){
  * On success prints:
  *  Setting frame count to <frame_count>
  * On failure:
- *  When setting frame count the following error ocurred: <error.message>
+ *  When setting frame count the following error ocurred: <error->message>
  * 
  * @param frame_count
  */
 void AravisDetectorPlugin::set_frame_count(float frame_count){
   GError *error = NULL;
-  try{
-    arv_camera_set_frame_count(camera, frame_count, &error);
+  arv_camera_set_frame_count(camera_, frame_count, &error);
+  if(error==NULL){
     LOG4CXX_INFO(logger_, "Setting frame count to "<< frame_count);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When setting frame count the following error ocurred: \n" << error.message);
+  }else{
+    LOG4CXX_ERROR(logger_, "When setting frame count the following error ocurred: \n" << error->message);
   }
 }
 
@@ -257,16 +282,44 @@ void AravisDetectorPlugin::set_frame_count(float frame_count){
  * On success prints:
  *  Frame count is <frame_count>
  * On failure:
- *  When reading frame count the following error ocurred: <error.message>
+ *  When reading frame count the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_frame_count(){
   GError *error = NULL;
-  try{
-    int32_t frame_count = arv_camera_get_frame_count(camera, &error);
+  int32_t frame_count = arv_camera_get_frame_count(camera_, &error);
+  if(error==NULL){
     LOG4CXX_INFO(logger_, "Frame count is "<< frame_count);
-  }catch(GError error){
-    LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error.message);
+  }else{
+    LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error->message);
   }
+}
+
+void AravisDetectorPlugin::set_pixel_format(std::string pixel_format){
+  GError *error = NULL;
+  arv_camera_set_pixel_format_from_string(camera_, pixel_format.c_str(), &error);
+  if(error){
+    LOG4CXX_ERROR(logger_, "When setting pixel format the following error ocurred: \n" << error->message);
+  }
+}
+
+void AravisDetectorPlugin::get_pixel_format(){
+  GError *error = NULL;
+  unsigned int n_of_pixel_formats; 
+  const char** available_pixel_formats = arv_camera_dup_available_pixel_formats_as_strings(camera_,&n_of_pixel_formats, &error);
+  LOG4CXX_INFO(logger_, "There are "<< n_of_pixel_formats<<" pixel formats: ");
+  for(int i=0; i<n_of_pixel_formats; i++){
+          LOG4CXX_INFO(logger_, i << " is "<< available_pixel_formats[i]);
+          // g_free(*available_pixel_formats[i]); 
+  }
+  if(error){
+      LOG4CXX_ERROR(logger_, "Error, could not retrieve pixel formats");
+    }
+  const char* available_pixel_format = arv_camera_get_pixel_format_as_string(camera_, &error);
+  LOG4CXX_INFO(logger_, "Currently using "<< available_pixel_format<<" format");
+  // g_free(*available_pixel_format);
+  if(error){
+      LOG4CXX_ERROR(logger_, "Error, could not retrieve current pixel format");
+    }
 }
 
 /** @brief Connects to a camera using the ip address
@@ -289,7 +342,7 @@ void AravisDetectorPlugin::get_frame_count(){
 void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
   GError *error = NULL;
   arv_update_device_list();
-  number_of_cameras = arv_get_n_devices();
+  unsigned int number_of_cameras = arv_get_n_devices();
 
   if(number_of_cameras == 0){
     LOG4CXX_ERROR(logger_, "No aravis cameras found");
@@ -297,13 +350,14 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
       // there might be a better way to do this
       // arv_camera_new needs a char pointer, so I'm changing the string to a char
       const char *ip_copy = ip.c_str();
-      try{
-        camera = arv_camera_new(ip_copy, &error);
-      }catch(GError error){
+      if(error==NULL){
+        camera_ = arv_camera_new(ip_copy, &error);
+      }else
+  {
         LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
       }
-     if (ARV_IS_CAMERA (camera)) {
-       LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera, NULL));
+     if (ARV_IS_CAMERA (camera_)) {
+       LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera_, NULL));
      }
    }
 }
@@ -318,7 +372,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
 void AravisDetectorPlugin::display_aravis_cameras(){
   // Updating the device list is required before using get device id
   arv_update_device_list();
-  number_of_cameras = arv_get_n_devices();
+  unsigned int number_of_cameras = arv_get_n_devices();
   if(number_of_cameras==0){
     LOG4CXX_WARN(logger_, "No cameras were detected. Please confirm camera is connected");
   }else{
