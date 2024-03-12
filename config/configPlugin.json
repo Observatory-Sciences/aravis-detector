@@ -1,6 +1,9 @@
 { "aravis":
-    { "camera_address": "000",
-        "exposure_time": "1270",
-        "ip_address": "127.0.0.1"
+    {
+        "ip_address": "127.0.0.1",
+        "get_config": true,
+        "frame_count": 1,
+        "frame_rate": 30,
+        "exposure": 1000
     }
 }

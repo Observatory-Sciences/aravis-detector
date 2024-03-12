@@ -19,11 +19,17 @@ namespace FrameProcessor
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP = "tcp://127.0.0.1:3956";
   const float     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
+  const float     AravisDetectorPlugin::DEFAULT_FRAME_RATE = 60;
+  const float     AravisDetectorPlugin::DEFAULT_FRAME_COUNT = 1;
 
   /** Config names*/
-  const std::string AravisDetectorPlugin::LIST_DEVICES = "list_devices";
-  const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP = "ip_address";
-  const std::string AravisDetectorPlugin::CONFIG_EXPOSURE = "exposure_time";
+  
+  const std::string AravisDetectorPlugin::GET_CONFIG          = "get_config";
+  const std::string AravisDetectorPlugin::LIST_DEVICES        = "list_devices";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
+  const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure";
+  const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
+  const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
 
 
 /**
@@ -72,6 +78,7 @@ void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
  * @param[out] reply - Response IpcMessage
  */
 void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply){
+
   /** List of config options:
    Find devices flag
    2. Start/Stop 
@@ -89,7 +96,16 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
       connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     }
     if (config.has_param(CONFIG_EXPOSURE)){
-      set_exposure(config.get_param<float>(CONFIG_EXPOSURE));
+      set_exposure(config.get_param<int32_t>(CONFIG_EXPOSURE));
+    }
+    if (config.has_param(CONFIG_FRAME_RATE)){
+      set_frame_rate(config.get_param<int32_t>(CONFIG_FRAME_RATE));
+    }
+    if (config.has_param(CONFIG_FRAME_COUNT)){
+      set_frame_count(config.get_param<int32_t>(CONFIG_FRAME_COUNT));
+    }
+    if (config.has_param(GET_CONFIG)){
+      get_config();
     }
   }
   catch (std::runtime_error& e)
@@ -101,7 +117,19 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
   }
 }
 
-/** Status execution thread for this class.
+/** @brief Queries the Aravis Camera for config info
+ * In progress
+ * Gets config info and stores it until needed by the user
+ * 
+ */
+void AravisDetectorPlugin::get_config(){
+    LOG4CXX_WARN(logger_, " \n --------------------- \n Function still in development");
+    get_exposure();
+    get_frame_rate();
+    get_frame_count();
+}
+
+/** @brief Status execution thread for this class.
  *
  * The thread executes in a continuous loop until the working_ flag is set to false.
  * This thread queries the camera status
@@ -133,15 +161,111 @@ void AravisDetectorPlugin::status_task()
   }
 }
 
-/** @brief Change exposure time in miliseconds
+/** @brief Set exposure time in microseconds
  * 
+ * On success prints:
+ *  Setting exposure time to <exposure_time_us>
+ * On failure:
+ *  When setting exposure time the following error ocurred: <error.message>
+ * 
+ * @param exposure_time_us
  */
 void AravisDetectorPlugin::set_exposure(float exposure_time_us){
+  GError *error = NULL;
   try{
     arv_camera_set_exposure_time(camera, exposure_time_us, &error);
-    LOG4CXX_INFO(logger_, ("Setting exposure time to %f", exposure_time_us));
+    LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
   }catch(GError error){
-    LOG4CXX_ERROR(logger_, ("When setting exposure time the following error ocurred: %s", error.message));
+    LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error.message);
+  }
+}
+
+/** @brief Get exposure time in microseconds
+ * 
+ * On success prints:
+ *  Exposure time is <exposure_time_us>
+ * On failure:
+ *  When reading exposure time the following error ocurred: <error.message>
+ */
+void AravisDetectorPlugin::get_exposure(){
+  GError *error = NULL;
+  try{
+    double exposure_time_us = arv_camera_get_exposure_time(camera, &error);
+    LOG4CXX_INFO(logger_, "Exposure time is " << exposure_time_us);
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, "When reading exposure time the following error ocurred: \n" << error.message);
+  }
+}
+
+/** @brief Set frame rate in hertz
+ * 
+ * On success prints:
+ *  Setting frame rate to <frame_rate_hz>
+ * On failure:
+ *  When setting frame rate the following error ocurred: <error.message>
+ * 
+ * @param frame_rate_hz
+ */
+void AravisDetectorPlugin::set_frame_rate(float frame_rate_hz){
+  GError *error = NULL;
+  try{
+    arv_camera_set_frame_rate(camera, frame_rate_hz, &error);
+    LOG4CXX_INFO(logger_, "Setting frame rate to "<< frame_rate_hz);
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, "When setting frame rate the following error ocurred: \n" << error.message);
+  }
+}
+
+/** @brief Get frame rate in hertz
+ * 
+ * On success prints:
+ *  Frame rate is <frame_rate_hz>
+ * On failure:
+ *  When reading frame rate the following error ocurred: <error.message>
+ */
+void AravisDetectorPlugin::get_frame_rate(){
+  GError *error = NULL;
+  try{
+    double frame_rate_hz = arv_camera_get_frame_rate(camera, &error);
+    LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz);
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, "When reading frame rate the following error ocurred: \n" << error.message);
+  }
+}
+
+/** @brief Set frame count
+ * 
+ * On success prints:
+ *  Setting frame count to <frame_count>
+ * On failure:
+ *  When setting frame count the following error ocurred: <error.message>
+ * 
+ * @param frame_count
+ */
+void AravisDetectorPlugin::set_frame_count(float frame_count){
+  GError *error = NULL;
+  try{
+    arv_camera_set_frame_count(camera, frame_count, &error);
+    LOG4CXX_INFO(logger_, "Setting frame count to "<< frame_count);
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, "When setting frame count the following error ocurred: \n" << error.message);
+  }
+}
+
+/** @brief Get frame count in hertz
+ * 
+ * On success prints:
+ *  Frame count is <frame_count>
+ * On failure:
+ *  When reading frame count the following error ocurred: <error.message>
+ */
+void AravisDetectorPlugin::get_frame_count(){
+  GError *error = NULL;
+  try{
+    int32_t frame_count = arv_camera_get_frame_count(camera, &error);
+    LOG4CXX_INFO(logger_, "Frame count is "<< frame_count);
+  }catch(GError error){
+    LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error.message);
   }
 }
 
@@ -163,10 +287,10 @@ void AravisDetectorPlugin::set_exposure(float exposure_time_us){
  * @param ip std::string of ip address
  */
 void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
-  LOG4CXX_INFO(logger_, "Connecting to camera");
-  
+  GError *error = NULL;
   arv_update_device_list();
   number_of_cameras = arv_get_n_devices();
+
   if(number_of_cameras == 0){
     LOG4CXX_ERROR(logger_, "No aravis cameras found");
   }else{
@@ -179,7 +303,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip){
         LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
       }
      if (ARV_IS_CAMERA (camera)) {
-       LOG4CXX_INFO(logger_,("Connected to camera '%s'\n", arv_camera_get_model_name (camera, NULL)));
+       LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera, NULL));
      }
    }
 }
@@ -198,11 +322,11 @@ void AravisDetectorPlugin::display_aravis_cameras(){
   if(number_of_cameras==0){
     LOG4CXX_WARN(logger_, "No cameras were detected. Please confirm camera is connected");
   }else{
-    LOG4CXX_INFO(logger_, ("%i cameras were detected: \n ", number_of_cameras));
+    LOG4CXX_INFO(logger_, number_of_cameras << " cameras were detected: \n ");
     for(int i=0; i<number_of_cameras; i++){
       const char* device_id = arv_get_device_id(i);
       const char* device_address = arv_get_device_address(i);
-      LOG4CXX_INFO(logger_,("Device index %i has the id %s  and address %s\n", i, device_id, device_address));
+      LOG4CXX_INFO(logger_,"Device index "<< i <<" has the id "<<device_id<<" and address "<< device_address<<" \n");
     }
   }
 }
