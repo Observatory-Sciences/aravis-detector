@@ -52,7 +52,7 @@ public:
 
     /*Config names*/
     static const std::string LIST_DEVICES;          ///< list available devices
-    static const std::string GET_CONFIG;            ///< returns config values for the current connected camera
+    static const std::string READ_CONFIG;           ///< returns config values for the current connected camera
 
     static const std::string CONFIG_CAMERA_IP;      ///< set camera IP
     static const std::string CONFIG_EXPOSURE;       ///< set exposure time in microseconds
@@ -63,12 +63,14 @@ public:
 
 private:
 
-    void get_config(int32_t display_option);
+    void read_config(int32_t display_option);
+    void get_config();
     void display_aravis_cameras();
     void connect_aravis_camera(std::string ip);
 
     void set_exposure(double exposure_time_us);
     void get_exposure();
+    void get_exposure_bounds();
 
     void set_frame_rate(float frame_rate_hz);
     void get_frame_rate();
@@ -77,6 +79,7 @@ private:
     void get_frame_count();
 
     void set_pixel_format(std::string pixel_format);
+    void get_available_pixel_formats();
     void get_pixel_format();
 
 
@@ -87,7 +90,25 @@ private:
 
     ArvCamera *camera_;      ///< Pointer to ArvCamera object
 	ArvBuffer *buffer_;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
+    
 
+    /*********************************
+    **       Camera parameters      **
+    **********************************/
+
+    double exposure_time_us_;           ///< current exposure time in microseconds
+    double expo_min_;                   ///< minimum exposure time in microseconds
+    double expo_max_;                   ///< maximum exposure time in microseconds
+
+    double frame_rate_hz_;              ///< current frame rate in hertz
+    double min_frame_rate_;             ///< minimum frame rate in hertz
+    double max_frame_rate_;             ///< maximum frame rate in hertz
+
+    double frame_count_;                ///< current frame count
+    
+    unsigned int n_pixel_formats_;                  ///< total number of pixel formats
+    std::string available_pixel_formats_;    ///< a set of available pixel formats in string form
+    std::string pixel_format_;                            ///< current pixel format
 };
 
 } // namespace 
