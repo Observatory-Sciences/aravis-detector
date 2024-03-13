@@ -144,52 +144,40 @@ void AravisDetectorPlugin::read_config(int32_t display_option){
         LOG4CXX_INFO(logger_, "Frame count is "<< frame_count_);
         break;
       case 4:
-        if(n_pixel_formats_ > 1){
-          LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
-          for(int i=0; i< n_pixel_formats_; i++){
-                  LOG4CXX_INFO(logger_, "#"<< (i+1) << " is "<< available_pixel_formats_[i]);
-          }
-        }else{
-          LOG4CXX_INFO(logger_, "There is only one pixel format available "<< available_pixel_formats_[0]);
-        }
+        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
+        LOG4CXX_INFO(logger_, available_pixel_formats_);
         LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
       case 0:
         LOG4CXX_INFO(logger_, "The exposure time bounds are min: " << expo_min_ << " and max: "<< expo_max_);
         LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
         LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
         LOG4CXX_INFO(logger_, "Frame count is "<< frame_count_);
+        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
         LOG4CXX_INFO(logger_, available_pixel_formats_);
-        // if(n_pixel_formats_ > 1){
-        //   LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
-        //   for(int i=0; i< n_pixel_formats_; i++){
-        //           LOG4CXX_INFO(logger_, "#"<< (i+1) << " is "<< available_pixel_formats_[i]);
-        //   }
-        // }else{
-        //   LOG4CXX_INFO(logger_, "There is only one pixel format available "<< available_pixel_formats_[0]);
-        // }
         LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
+        LOG4CXX_INFO(logger_, "Frame size: "<< frame_size_px_);
         break;
       default:
         LOG4CXX_WARN(logger_, "Please check get_frame parameter for spelling mistakes");
     }
 }
 
+/** @brief Populates config variables
+ * 
+ * This function gets called periodically to set config variables that can be
+ * accessed by read_config. 
+ * 
+ * It calls the following:
+ * 
+ */
 void AravisDetectorPlugin::get_config(){
-  // get_frame_count();
-  get_frame_rate();
-  LOG4CXX_INFO(logger_, "acquired FR");
 
-  get_exposure();
-  LOG4CXX_INFO(logger_, "acquired expo");
-
-  get_exposure_bounds();
-  LOG4CXX_INFO(logger_, "acquired expo limit");
-
-  get_available_pixel_formats();
-  LOG4CXX_INFO(logger_, "acquired formats");
-
-  get_pixel_format();
   LOG4CXX_INFO(logger_, "acquiring config");
+  get_frame_rate();
+  get_exposure();
+  get_exposure_bounds();
+  get_pixel_format();
+  get_frame_size(); // because encoding can change
 }
 
 /** @brief Status execution thread for this class.
@@ -418,6 +406,16 @@ void AravisDetectorPlugin::get_available_pixel_formats(){
   // free(formats_temp); // only need to free the container
 }
 
+void AravisDetectorPlugin::get_frame_size(){
+  GError *error = NULL;
+  int temp = arv_camera_get_payload(camera_, &error);
+  if(error==NULL){
+    frame_size_px_ = temp;
+  }else{
+      LOG4CXX_ERROR(logger_, "Error, could not retrieve frame size");
+  }
+}
+
 /** @brief Connects to a camera using the ip address
  * 
  * Can in theory work with any of the following names:
@@ -446,12 +444,18 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
       // there might be a better way to do this
       // arv_camera_new needs a char pointer, so I'm changing the string to a char
       const char *ip_copy = ip_string.c_str();
-    // check for errors
+      camera_ = arv_camera_new(ip_string.c_str(), &error);
     if(error==NULL){ 
-    // protect variables from junk data if there are errors
-        camera_ = arv_camera_new(ip_copy, &error);
-      }else
-  {
+     
+        /***************************************
+        **      Camera init routine
+        ****************************************/
+
+        get_frame_size();
+        get_pixel_format();
+        get_available_pixel_formats();
+
+      }else{
         LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
       }
      if (ARV_IS_CAMERA (camera_)) {

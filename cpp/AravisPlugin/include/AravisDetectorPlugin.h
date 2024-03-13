@@ -81,7 +81,7 @@ private:
     void set_pixel_format(std::string pixel_format);
     void get_available_pixel_formats();
     void get_pixel_format();
-
+    void get_frame_size();
 
     LoggerPtr logger_;      ///< Pointer to logger object for displaying info in terminal
 
@@ -105,10 +105,11 @@ private:
     double max_frame_rate_;             ///< maximum frame rate in hertz
 
     double frame_count_;                ///< current frame count
-    
-    unsigned int n_pixel_formats_;                  ///< total number of pixel formats
-    std::string available_pixel_formats_;    ///< a set of available pixel formats in string form
-    std::string pixel_format_;                            ///< current pixel format
+    unsigned int frame_size_px_;        ///< frame size in bytes
+
+    unsigned int n_pixel_formats_;          ///< total number of pixel formats
+    std::string available_pixel_formats_;   ///< a set of available pixel formats in string form
+    std::string pixel_format_;              ///< current pixel format
 };
 
 } // namespace 
