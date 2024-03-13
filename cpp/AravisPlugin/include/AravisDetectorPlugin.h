@@ -43,17 +43,20 @@ public:
     std::string get_version_short();
     std::string get_version_long();
 
-    /**Default Config Values*/
+    /** Default Config Values*/
     static const std::string DEFAULT_CAMERA_IP;     ///< Ip address of the current camera
     static const std::string DEFAULT_PIXEL_FORMAT;  ///< Default pixel encoding
-    static const float    DEFAULT_EXPOSURE_TIME;    ///< Exposure time in microseconds
-    static const float    DEFAULT_FRAME_RATE;       ///< Frame rate in hertz
-    static const float    DEFAULT_FRAME_COUNT;      ///< Frame count
+    static const double      DEFAULT_EXPOSURE_TIME; ///< Exposure time in microseconds
+    static const double      DEFAULT_FRAME_RATE;    ///< Frame rate in hertz
+    static const double      DEFAULT_FRAME_COUNT;   ///< Frame count
 
-    /*Config names*/
+    /** Flags*/
+    static const std::string START_STREAM;          ///< starts continuos mode acquisition   
+    static const std::string STOP_STREAM;           ///< stops continuos mode acquisition
     static const std::string LIST_DEVICES;          ///< list available devices
-    static const std::string READ_CONFIG;           ///< returns config values for the current connected camera
 
+    /** Config names*/
+    static const std::string READ_CONFIG;           ///< returns config values for the current connected camera
     static const std::string CONFIG_CAMERA_IP;      ///< set camera IP
     static const std::string CONFIG_EXPOSURE;       ///< set exposure time in microseconds
     static const std::string CONFIG_FRAME_RATE;     ///< set frame rate in hz
@@ -63,6 +66,8 @@ public:
 
 private:
 
+    void start_stream();
+    void stop_stream();
     void read_config(int32_t display_option);
     void get_config();
     void display_aravis_cameras();
@@ -72,10 +77,10 @@ private:
     void get_exposure();
     void get_exposure_bounds();
 
-    void set_frame_rate(float frame_rate_hz);
+    void set_frame_rate(double frame_rate_hz);
     void get_frame_rate();
 
-    void set_frame_count(float frame_count);
+    void set_frame_count(double frame_count);
     void get_frame_count();
 
     void set_pixel_format(std::string pixel_format);

@@ -19,15 +19,17 @@ namespace FrameProcessor
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "tcp://127.0.0.1:3956";
   const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
-  const float     AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME   = 1000.0;
-  const float     AravisDetectorPlugin::DEFAULT_FRAME_RATE      = 60;
-  const float     AravisDetectorPlugin::DEFAULT_FRAME_COUNT     = 1;
+  const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
+  const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 60;
+  const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 1;
   
+  /** Flags*/
+  const std::string AravisDetectorPlugin::START_STREAM        = "start";
+  const std::string AravisDetectorPlugin::STOP_STREAM         = "stop";
+  const std::string AravisDetectorPlugin::LIST_DEVICES        = "list_devices";
 
   /** Config names*/
-  
   const std::string AravisDetectorPlugin::READ_CONFIG         = "read_config";
-  const std::string AravisDetectorPlugin::LIST_DEVICES        = "list_devices";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
   const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
@@ -72,10 +74,7 @@ void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
   this->push(frame);
 }
 
-/**
- * @brief Takes json configuration files
- * 
- * 
+/** @brief Implements json configurations
  * 
  * @param[in] config - IpcMessage containing configuration data
  * @param[out] reply - Response IpcMessage
@@ -92,10 +91,10 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
 
   try{
     /** List all devices*/
-    if (config.has_param(LIST_DEVICES))
-    {
-      display_aravis_cameras();
-    }
+    if (config.has_param(START_STREAM)) start_stream();
+    if (config.has_param(STOP_STREAM)) stop_stream();
+    if (config.has_param(LIST_DEVICES)) display_aravis_cameras();
+    
     if (config.has_param(CONFIG_CAMERA_IP)){
       connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     }
@@ -175,7 +174,6 @@ void AravisDetectorPlugin::get_config(){
   LOG4CXX_INFO(logger_, "acquiring config");
   get_frame_rate();
   get_exposure();
-  get_exposure_bounds();
   get_pixel_format();
   get_frame_size(); // because encoding can change
 }
@@ -208,6 +206,13 @@ void AravisDetectorPlugin::status_task()
   }
 }
 
+void AravisDetectorPlugin::start_stream(){
+  LOG4CXX_INFO(logger_,"Starting continuos camera acquisition");
+}
+void AravisDetectorPlugin::stop_stream(){
+  LOG4CXX_INFO(logger_,"Stopping continuos camera acquisition");
+}
+
 /** @brief Set exposure time in microseconds
  * 
  * On success prints:
@@ -219,13 +224,17 @@ void AravisDetectorPlugin::status_task()
  */
 void AravisDetectorPlugin::set_exposure(double exposure_time_us){
   GError *error = NULL;
-  arv_camera_set_exposure_time(camera_, exposure_time_us, &error);
-  // check for errors
-  if(error==NULL){ 
-  // protect variables from junk data if there are errors
-  LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
+  if(exposure_time_us <= expo_max_ && exposure_time_us >= expo_min_){
+    arv_camera_set_exposure_time(camera_, exposure_time_us, &error);
+    // check for errors
+    if(error==NULL){ 
+    // protect variables from junk data if there are errors
+    LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
+    }else{
+      LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error->message);
+    }
   }else{
-    LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error->message);
+    LOG4CXX_ERROR(logger_, "The exposure value "<< exposure_time_us << " is out of bounds: min="<<expo_min_<<"; max="<< expo_max_);
   }
 }
 
@@ -272,7 +281,7 @@ void AravisDetectorPlugin::get_exposure_bounds(){
  * 
  * @param frame_rate_hz
  */
-void AravisDetectorPlugin::set_frame_rate(float frame_rate_hz){
+void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
   GError *error = NULL;
 
   arv_camera_set_frame_rate(camera_, frame_rate_hz, &error);
@@ -313,7 +322,7 @@ void AravisDetectorPlugin::get_frame_rate(){
  * 
  * @param frame_count
  */
-void AravisDetectorPlugin::set_frame_count(float frame_count){
+void AravisDetectorPlugin::set_frame_count(double frame_count){
   GError *error = NULL;
   arv_camera_set_frame_count(camera_, frame_count, &error);
   // check for errors
@@ -454,6 +463,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
         get_frame_size();
         get_pixel_format();
         get_available_pixel_formats();
+        get_exposure_bounds();
 
       }else{
         LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
