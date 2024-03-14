@@ -54,6 +54,8 @@ public:
     static const std::string START_STREAM;          ///< starts continuos mode acquisition   
     static const std::string STOP_STREAM;           ///< stops continuos mode acquisition
     static const std::string LIST_DEVICES;          ///< list available devices
+    static const std::string ACQUIRE_BUFFER;        ///< acquire an image buffer from the camera
+
 
     /** Config names*/
     static const std::string READ_CONFIG;           ///< returns config values for the current connected camera
@@ -68,6 +70,13 @@ private:
 
     void start_stream();
     void stop_stream();
+    void acquire_single_buffer();
+    void acquire_stream_buffer();
+
+    void set_acquisition_mode(std::string acq_mode);
+    void get_acquisition_mode();
+
+
     void read_config(int32_t display_option);
     void get_config();
     void display_aravis_cameras();
@@ -88,33 +97,39 @@ private:
     void get_pixel_format();
     void get_frame_size();
 
+    void save_frame_pgm();
+
     LoggerPtr logger_;      ///< Pointer to logger object for displaying info in terminal
 
     boost::thread *thread_; ///< Pointer to status thread
     bool working_;          ///< Is the status thread working?
+    bool streaming_;        ///< Is the camera streaming data?
 
     ArvCamera *camera_;      ///< Pointer to ArvCamera object
 	ArvBuffer *buffer_;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
-    
+    ArvStream *stream_;      ///< Pointer to ArvStream object. For continuos frame acquisition
 
     /*********************************
     **       Camera parameters      **
     **********************************/
 
-    double exposure_time_us_;           ///< current exposure time in microseconds
-    double expo_min_;                   ///< minimum exposure time in microseconds
-    double expo_max_;                   ///< maximum exposure time in microseconds
+    double exposure_time_us_;               ///< current exposure time in microseconds
+    double expo_min_;                       ///< minimum exposure time in microseconds
+    double expo_max_;                       ///< maximum exposure time in microseconds
 
-    double frame_rate_hz_;              ///< current frame rate in hertz
-    double min_frame_rate_;             ///< minimum frame rate in hertz
-    double max_frame_rate_;             ///< maximum frame rate in hertz
+    double frame_rate_hz_;                  ///< current frame rate in hertz
+    double min_frame_rate_;                 ///< minimum frame rate in hertz
+    double max_frame_rate_;                 ///< maximum frame rate in hertz
 
-    double frame_count_;                ///< current frame count
-    unsigned int frame_size_px_;        ///< frame size in bytes
+    double frame_count_;                    ///< current frame count
+    int     bmg_count_;                     ///< current number of buffers saved as bmg
+    unsigned int payload_;                  ///< frame size in bytes
 
     unsigned int n_pixel_formats_;          ///< total number of pixel formats
     std::string available_pixel_formats_;   ///< a set of available pixel formats in string form
     std::string pixel_format_;              ///< current pixel format
+
+    std::string acquisition_mode_;          ///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
 };
 
 } // namespace 
