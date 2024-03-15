@@ -21,8 +21,9 @@ using namespace log4cxx::helpers;
 
 #include "FrameProcessorPlugin.h"
 #include "ClassLoader.h"
-#include "arv.h"
-
+extern "C" {
+    #include "arv.h"
+}
 namespace FrameProcessor
 {
 
@@ -117,12 +118,11 @@ private:
     double expo_min_;                       ///< minimum exposure time in microseconds
     double expo_max_;                       ///< maximum exposure time in microseconds
 
-    double frame_rate_hz_;                  ///< current frame rate in hertz
+    double frame_rate_hz_ {20};             ///< current frame rate in hertz
     double min_frame_rate_;                 ///< minimum frame rate in hertz
     double max_frame_rate_;                 ///< maximum frame rate in hertz
 
     double frame_count_;                    ///< current frame count
-    int     bmg_count_;                     ///< current number of buffers saved as bmg
     unsigned int payload_;                  ///< frame size in bytes
 
     unsigned int n_pixel_formats_;          ///< total number of pixel formats
