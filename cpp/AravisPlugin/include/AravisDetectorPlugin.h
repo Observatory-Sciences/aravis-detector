@@ -122,14 +122,10 @@ private:
     **        Plugin states         **
     **********************************/
 
-    LoggerPtr logger_;      ///< Pointer to logger object for displaying info in terminal
-
-    boost::thread *thread_; ///< Pointer to status thread
-    bool working_;          ///< Is the status thread working?
-    bool streaming_;        ///< Is the camera streaming data?
-
-	ArvBuffer *buffer_;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
-    ArvStream *stream_;      ///< Pointer to ArvStream object. For continuos frame acquisition
+    LoggerPtr logger_;                      ///< Pointer to logger object for displaying info in terminal
+    boost::thread *thread_;                 ///< Pointer to status thread
+    bool working_;                          ///< Is the status thread working?
+    bool streaming_;                        ///< Is the camera streaming data?
 
     /*********************************
     **       Camera parameters      **
@@ -159,6 +155,10 @@ private:
     **   Stream/buffer parameters    **
     ***********************************/
 
+	ArvBuffer *buffer_;                     ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
+    ArvStream *stream_;                     ///< Pointer to ArvStream object. For continuos frame acquisition
+
+    int n_empty_buffers_{50};               ///< number of empty buffers to initialise the current stream with. Defaults to 50
     int n_input_buff_;                      ///< n of input buffers in the current stream
     int n_output_buff_;                     ///< n of output buffers in the current stream
     long unsigned int n_completed_buff_;    ///< n of successful buffers
