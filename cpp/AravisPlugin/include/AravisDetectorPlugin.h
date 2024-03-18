@@ -69,25 +69,29 @@ public:
 
 private:
 
-    void start_stream();
-    void stop_stream();
-    void acquire_single_buffer();
-    void acquire_stream_buffer();
+    /*********************************
+    **       Plugin Functions       **
+    **********************************/
+
+    void read_config(int32_t display_option);
+    void get_config();
+
+    /*********************************
+    **       Camera Functions       **
+    **********************************/
+
+    void connect_aravis_camera(std::string ip); 
+    void display_aravis_cameras();
 
     void set_acquisition_mode(std::string acq_mode);
     void get_acquisition_mode();
 
-
-    void read_config(int32_t display_option);
-    void get_config();
-    void display_aravis_cameras();
-    void connect_aravis_camera(std::string ip);
-
     void set_exposure(double exposure_time_us);
-    void get_exposure();
     void get_exposure_bounds();
+    void get_exposure();
 
     void set_frame_rate(double frame_rate_hz);
+    void get_frame_rate_bounds();
     void get_frame_rate();
 
     void set_frame_count(double frame_count);
@@ -96,9 +100,27 @@ private:
     void set_pixel_format(std::string pixel_format);
     void get_available_pixel_formats();
     void get_pixel_format();
+
     void get_frame_size();
 
+    /**********************************
+    **    Stream/buffer functions    **
+    ***********************************/
+
+    void start_stream();
+    void stop_stream();
+
+    void acquire_single_buffer();
+    void acquire_stream_buffer();
+    
+    void get_stream_state();
+    
     void save_frame_pgm();
+
+
+    /*********************************
+    **        Plugin states         **
+    **********************************/
 
     LoggerPtr logger_;      ///< Pointer to logger object for displaying info in terminal
 
@@ -106,7 +128,6 @@ private:
     bool working_;          ///< Is the status thread working?
     bool streaming_;        ///< Is the camera streaming data?
 
-    ArvCamera *camera_;      ///< Pointer to ArvCamera object
 	ArvBuffer *buffer_;      ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
     ArvStream *stream_;      ///< Pointer to ArvStream object. For continuos frame acquisition
 
@@ -114,22 +135,36 @@ private:
     **       Camera parameters      **
     **********************************/
 
+    ArvCamera *camera_;                     ///< Pointer to ArvCamera object
+
     double exposure_time_us_;               ///< current exposure time in microseconds
     double expo_min_;                       ///< minimum exposure time in microseconds
     double expo_max_;                       ///< maximum exposure time in microseconds
 
-    double frame_rate_hz_ {20};             ///< current frame rate in hertz
+    double frame_rate_hz_ {5};              ///< current frame rate in hertz, default to 5
     double min_frame_rate_;                 ///< minimum frame rate in hertz
     double max_frame_rate_;                 ///< maximum frame rate in hertz
-
-    double frame_count_;                    ///< current frame count
-    unsigned int payload_;                  ///< frame size in bytes
 
     unsigned int n_pixel_formats_;          ///< total number of pixel formats
     std::string available_pixel_formats_;   ///< a set of available pixel formats in string form
     std::string pixel_format_;              ///< current pixel format
 
     std::string acquisition_mode_;          ///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
+
+    unsigned int payload_;                  ///< frame size in bytes
+
+    double frame_count_;                    ///< current frame count in MultiFrame mode
+
+    /**********************************
+    **   Stream/buffer parameters    **
+    ***********************************/
+
+    int n_input_buff_;                      ///< n of input buffers in the current stream
+    int n_output_buff_;                     ///< n of output buffers in the current stream
+    long unsigned int n_completed_buff_;    ///< n of successful buffers
+    long unsigned int n_failed_buff_;       ///< n of failed buffers
+    long unsigned int n_underrun_buff_;     ///< n of buffers overwritten (stream ran out of empty buffers)
+
 };
 
 } // namespace 
