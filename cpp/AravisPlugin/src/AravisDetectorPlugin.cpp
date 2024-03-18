@@ -14,6 +14,17 @@
 #include "logging.h"
 #include <boost/algorithm/string.hpp>
 
+struct GErrorWrapper {
+  GError *error;
+  GErrorWrapper(): error(NULL){}
+  ~GErrorWrapper(){ if(error){
+      g_error_free(error);
+  }}
+  GError** get() {return &error;}
+  operator GError*() const { return error;}
+  GError* operator->() const {return error;}
+};
+
 namespace FrameProcessor
 {
   /** Default configurations */
@@ -184,7 +195,7 @@ void AravisDetectorPlugin::get_config(){
 void AravisDetectorPlugin::status_task()
 {
   // Error return value
-	GError *error = NULL;
+	GErrorWrapper error;
   // Configure logging for this thread
   OdinData::configure_logging_mdc(OdinData::app_path.c_str());
 
@@ -222,9 +233,9 @@ void AravisDetectorPlugin::status_task()
 void AravisDetectorPlugin::acquire_single_buffer(){
   if (!ARV_IS_CAMERA (camera_))
     LOG4CXX_ERROR(logger_, "Cannot acquire buffer without connecting to a camera first.");
-  GError *error = NULL;
+  GErrorWrapper error;
   get_acquisition_mode();
-  buffer_ = arv_camera_acquisition(camera_, 0, &error);
+  buffer_ = arv_camera_acquisition(camera_, 0, error.get());
   if(error!=NULL)
     LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error->message);
       
@@ -259,6 +270,7 @@ void AravisDetectorPlugin::acquire_stream_buffer(){
       break;
     case ARV_BUFFER_STATUS_TIMEOUT:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: timeout");
+      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_MISSING_PACKETS:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: missing packets.");
@@ -294,9 +306,9 @@ void AravisDetectorPlugin::acquire_stream_buffer(){
  * @param acq_mode can be one of the following: "Continuous", "SingleFrame","MultiFrame"
  */
 void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
-  GError *error = NULL;
+  GErrorWrapper error;
   ArvAcquisitionMode temp= arv_acquisition_mode_from_string(acq_mode.c_str());
-  arv_camera_set_acquisition_mode(camera_, temp, &error);
+  arv_camera_set_acquisition_mode(camera_, temp, error.get());
   if(error==NULL){ 
     LOG4CXX_INFO(logger_, "Setting acquisition mode to " << acq_mode);
   }else{
@@ -305,8 +317,8 @@ void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
 }
 
 void AravisDetectorPlugin::get_acquisition_mode(){
-  GError *error = NULL;
-  ArvAcquisitionMode temp = arv_camera_get_acquisition_mode(camera_, &error);
+  GErrorWrapper error;
+  ArvAcquisitionMode temp = arv_camera_get_acquisition_mode(camera_, error.get());
   if(error== NULL){
     acquisition_mode_ = arv_acquisition_mode_to_string(temp);
   }else{
@@ -316,7 +328,7 @@ void AravisDetectorPlugin::get_acquisition_mode(){
 }
 
 void AravisDetectorPlugin::start_stream(){
-  GError *error = NULL;
+  GErrorWrapper error;
   
   // check you are connected 
   if (!ARV_IS_CAMERA(camera_)){
@@ -333,7 +345,7 @@ void AravisDetectorPlugin::start_stream(){
   set_acquisition_mode("Continuos"); 
   
   // create the stream object
-  stream_ = arv_camera_create_stream (camera_, NULL, NULL, &error);
+  stream_ = arv_camera_create_stream (camera_, NULL, NULL, error.get());
   
   if(error!=NULL || stream_ == NULL)
     LOG4CXX_ERROR(logger_, "When creating camera stream the following error ocurred: \n" << error->message);
@@ -345,7 +357,7 @@ void AravisDetectorPlugin::start_stream(){
 
   // Start the stream
   streaming_= true;
-  arv_camera_start_acquisition (camera_, &error);
+  arv_camera_start_acquisition (camera_, error.get());
 
   if(error!=NULL)
     LOG4CXX_ERROR(logger_, "When starting video stream the following error occurred: \n" << error->message);
@@ -353,8 +365,8 @@ void AravisDetectorPlugin::start_stream(){
 }
 
 void AravisDetectorPlugin::stop_stream(){
-  GError *error = NULL;
-  arv_camera_stop_acquisition (camera_, &error);
+  GErrorWrapper error;
+  arv_camera_stop_acquisition (camera_, error.get());
   streaming_ = false;
   if(error!=NULL)
     LOG4CXX_ERROR(logger_, "Stream acquisition failed to stop, error : \n" << error->message);
@@ -371,9 +383,9 @@ void AravisDetectorPlugin::stop_stream(){
  * @param exposure_time_us
  */
 void AravisDetectorPlugin::set_exposure(double exposure_time_us){
-  GError *error = NULL;
+  GErrorWrapper error;
   if(exposure_time_us <= expo_max_ && exposure_time_us >= expo_min_){
-    arv_camera_set_exposure_time(camera_, exposure_time_us, &error);
+    arv_camera_set_exposure_time(camera_, exposure_time_us, error.get());
     // check for errors
     if(error==NULL){ 
     // protect variables from junk data if there are errors
@@ -394,8 +406,8 @@ void AravisDetectorPlugin::set_exposure(double exposure_time_us){
  *  When reading exposure time the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_exposure(){
-  GError *error = NULL;
-  double temp = arv_camera_get_exposure_time(camera_, &error);
+  GErrorWrapper error;
+  double temp = arv_camera_get_exposure_time(camera_, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -407,9 +419,9 @@ void AravisDetectorPlugin::get_exposure(){
 }
 
 void AravisDetectorPlugin::get_exposure_bounds(){
-  GError *error = NULL;
+  GErrorWrapper error;
   double min_expo, max_expo;
-  arv_camera_get_exposure_time_bounds(camera_, &min_expo, &max_expo, &error);
+  arv_camera_get_exposure_time_bounds(camera_, &min_expo, &max_expo, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -430,9 +442,9 @@ void AravisDetectorPlugin::get_exposure_bounds(){
  * @param frame_rate_hz
  */
 void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
-  GError *error = NULL;
+  GErrorWrapper error;
 
-  arv_camera_set_frame_rate(camera_, frame_rate_hz, &error);
+  arv_camera_set_frame_rate(camera_, frame_rate_hz, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -450,8 +462,8 @@ void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
  *  When reading frame rate the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_frame_rate(){
-  GError *error = NULL;
-  double temp = arv_camera_get_frame_rate(camera_, &error);
+  GErrorWrapper error;
+  double temp = arv_camera_get_frame_rate(camera_, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -471,8 +483,8 @@ void AravisDetectorPlugin::get_frame_rate(){
  * @param frame_count
  */
 void AravisDetectorPlugin::set_frame_count(double frame_count){
-  GError *error = NULL;
-  arv_camera_set_frame_count(camera_, frame_count, &error);
+  GErrorWrapper error;
+  arv_camera_set_frame_count(camera_, frame_count, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -490,8 +502,8 @@ void AravisDetectorPlugin::set_frame_count(double frame_count){
  *  When reading frame count the following error ocurred: <error->message>
  */
 void AravisDetectorPlugin::get_frame_count(){
-  GError *error = NULL;
-  int32_t temp = arv_camera_get_frame_count(camera_, &error);
+  GErrorWrapper error;
+  int32_t temp = arv_camera_get_frame_count(camera_, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -508,8 +520,8 @@ void AravisDetectorPlugin::get_frame_count(){
  * @param pixel_format string representation of the format (eg, Mono8, Mono12, RGB8)
  */
 void AravisDetectorPlugin::set_pixel_format(std::string pixel_format){
-  GError *error = NULL;
-  arv_camera_set_pixel_format_from_string(camera_, pixel_format.c_str(), &error);
+  GErrorWrapper error;
+  arv_camera_set_pixel_format_from_string(camera_, pixel_format.c_str(), error.get());
   if(error){
     LOG4CXX_ERROR(logger_, "When setting pixel format the following error ocurred: \n" << error->message);
   }
@@ -520,8 +532,8 @@ void AravisDetectorPlugin::set_pixel_format(std::string pixel_format){
  * The pixel format is saved in pixel_format_ variable as a string
  */
 void AravisDetectorPlugin::get_pixel_format(){
-  GError *error = NULL;
-  const char* temp = arv_camera_get_pixel_format_as_string(camera_, &error);
+  GErrorWrapper error;
+  const char* temp = arv_camera_get_pixel_format_as_string(camera_, error.get());
   // check for errors
   if(error==NULL){ 
   // protect variables from junk data if there are errors
@@ -541,9 +553,9 @@ void AravisDetectorPlugin::get_pixel_format(){
  * Saved in available_pixel_formats_
  */
 void AravisDetectorPlugin::get_available_pixel_formats(){
-  GError *error = NULL;
+  GErrorWrapper error;
   unsigned int temp; 
-  const char** formats_temp = arv_camera_dup_available_pixel_formats_as_strings(camera_,&temp, &error);
+  const char** formats_temp = arv_camera_dup_available_pixel_formats_as_strings(camera_,&temp, error.get());
 
   // check for errors
   if(error==NULL){ 
@@ -565,8 +577,8 @@ void AravisDetectorPlugin::get_available_pixel_formats(){
 }
 
 void AravisDetectorPlugin::get_frame_size(){
-  GError *error = NULL;
-  int temp = arv_camera_get_payload(camera_, &error);
+  GErrorWrapper error;
+  int temp = arv_camera_get_payload(camera_, error.get());
   if(error==NULL){
     payload_ = temp;
   }else{
@@ -592,7 +604,7 @@ void AravisDetectorPlugin::get_frame_size(){
  * @param ip_string std::string of ip address
  */
 void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
-  GError *error = NULL;
+  GErrorWrapper error;
   arv_update_device_list();
   unsigned int number_of_cameras = arv_get_n_devices();
 
@@ -602,7 +614,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
       // there might be a better way to do this
       // arv_camera_new needs a char pointer, so I'm changing the string to a char
       const char *ip_copy = ip_string.c_str();
-      camera_ = arv_camera_new(ip_string.c_str(), &error);
+      camera_ = arv_camera_new(ip_string.c_str(), error.get());
     if(error==NULL){ 
      
         /***************************************
