@@ -38,3 +38,6 @@ docs/doxygen-awesome-css
 
 # Ignore for now
 .github/workflows/doc_build.yml
+config/setConfig.json
+config/startVideo.json
+config/stopVideo.json

@@ -1,6 +1,5 @@
 { "aravis":
     {
-        "start": true,
-        "stop": true
+        "start": true
     }
 }

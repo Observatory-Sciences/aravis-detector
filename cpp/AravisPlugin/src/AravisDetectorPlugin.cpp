@@ -161,6 +161,8 @@ void AravisDetectorPlugin::status_task()
   // Main worker task of this callback
   // Check the queue for messages
 
+
+  /** TODO: Remove this mess*/
   size_t delay_ms {1000/frame_rate_hz_}; // delay in milliseconds is the time between frames 
   int read_config_delay_seconds = 10; // number of seconds delay between config reads
   int read_config_delay= read_config_delay_seconds*(static_cast<int>(frame_rate_hz_)); // number of loops between config reads
@@ -176,52 +178,63 @@ void AravisDetectorPlugin::status_task()
       // TODO: Change this example
       // Read out camera status items here and store to member variable cache
       i=0;
-      get_config();
+      get_config(0);
     }
     if(streaming_){
         acquire_stream_buffer();
       }
   }
-  
 }
 
 /** @brief Displays the config info received from the camera
  * 
  * TODO: change display style and grouping 
  * 
- * @param display_option: 0- all, 1- exposure time, 2- frame rate, 3- MultiFrame, 4- Pixel format
+ * @param display_option (int32_t): 0- all,  1- Camera init routine, 2- Camera parameter check, 3- Stream statistics, Others: warning 
  */
 void AravisDetectorPlugin::read_config(int32_t display_option){
     switch(display_option){
       case 1:
+      /** Camera Innit routine */
+      
         LOG4CXX_INFO(logger_, "The exposure time bounds are min: " << expo_min_ << " and max: "<< expo_max_);
         LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
+        
+        LOG4CXX_INFO(logger_, "The frame rate bounds are min: " << min_frame_rate_ << " and max: "<< max_frame_rate_);
+        LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
+        
+        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: \n" << available_pixel_formats_);
+        LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
+
+        LOG4CXX_INFO(logger_, "Camera acquisition mode is set on: "<< acquisition_mode_);
+        LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
         break;
       case 2:
-        LOG4CXX_INFO(logger_, "The frame rate bounds are min: " << min_frame_rate_ << " and max: "<< max_frame_rate_);
-        LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
-        break;
-      case 3:
-        LOG4CXX_INFO(logger_, "Frame count is "<< frame_count_);
-        break;
-      case 4:
-        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
-        LOG4CXX_INFO(logger_, available_pixel_formats_);
-        LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
-      case 0:
-        LOG4CXX_INFO(logger_, "The exposure time bounds are min: " << expo_min_ << " and max: "<< expo_max_);
+      /** Regular config values*/
+
         LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
-        LOG4CXX_INFO(logger_, "The frame rate bounds are min: " << min_frame_rate_ << " and max: "<< max_frame_rate_);
         LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
-        LOG4CXX_INFO(logger_, "Frame count is "<< frame_count_);
-        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: ");
-        LOG4CXX_INFO(logger_, available_pixel_formats_);
         LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
-        LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
         LOG4CXX_INFO(logger_, "Camera acquisition mode is set on: "<< acquisition_mode_);
+        LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
+
         break;
+      
+      case 3:
+      /** Stream statistics*/
+        LOG4CXX_INFO(logger_, "Input buffers: "<< n_input_buff_ << "; Output buffers: "<< n_output_buff_);
+        LOG4CXX_INFO(logger_, "Successful buffers: "<< n_completed_buff_ << "; Failed buffers: "<< n_failed_buff_ << "; Underrun buffers: "<< n_underrun_buff_);
+
+        break;
+
+      case 0:
+        read_config(1);
+        read_config(3);
+
+        break;
+
       default:
-        LOG4CXX_WARN(logger_, "Parameter must be an integer from 0 to 4");
+        LOG4CXX_WARN(logger_, "Parameter must be an integer from 0 to 3");
     }
 }
 
@@ -230,8 +243,64 @@ void AravisDetectorPlugin::read_config(int32_t display_option){
  * This function gets called periodically to set config variables that can be
  * accessed by read_config. 
  * 
+ * @param get_option (int32_t): 0- all,  1- Camera init routine, 2- Camera parameter check, 3- Stream statistics, Others: error
  */
-void AravisDetectorPlugin::get_config(){
+void AravisDetectorPlugin::get_config(int32_t get_option){
+
+  switch(get_option){
+    case 1:
+     /** Camera init routine */
+
+      get_exposure_bounds();
+      get_exposure();
+
+      get_frame_rate_bounds();
+      get_frame_rate();
+
+      get_available_pixel_formats();
+      get_pixel_format();
+
+      get_acquisition_mode();
+      get_frame_size();
+
+      break;
+
+    case 2: 
+    /** Constant camera parameter check */
+
+      get_frame_rate();
+      get_exposure();
+      get_pixel_format();
+      get_acquisition_mode();
+      get_frame_size();
+
+      break;
+    case 3:
+    /** Stream Statistics*/ 
+      get_stream_state();
+      
+      break;
+    
+    case 0:
+    /** All values */
+      get_exposure_bounds();
+      get_exposure();
+
+      get_frame_rate_bounds();
+      get_frame_rate();
+
+      get_available_pixel_formats();
+      get_pixel_format();
+
+      get_acquisition_mode();
+      get_frame_size();
+
+      get_stream_state();
+      break;
+      
+  default:
+    LOG4CXX_ERROR(logger_, "Invalid get_config option");      
+}
 
   LOG4CXX_INFO(logger_, "acquiring config");
   get_frame_rate();
@@ -283,20 +352,12 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   /***************************************
   **      Camera init routine
   ****************************************/
-
-  get_frame_size();
-  get_pixel_format();
-  get_available_pixel_formats();
-
-  // bounds for values
-  get_exposure_bounds();
-  get_frame_rate_bounds();
-  
-  // general configs
-  get_config();
+ 
+  // get config values 
+  get_config(1);
 
   // display configs
-  read_config(0);
+  read_config(1);
 }
 
 /** @brief Checks for available devices
@@ -664,6 +725,12 @@ void AravisDetectorPlugin::start_stream(){
 
 void AravisDetectorPlugin::stop_stream(){
   GErrorWrapper error;
+
+  if(camera_ == NULL || stream_ == NULL){
+    LOG4CXX_ERROR(logger_, "There is no stream to stop. Exiting process");
+    return;
+  }
+
   arv_camera_stop_acquisition (camera_, error.get());
   streaming_ = false;
   g_object_unref(stream_);

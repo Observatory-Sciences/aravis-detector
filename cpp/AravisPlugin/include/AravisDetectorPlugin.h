@@ -15,15 +15,17 @@
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/propertyconfigurator.h>
 #include <log4cxx/helpers/exception.h>
+
 using namespace log4cxx;
 using namespace log4cxx::helpers;
 
-
 #include "FrameProcessorPlugin.h"
 #include "ClassLoader.h"
+
 extern "C" {
     #include "arv.h"
 }
+
 namespace FrameProcessor
 {
 
@@ -74,7 +76,7 @@ private:
     **********************************/
 
     void read_config(int32_t display_option);
-    void get_config();
+    void get_config(int32_t get_option);
 
     /*********************************
     **       Camera Functions       **
