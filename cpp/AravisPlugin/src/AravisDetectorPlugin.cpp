@@ -43,11 +43,11 @@ struct GErrorWrapper {
 namespace FrameProcessor
 {
   /** Default configurations */
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "tcp://127.0.0.1:3956";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
   const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
-  const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 60;
-  const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 1;
+  const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
+  const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 0;
   
   /** Flags*/
   const std::string AravisDetectorPlugin::START_STREAM        = "start";
@@ -146,6 +146,46 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
   }
 }
 
+/** @brief Provides python client with current configuration data in json format
+ * 
+ * @param[out] reply - Response IpcMessage
+ */
+void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CAMERA_IP, camera_address_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_EXPOSURE, exposure_time_us_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_RATE, frame_rate_hz_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_COUNT, frame_count_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_PIXEL_FORMAT, pixel_format_);
+}
+
+void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
+  /** Camera parameters */
+  status.set_param(get_name() + "/" + "camera_id", camera_id_);
+  status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
+  status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
+  status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
+  status.set_param(get_name() + "/" + "payload", payload_);
+
+  /** Stream parameters*/
+  if(stream_==NULL) return;
+
+  status.set_param(get_name() + "/" + "input_buffers", n_input_buff_);
+  status.set_param(get_name() + "/" + "output_buffers", n_output_buff_);
+
+  status.set_param(get_name() + "/" + "completed_buff", n_completed_buff_);
+  status.set_param(get_name() + "/" + "failed_buff", n_failed_buff_);
+  status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
+}
+
+bool AravisDetectorPlugin::reset_statistics(){
+    n_input_buff_ =0;
+    n_output_buff_ =0;
+    n_completed_buff_ =0;
+    n_failed_buff_ =0;  
+    n_underrun_buff_ =0;
+    return true;
+}
+
 /** @brief Status execution thread for this class.
  *
  * The thread executes in a continuous loop until the working_ flag is set to false.
@@ -186,22 +226,6 @@ void AravisDetectorPlugin::status_task()
   }
 }
 
-void AravisDetectorPlugin::status(OdinData::IpcMessage &status)
-{
-  /** Camera parameters */
-  status.set_param(get_name() + "/" + "camera_id", camera_id_);
-  status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
-  status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
-  status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
-  status.set_param(get_name() + "/" + "payload", payload_);
-
-  /** Stream parameters*/
-  if(stream_==NULL) return;
-
-  status.set_param(get_name() + "/" + "completed_buff", n_completed_buff_);
-  status.set_param(get_name() + "/" + "failed_buff", n_failed_buff_);
-  status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
-}
 
 /** @brief Displays the config info received from the camera
  * 

@@ -140,9 +140,9 @@ private:
     **********************************/
 
     ArvCamera *camera_;                     ///< Pointer to ArvCamera object
-    std::string camera_id_;                 ///< camera device id
-    std::string camera_serial_;             ///< camera serial number
-    std::string camera_address_;            ///< camera address
+    std::string camera_id_ {"None"};        ///< camera device id
+    std::string camera_serial_ {"None"};    ///< camera serial number
+    std::string camera_address_ {"None"};   ///< camera address
 
     double exposure_time_us_;               ///< current exposure time in microseconds
     double expo_min_;                       ///< minimum exposure time in microseconds
@@ -169,7 +169,7 @@ private:
 	ArvBuffer *buffer_;                     ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
     ArvStream *stream_;                     ///< Pointer to ArvStream object. For continuos frame acquisition
 
-    int n_empty_buffers_{50};               ///< number of empty buffers to initialise the current stream with. Defaults to 50
+    int n_empty_buffers_{500};              ///< number of empty buffers to initialise the current stream with. Defaults to 50
     int n_input_buff_;                      ///< n of input buffers in the current stream
     int n_output_buff_;                     ///< n of output buffers in the current stream
     long unsigned int n_completed_buff_ {0};///< n of successful buffers
