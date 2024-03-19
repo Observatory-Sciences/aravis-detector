@@ -186,6 +186,23 @@ void AravisDetectorPlugin::status_task()
   }
 }
 
+void AravisDetectorPlugin::status(OdinData::IpcMessage &status)
+{
+  /** Camera parameters */
+  status.set_param(get_name() + "/" + "camera_id", camera_id_);
+  status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
+  status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
+  status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
+  status.set_param(get_name() + "/" + "payload", payload_);
+
+  /** Stream parameters*/
+  if(stream_==NULL) return;
+
+  status.set_param(get_name() + "/" + "completed_buff", n_completed_buff_);
+  status.set_param(get_name() + "/" + "failed_buff", n_failed_buff_);
+  status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
+}
+
 /** @brief Displays the config info received from the camera
  * 
  * TODO: change display style and grouping 
@@ -250,6 +267,9 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
   switch(get_option){
     case 1:
      /** Camera init routine */
+
+      get_camera_serial();
+      get_camera_id();
 
       get_exposure_bounds();
       get_exposure();
@@ -343,7 +363,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
 
   camera_ = arv_camera_new(ip_string.c_str(), error.get());
 
-  if(error){ LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please confirm camera is connected");
+  if(error){ LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please check ip address");
     return;}
 
   if (ARV_IS_CAMERA (camera_))
@@ -352,7 +372,9 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   /***************************************
   **      Camera init routine
   ****************************************/
- 
+
+  camera_address_ = ip_string;
+
   // get config values 
   get_config(1);
 
@@ -379,6 +401,50 @@ void AravisDetectorPlugin::display_aravis_cameras(){
   for(int i=0; i<number_of_cameras; i++){
     LOG4CXX_INFO(logger_,"Device index "<< i <<" has the id "<<arv_get_device_id(i)<<" and address "<< arv_get_device_address(i)<<" \n");
   }
+}
+
+/** @brief Get serial of the current connected camera
+ *
+ * Saved to camera_serial_
+ */
+void AravisDetectorPlugin::get_camera_serial(){
+  GErrorWrapper error;
+
+  if(camera_ == NULL){
+    LOG4CXX_ERROR(logger_, "Cannot get camera serial number without connecting to camera");
+    return;
+  }
+
+  std::string serial_temp = arv_camera_get_device_serial_number(camera_, error.get());
+
+  if(error){ 
+    LOG4CXX_ERROR(logger_, "When reading camera serial number the following error occurred: \n" << error.message());
+      return;
+    }
+
+  camera_serial_ = serial_temp;
+}
+
+/** @brief Get id of the current connected camera
+ *
+ * Saved to camera_id_
+ */
+void AravisDetectorPlugin::get_camera_id(){
+  GErrorWrapper error;
+
+  if(camera_ == NULL){
+    LOG4CXX_ERROR(logger_, "Cannot get camera id without connecting to camera");
+    return;
+  }
+
+  std::string id_temp = arv_camera_get_device_id(camera_, error.get());
+
+  if(error){ 
+    LOG4CXX_ERROR(logger_, "When reading camera id the following error occurred: \n" << error.message());
+      return;
+    }
+
+  camera_id_ = id_temp;
 }
 
 
@@ -619,7 +685,7 @@ void AravisDetectorPlugin::get_available_pixel_formats(){
   const char** formats_temp = arv_camera_dup_available_pixel_formats_as_strings(camera_,&temp, error.get());
 
   if(error){
-    LOG4CXX_ERROR(logger_, "When reading pixel formats the following error occured: \n" << error.message());
+    LOG4CXX_ERROR(logger_, "When reading pixel formats the following error occurred: \n" << error.message());
     return;
   }
 
@@ -642,7 +708,7 @@ void AravisDetectorPlugin::get_available_pixel_formats(){
  */
 void AravisDetectorPlugin::get_pixel_format(){
   GErrorWrapper error;
-  const char* temp = arv_camera_get_pixel_format_as_string(camera_, error.get());
+  std::string temp = arv_camera_get_pixel_format_as_string(camera_, error.get());
 
   if(error){ 
     LOG4CXX_ERROR(logger_, "When reading current the pixel format the following error occurred: \n" << error.message());
@@ -766,7 +832,6 @@ void AravisDetectorPlugin::acquire_single_buffer(){
  * TODO: Rather than save the buffer, send it to the frame processor
  */
 void AravisDetectorPlugin::acquire_stream_buffer(){
-
 
   if (!ARV_IS_STREAM (stream_)){
     LOG4CXX_ERROR(logger_, "Cannot acquire buffer without initialising a stream first");

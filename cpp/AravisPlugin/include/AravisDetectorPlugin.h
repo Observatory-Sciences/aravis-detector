@@ -37,6 +37,9 @@ public:
     virtual ~AravisDetectorPlugin();
     void process_frame(boost::shared_ptr<Frame> frame);
     void configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply);
+    void requestConfiguration(OdinData::IpcMessage& reply);
+    void status(OdinData::IpcMessage& status);
+    bool reset_statistics();
     void status_task();
 
 
@@ -84,6 +87,9 @@ private:
 
     void connect_aravis_camera(std::string ip); 
     void display_aravis_cameras();
+    void get_camera_serial();
+    void get_camera_id();
+
 
     void set_acquisition_mode(std::string acq_mode);
     void get_acquisition_mode();
@@ -134,6 +140,9 @@ private:
     **********************************/
 
     ArvCamera *camera_;                     ///< Pointer to ArvCamera object
+    std::string camera_id_;                 ///< camera device id
+    std::string camera_serial_;             ///< camera serial number
+    std::string camera_address_;            ///< camera address
 
     double exposure_time_us_;               ///< current exposure time in microseconds
     double expo_min_;                       ///< minimum exposure time in microseconds
@@ -163,9 +172,9 @@ private:
     int n_empty_buffers_{50};               ///< number of empty buffers to initialise the current stream with. Defaults to 50
     int n_input_buff_;                      ///< n of input buffers in the current stream
     int n_output_buff_;                     ///< n of output buffers in the current stream
-    long unsigned int n_completed_buff_;    ///< n of successful buffers
-    long unsigned int n_failed_buff_;       ///< n of failed buffers
-    long unsigned int n_underrun_buff_;     ///< n of buffers overwritten (stream ran out of empty buffers)
+    long unsigned int n_completed_buff_ {0};///< n of successful buffers
+    long unsigned int n_failed_buff_ {0};   ///< n of failed buffers
+    long unsigned int n_underrun_buff_ {0}; ///< n of buffers overwritten (stream ran out of empty buffers)
 
 };
 
