@@ -89,6 +89,8 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
   if(camera_){
     g_clear_object (&camera_);}
 
+  arv_shutdown();
+
   LOG4CXX_TRACE(logger_, "AravisDetectorPlugin destructor.");
 }
 
@@ -163,7 +165,7 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
 
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
   status.set_param(get_name() + "/" + "acquisition_mode", acquisition_mode_);
-  
+
   status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
   status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
   status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
