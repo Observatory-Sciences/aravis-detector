@@ -160,11 +160,16 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
 
 void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   /** Camera parameters */
+
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
+  status.set_param(get_name() + "/" + "acquisition_mode", acquisition_mode_);
+  
   status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
   status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
   status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
   status.set_param(get_name() + "/" + "payload", payload_);
+
+  status.set_param(get_name() + "/" + "streaming", streaming_);
 
   /** Stream parameters*/
   if(stream_==NULL) return;
