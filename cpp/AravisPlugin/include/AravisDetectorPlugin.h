@@ -20,6 +20,7 @@ using namespace log4cxx;
 using namespace log4cxx::helpers;
 
 #include "FrameProcessorPlugin.h"
+#include "DataBlockFrame.h"
 #include "ClassLoader.h"
 
 extern "C" {
@@ -120,6 +121,7 @@ private:
 
     void acquire_single_buffer();
     void acquire_stream_buffer();
+    void process_buffer();
     
     void get_stream_state();
     

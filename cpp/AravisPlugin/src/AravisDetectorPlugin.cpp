@@ -82,15 +82,7 @@ AravisDetectorPlugin::AravisDetectorPlugin() :
 /** @brief Class Destructor. Closes the Publish socket */
 AravisDetectorPlugin::~AravisDetectorPlugin()
 {
-  if(stream_){
-    g_clear_object (&stream_);}
-  if(buffer_){
-    g_clear_object (&buffer_);}
-  if(camera_){
-    g_clear_object (&camera_);}
-
   arv_shutdown();
-
   LOG4CXX_TRACE(logger_, "AravisDetectorPlugin destructor.");
 }
 
@@ -100,8 +92,6 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
  */
 void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
 {
-  LOG4CXX_INFO(logger_, "Test message: this is where I would put my frame processor, if I had one");
-  LOG4CXX_TRACE(logger_, "Pushing Data Frame");
   this->push(frame);
 }
 
@@ -171,10 +161,9 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
   status.set_param(get_name() + "/" + "payload", payload_);
 
-  status.set_param(get_name() + "/" + "streaming", streaming_);
-
   /** Stream parameters*/
-  if(stream_==NULL) return;
+
+  status.set_param(get_name() + "/" + "streaming", streaming_);
 
   status.set_param(get_name() + "/" + "input_buffers", n_input_buff_);
   status.set_param(get_name() + "/" + "output_buffers", n_output_buff_);
@@ -586,8 +575,8 @@ void AravisDetectorPlugin::get_exposure(){
 void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
   GErrorWrapper error;
 
-  if(frame_rate_hz_ < min_frame_rate_ || max_frame_rate_ < frame_rate_hz_){
-    LOG4CXX_ERROR(logger_, "The frame rate "<< frame_rate_hz_ << " is out of bounds: min="<< min_frame_rate_<<"; max="<< max_frame_rate_);
+  if(frame_rate_hz < min_frame_rate_ || max_frame_rate_ < frame_rate_hz){
+    LOG4CXX_ERROR(logger_, "The frame rate "<< frame_rate_hz << " is out of bounds: min="<< min_frame_rate_<<"; max="<< max_frame_rate_);
     return;
   }
 
@@ -615,8 +604,8 @@ void AravisDetectorPlugin::get_frame_rate_bounds(){
     return;
   }
 
-  min_frame_rate_ = max_temp;
-  max_frame_rate_ = min_temp ;
+  min_frame_rate_ = min_temp;
+  max_frame_rate_ = max_temp;
 }
 
 /** @brief Get frame rate in hertz
@@ -873,49 +862,65 @@ void AravisDetectorPlugin::acquire_stream_buffer(){
 
   // if buffer is empty then it isn't finished.
   // this won't occur if we match frame rate
-  if (!ARV_IS_BUFFER (buffer_))return;
+  if (!ARV_IS_BUFFER (buffer_)){
+    LOG4CXX_ERROR(logger_, "Buffer not finished, frame rate: "<< frame_rate_hz_ << " in buffers: "<< n_input_buff_);
+    return;}
 
   switch(arv_buffer_get_status(buffer_)){
     case ARV_BUFFER_STATUS_SUCCESS:
-      save_frame_pgm();
-      arv_stream_push_buffer(stream_, buffer_);
+      process_buffer();
+      arv_stream_push_buffer(stream_, arv_buffer_new(payload_, NULL));
       break;
     case ARV_BUFFER_STATUS_UNKNOWN:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: status unknown");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_TIMEOUT:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: timeout");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_MISSING_PACKETS:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: missing packets.");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_WRONG_PACKET_ID:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: wrong packet id");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_SIZE_MISMATCH:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: size mismatch");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_FILLING:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: status still filling");
       break;
     case ARV_BUFFER_STATUS_ABORTED:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: aborted");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     case ARV_BUFFER_STATUS_PAYLOAD_NOT_SUPPORTED:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: payload not supported");
-      arv_stream_push_buffer(stream_, buffer_);
       break;
     default:
       LOG4CXX_ERROR(logger_, "Error when getting the buffer: unexpected buffer status");
-      arv_stream_push_buffer(stream_, buffer_);
   }
  }
+
+/** @brief Changes buffer object to DataBlockFrame object pointer. 
+ * 
+ */
+void AravisDetectorPlugin::process_buffer(){
+  const long long f_number = arv_buffer_get_frame_id(buffer_);
+  if(f_number==0){
+    LOG4CXX_ERROR(logger_, "An error occurred when retrieving buffer id");
+    return;
+  }
+
+  DataType d_type{raw_8bit};
+  std::string dataset_name {"data"};
+  std::string id_temp {"test"};
+  std::vector<unsigned long long> dimensions_temp {arv_buffer_get_image_height(buffer_),arv_buffer_get_image_width(buffer_)};
+  CompressionType c_type{no_compression};
+  size_t size_temp = dimensions_temp.at(0)*dimensions_temp.at(1);
+  FrameMetaData metadata(f_number, dataset_name , d_type, id_temp, dimensions_temp, c_type);
+  boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &size_temp), size_temp));
+  
+  process_frame(new_frame);
+}
 
 /** @brief Saves information about the stream_
  * 
@@ -942,14 +947,17 @@ void AravisDetectorPlugin::get_stream_state(){
  */
 void AravisDetectorPlugin::save_frame_pgm()
 { 
+  unsigned int height = arv_buffer_get_image_height(buffer_);
+  unsigned int width = arv_buffer_get_image_width(buffer_);
+  size_t size_temp = height*width;
+
   static size_t bmg_count {1} ; // current number of buffers saved as bmg
-  size_t img_size = 512*512;
-  const u_char* decoded_frame = reinterpret_cast<u_char*>(const_cast<void*>(arv_buffer_get_image_data(buffer_, &img_size)));
+  const u_char* decoded_frame = reinterpret_cast<u_char*>(const_cast<void*>(arv_buffer_get_image_data(buffer_, &size_temp)));
   std::string filename {"/home/gsc/Github/RFI_Odin/_images/test_" + std::to_string(bmg_count)+ ".pgm"};
 
   FILE *pgmimg = fopen(filename.c_str(), "wb");
-  fprintf(pgmimg, "P5\n%d %d\n255\n", 512, 512);
-  fwrite(decoded_frame, sizeof(u_char), img_size, pgmimg);
+  fprintf(pgmimg, "P5\n%d %d\n255\n", width, height);
+  fwrite(decoded_frame, sizeof(u_char), payload_, pgmimg);
   fclose(pgmimg);
   bmg_count++;
 

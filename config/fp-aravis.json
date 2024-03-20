@@ -16,8 +16,51 @@
 	  }
 	},
 	{
+	  "plugin": {
+		"load": {
+			"index": "hdf",
+			"name": "FileWriterPlugin",
+			"library": "/home/gsc/Github/RFI_Odin/prefix/lib/libHdf5Plugin.so"
+		}
+	  }
+	},	{
+		"plugin": {
+			"connect": {
+				"index": "hdf",
+				"connection": "aravis"
+			}
+		}
+	},
+	{
 		"aravis":{
 			"list_devices": true
 	  }
+	},
+	{
+		"hdf": {
+			"dataset": "data"
+		}
+	},
+	{
+		"hdf": {
+			"dataset": {
+				"data": {
+					"datatype": "uint8",
+					"dims": [
+						512,
+						512
+					],
+					"compression": "none"
+				}
+			},
+			"file": {
+				"path": "/home/gsc/Github/RFI_Odin/_images",
+				"first_number": 1
+			},
+			"frames": 100,
+			"acquisition_id": "test",
+			"timeout_timer_period": 3000,
+			"write": true
+		}
 	}
   ]
