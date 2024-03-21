@@ -63,6 +63,11 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
   const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
 
+  /** Names and settings */
+
+  const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data";
+  const std::string AravisDetectorPlugin::FILE_NAME           = "test"; 
+  const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "none";
 
 /** @brief Construct for the plugin
  * 
@@ -125,8 +130,14 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(CONFIG_PIXEL_FORMAT)){
       set_pixel_format(config.get_param<std::string>(CONFIG_PIXEL_FORMAT));
     }
-    if (config.has_param(READ_CONFIG)){
-      read_config(config.get_param<int32_t>(READ_CONFIG));
+    if (config.has_param(DATA_SET_NAME)){
+      data_set_name_= config.get_param<std::string>(DATA_SET_NAME);
+    }
+    if (config.has_param(FILE_NAME)){
+      file_id_ = config.get_param<std::string>(FILE_NAME);
+    }   
+    if (config.has_param(COMPRESSION_TYPE)){
+      compression_type_ = get_compression_from_string(config.get_param<std::string>(COMPRESSION_TYPE));
     }
   }
   catch (std::runtime_error& e)
@@ -214,10 +225,11 @@ void AravisDetectorPlugin::status_task()
       // TODO: Change this example
       // Read out camera status items here and store to member variable cache
       i=0;
-      get_config(0);
+      get_config(2);
     }
     if(streaming_){
         acquire_stream_buffer();
+        get_config(3);
       }
   }
 }
@@ -771,7 +783,7 @@ void AravisDetectorPlugin::start_stream(){
   
   // check you are connected to a camera
   if (!ARV_IS_CAMERA(camera_)){
-    LOG4CXX_ERROR(logger_, "Cannot start stream without connecting to a camera first.");
+    LOG4CXX_ERROR(logger_, "Cannot start stream without connecting >to a camera first.");
     return;}
 
   // delete old stream
@@ -904,22 +916,19 @@ void AravisDetectorPlugin::acquire_stream_buffer(){
  * 
  */
 void AravisDetectorPlugin::process_buffer(){
-  const long long f_number = arv_buffer_get_frame_id(buffer_);
-  if(f_number==0){
-    LOG4CXX_ERROR(logger_, "An error occurred when retrieving buffer id");
-    return;
-  }
 
-  DataType d_type{raw_8bit};
-  std::string dataset_name {"data"};
-  std::string id_temp {"test"};
-  std::vector<unsigned long long> dimensions_temp {arv_buffer_get_image_height(buffer_),arv_buffer_get_image_width(buffer_)};
-  CompressionType c_type{no_compression};
-  size_t size_temp = dimensions_temp.at(0)*dimensions_temp.at(1);
-  FrameMetaData metadata(f_number, dataset_name , d_type, id_temp, dimensions_temp, c_type);
-  boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &size_temp), size_temp));
-  
+  data_type_ = pixel_format_to_datatype(pixel_format_);
+
+  // Will need to change this at some point 
+  std::vector<unsigned long long> frame_dims {arv_buffer_get_image_height(buffer_),arv_buffer_get_image_width(buffer_)};
+
+  FrameMetaData metadata(n_frames_made_, data_set_name_ , data_type_, file_id_, frame_dims, compression_type_);
+  boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &payload_), payload_, image_data_offset_));
+
+
   process_frame(new_frame);
+  n_frames_made_++;
+
 }
 
 /** @brief Saves information about the stream_
@@ -963,6 +972,21 @@ void AravisDetectorPlugin::save_frame_pgm()
 
 }
 
+
+/** @brief Translates from the available pixel format to datatype
+ * 
+ * TODO: add support for more pixel formats
+ * 
+ * @param pixel_form 
+ * @return DataType 
+ */
+DataType AravisDetectorPlugin::pixel_format_to_datatype(std::string pixel_form){
+  if(pixel_form == "Mono8"){
+    return DataType::raw_8bit;
+  }
+
+  return DataType::raw_unknown;
+}
 
 /********************************
 **          Version            **

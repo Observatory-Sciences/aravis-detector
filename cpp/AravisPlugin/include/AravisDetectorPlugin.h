@@ -71,6 +71,12 @@ public:
     static const std::string CONFIG_FRAME_RATE;     ///< set frame rate in hz
     static const std::string CONFIG_FRAME_COUNT;    ///< set frame count
     static const std::string CONFIG_PIXEL_FORMAT;   ///< set pixel encoding Mono8/ 12bit/ etc
+    
+    /** Names and settings */
+
+    static const std::string DATA_SET_NAME;
+    static const std::string FILE_NAME;
+    static const std::string COMPRESSION_TYPE;
 
 
 private:
@@ -127,6 +133,8 @@ private:
     
     void save_frame_pgm();
 
+    DataType pixel_format_to_datatype(std::string pixel_form);
+
 
     /*********************************
     **        Plugin states         **
@@ -160,7 +168,7 @@ private:
 
     std::string acquisition_mode_;          ///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
 
-    unsigned int payload_;                  ///< frame size in bytes
+    size_t payload_;                  ///< frame size in bytes
 
     double frame_count_;                    ///< current frame count in MultiFrame mode
 
@@ -171,6 +179,15 @@ private:
 	ArvBuffer *buffer_;                     ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
     ArvStream *stream_;                     ///< Pointer to ArvStream object. For continuos frame acquisition
 
+    DataType data_type_;                    ///< currently used data_type
+    CompressionType compression_type_;      ///< currently used compression type
+
+    std::string data_set_name_;             ///< name of the data set the plugin is writing to
+    std::string file_id_;                   ///< name of the file the plugin is writing to 
+    int image_data_offset_{0};              ///< size of buffer metadata (usually none)
+
+    long long n_frames_made_ {0};           ///< Number of frames created from buffers
+
     int n_empty_buffers_{500};              ///< number of empty buffers to initialise the current stream with. Defaults to 50
     int n_input_buff_;                      ///< n of input buffers in the current stream
     int n_output_buff_;                     ///< n of output buffers in the current stream
@@ -178,6 +195,7 @@ private:
     long unsigned int n_failed_buff_ {0};   ///< n of failed buffers
     long unsigned int n_underrun_buff_ {0}; ///< n of buffers overwritten (stream ran out of empty buffers)
 
+    std::vector<unsigned long long> frame_dimensions_[2]; ///< size of a frame in pixels
 };
 
 } // namespace 
