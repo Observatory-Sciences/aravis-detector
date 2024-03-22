@@ -42,7 +42,7 @@ public:
     void status(OdinData::IpcMessage& status);
     bool reset_statistics();
     void status_task();
-
+    void callback_access(ArvStream *stream_temp); 
 
     int get_version_major();
     int get_version_minor();
@@ -56,13 +56,13 @@ public:
     static const double      DEFAULT_EXPOSURE_TIME; ///< Exposure time in microseconds
     static const double      DEFAULT_FRAME_RATE;    ///< Frame rate in hertz
     static const double      DEFAULT_FRAME_COUNT;   ///< Frame count
+    static const bool        DEFAULT_CALLBACK;  ///< default callback value
 
     /** Flags*/
     static const std::string START_STREAM;          ///< starts continuos mode acquisition   
     static const std::string STOP_STREAM;           ///< stops continuos mode acquisition
     static const std::string LIST_DEVICES;          ///< list available devices
     static const std::string ACQUIRE_BUFFER;        ///< acquire an image buffer from the camera
-
 
     /** Config names*/
     static const std::string READ_CONFIG;           ///< returns config values for the current connected camera
@@ -72,8 +72,9 @@ public:
     static const std::string CONFIG_FRAME_COUNT;    ///< set frame count
     static const std::string CONFIG_PIXEL_FORMAT;   ///< set pixel encoding Mono8/ 12bit/ etc
     static const std::string CONFIG_ACQUISITION_MODE;///< set the camera acquisition mode: "Continuous", "SingleFrame","MultiFrame"
-    /** Names and settings */
+    static const std::string CONFIG_CALLBACK;          ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
 
+    /** Names and settings */
     static const std::string DATA_SET_NAME;
     static const std::string FILE_NAME;
     static const std::string COMPRESSION_TYPE;
@@ -97,9 +98,9 @@ private:
     void get_camera_serial();
     void get_camera_id();
 
-
     void set_acquisition_mode(std::string acq_mode);
     void get_acquisition_mode();
+    void set_aravis_callback(bool arv_callback);
 
     void set_exposure(double exposure_time_us);
     void get_exposure_bounds();
@@ -142,8 +143,9 @@ private:
 
     LoggerPtr logger_;                      ///< Pointer to logger object for displaying info in terminal
     boost::thread *thread_;                 ///< Pointer to status thread
-    bool working_;                          ///< Is the status thread working?
-    bool streaming_;                        ///< Is the camera streaming data?
+    bool working_;                    ///< Is the status thread working?
+    bool streaming_;                 ///< Is the camera streaming data?
+    bool aravis_callback_;            ///< Is the camera emitting signals when a buffer is finished?
 
     /*********************************
     **       Camera parameters      **
@@ -195,7 +197,10 @@ private:
     long unsigned int n_failed_buff_ {0};   ///< n of failed buffers
     long unsigned int n_underrun_buff_ {0}; ///< n of buffers overwritten (stream ran out of empty buffers)
 
-    std::vector<unsigned long long> frame_dimensions_[2]; ///< size of a frame in pixels
+    unsigned long long image_height_px_{0};     ///< image height in pixels
+    unsigned long long image_width_px_{0};     ///< image width in pixels
+    std::vector<unsigned long long> frame_dimensions_;
+
 };
 
 } // namespace 

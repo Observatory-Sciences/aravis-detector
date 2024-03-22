@@ -48,6 +48,7 @@ namespace FrameProcessor
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 0;
+  const bool        AravisDetectorPlugin::DEFAULT_CALLBACK  = true;
   
   /** Flags*/
   const std::string AravisDetectorPlugin::START_STREAM        = "start";
@@ -62,20 +63,24 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
   const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
-  const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "Continuos";
+  const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "acquisition_mode";
+  const std::string AravisDetectorPlugin::CONFIG_CALLBACK     = "aravis_callback";
 
   /** Names and settings */
 
-  const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data";
-  const std::string AravisDetectorPlugin::FILE_NAME           = "test"; 
-  const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "none";
+  const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
+  const std::string AravisDetectorPlugin::FILE_NAME           = "file_name"; 
+  const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "compression";
 
 /** @brief Construct for the plugin
  * 
  * On plugin call it will display the number of available devices, as well as their id
  */
 AravisDetectorPlugin::AravisDetectorPlugin() :
-  working_(true)
+  working_(true),
+  streaming_(false),
+  aravis_callback_(true),
+  data_set_name_("data")
 {
   // Start the status thread to monitor the camera
   thread_ = new boost::thread(&AravisDetectorPlugin::status_task, this);
@@ -134,6 +139,9 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(CONFIG_ACQUISITION_MODE)){
       set_acquisition_mode(config.get_param<std::string>(CONFIG_ACQUISITION_MODE));
     }
+    if (config.has_param(CONFIG_CALLBACK)){
+      set_aravis_callback(config.get_param<bool>(CONFIG_CALLBACK));
+    }
     if (config.has_param(DATA_SET_NAME)){
       data_set_name_= config.get_param<std::string>(DATA_SET_NAME);
     }
@@ -164,6 +172,7 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_COUNT, frame_count_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_PIXEL_FORMAT, pixel_format_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_ACQUISITION_MODE, acquisition_mode_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CALLBACK, aravis_callback_);
 
 }
 
@@ -175,12 +184,15 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   /** Stream parameters*/
 
   status.set_param(get_name() + "/" + "payload", payload_);
+  status.set_param(get_name()+ "/" + "image_height",static_cast<long unsigned int>(image_height_px_));
+  status.set_param(get_name()+ "/" + "image_width", static_cast<long unsigned int>(image_width_px_));
 
   status.set_param(get_name() + "/" + "streaming", streaming_);
 
   status.set_param(get_name() + "/" + "input_buffers", n_input_buff_);
   status.set_param(get_name() + "/" + "output_buffers", n_output_buff_);
 
+  status.set_param(get_name()+ "/" + "frames made", static_cast<long int>(n_frames_made_));
   status.set_param(get_name() + "/" + "completed_buff", n_completed_buff_);
   status.set_param(get_name() + "/" + "failed_buff", n_failed_buff_);
   status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
@@ -211,9 +223,9 @@ void AravisDetectorPlugin::status_task()
   // Check the queue for messages
 
 
-  /** TODO: Remove this mess*/
+  /** TODO: Remove this mess */
   size_t delay_ms {1000/frame_rate_hz_}; // delay in milliseconds is the time between frames 
-  int read_config_delay_seconds = 10; // number of seconds delay between config reads
+  int read_config_delay_seconds = 1; // number of seconds delay between config reads
   int read_config_delay= read_config_delay_seconds*(static_cast<int>(frame_rate_hz_)); // number of loops between config reads
   int i = 0;
   while (working_) {
@@ -228,11 +240,13 @@ void AravisDetectorPlugin::status_task()
       // Read out camera status items here and store to member variable cache
       i=0;
       get_config(2);
-    }
-    if(streaming_){
-        acquire_stream_buffer();
+      if(streaming_) 
         get_config(3);
-      }
+    }
+
+    // Make sure streaming is on and we are not collecting buffers through the callback mechanism
+    if(streaming_ && !aravis_callback_)
+        acquire_stream_buffer();
   }
 }
 
@@ -364,6 +378,29 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
   get_frame_size();
 }
 
+/*******************************
+*      Callback functions      *
+********************************/
+
+/** @brief Called by GObject library when Aravis camera finishes a buffer
+ * 
+ * @param stream_temp pointer to currently used ArvStream object 
+ * @param object_temp pointer to the AravisDetectorPlugin currently running
+ */
+static void buffer_callback(ArvStream *stream_temp, AravisDetectorPlugin *object_temp){
+  object_temp->callback_access(stream_temp);
+}
+
+/** @brief Provides the callback function with access to acquire_stream_buffer
+ * 
+ * @param stream_temp pointer to currently used ArvStream object 
+ */
+void AravisDetectorPlugin::callback_access(ArvStream *stream_temp){
+  stream_ = stream_temp;
+  acquire_stream_buffer();
+} 
+
+
 /*********************************
 **       Camera Functions       **
 **********************************/
@@ -488,7 +525,7 @@ void AravisDetectorPlugin::get_camera_id(){
  */
 void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
   
-  if(!(acq_mode == "Continuos" || acq_mode == "SingleFrame" ||acq_mode == "MultiFrame")){
+  if(!(acq_mode == "Continuous" || acq_mode == "SingleFrame" ||acq_mode == "MultiFrame")){
     LOG4CXX_ERROR(logger_, "the acquisition mode supplied: " << acq_mode <<" is invalid and must be of the following: Continuous, SingleFrame, MultiFrame");
     return;
   }
@@ -515,6 +552,16 @@ void AravisDetectorPlugin::get_acquisition_mode(){
     return;
   }
   acquisition_mode_ = arv_acquisition_mode_to_string(temp);
+}
+
+void AravisDetectorPlugin::set_aravis_callback(bool arv_callback){
+  aravis_callback_=arv_callback;
+
+  // if there is no active stream, just exit
+  if(stream_ == NULL) return;
+
+
+  // some code to handle changing this mode during runs. 
 }
 
 
@@ -802,8 +849,8 @@ void AravisDetectorPlugin::start_stream(){
 
   // set camera on stream mode
   get_acquisition_mode();
-  if(acquisition_mode_!="Continuos")
-    set_acquisition_mode("Continuos"); 
+  if(acquisition_mode_!="Continuous")
+    set_acquisition_mode("Continuous"); 
   
   // create the stream object
   stream_ = arv_camera_create_stream (camera_, NULL, NULL, error.get());
@@ -818,6 +865,12 @@ void AravisDetectorPlugin::start_stream(){
   // and populate it with a few empty buffers (frames)
   for(int i =0; i<n_empty_buffers_; i++){
     arv_stream_push_buffer(stream_, arv_buffer_new(payload_, NULL));
+  }
+
+  // stream callback mechanism
+  if(aravis_callback_){
+    arv_stream_set_emit_signals (stream_, TRUE);
+    g_signal_connect (stream_, "new-buffer", G_CALLBACK (buffer_callback), this);
   }
 
   // Start the stream
@@ -835,6 +888,10 @@ void AravisDetectorPlugin::stop_stream(){
   if(camera_ == NULL || stream_ == NULL){
     LOG4CXX_ERROR(logger_, "There is no stream to stop. Exiting process");
     return;
+  }
+
+  if(aravis_callback_){
+    arv_stream_set_emit_signals (stream_, FALSE);
   }
 
   arv_camera_stop_acquisition (camera_, error.get());
@@ -928,16 +985,24 @@ void AravisDetectorPlugin::process_buffer(){
   data_type_ = pixel_format_to_datatype(pixel_format_);
 
   // Will need to change this at some point 
-  std::vector<unsigned long long> frame_dims {arv_buffer_get_image_height(buffer_),arv_buffer_get_image_width(buffer_)};
+  image_height_px_ = arv_buffer_get_image_height(buffer_);
+  image_width_px_ = arv_buffer_get_image_width(buffer_);
+  if(frame_dimensions_.empty()){
+    frame_dimensions_.push_back(image_height_px_);
+    frame_dimensions_.push_back(image_width_px_);
+  }else{
+    frame_dimensions_[0]=image_height_px_;
+    frame_dimensions_[1]=image_width_px_;
+  }
 
-  FrameMetaData metadata(n_frames_made_, data_set_name_ , data_type_, file_id_, frame_dims, compression_type_);
+  
+  FrameMetaData metadata(n_frames_made_, data_set_name_ , data_type_, file_id_, frame_dimensions_, compression_type_);
   boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &payload_), payload_, image_data_offset_));
 
-
-  process_frame(new_frame);
   n_frames_made_++;
-
+  process_frame(new_frame);
 }
+
 
 /** @brief Saves information about the stream_
  * 
@@ -955,6 +1020,7 @@ void AravisDetectorPlugin::get_stream_state(){
   arv_stream_get_n_buffers(stream_, &n_input_buff_, &n_output_buff_);
   arv_stream_get_statistics(stream_, &n_completed_buff_, &n_failed_buff_, &n_underrun_buff_);
 }
+
 
 /** @brief Saves current buffer_ to pgm format. 
  * 
@@ -979,7 +1045,6 @@ void AravisDetectorPlugin::save_frame_pgm()
   bmg_count++;
 
 }
-
 
 /** @brief Translates from the available pixel format to datatype
  * 
