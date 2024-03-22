@@ -58,10 +58,11 @@ namespace FrameProcessor
   /** Config names*/
   const std::string AravisDetectorPlugin::READ_CONFIG         = "read_config";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
-  const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure";
+  const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure_time";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
   const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
+  const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "Continuos";
 
   /** Names and settings */
 
@@ -130,6 +131,9 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(CONFIG_PIXEL_FORMAT)){
       set_pixel_format(config.get_param<std::string>(CONFIG_PIXEL_FORMAT));
     }
+    if (config.has_param(CONFIG_ACQUISITION_MODE)){
+      set_acquisition_mode(config.get_param<std::string>(CONFIG_ACQUISITION_MODE));
+    }
     if (config.has_param(DATA_SET_NAME)){
       data_set_name_= config.get_param<std::string>(DATA_SET_NAME);
     }
@@ -159,20 +163,18 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_RATE, frame_rate_hz_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_COUNT, frame_count_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_PIXEL_FORMAT, pixel_format_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_ACQUISITION_MODE, acquisition_mode_);
+
 }
 
 void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   /** Camera parameters */
 
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
-  status.set_param(get_name() + "/" + "acquisition_mode", acquisition_mode_);
-
-  status.set_param(get_name() + "/" + "frame_rate", frame_rate_hz_);
-  status.set_param(get_name() + "/" + "exposure_time", exposure_time_us_);
-  status.set_param(get_name() + "/" + "pixel_format", pixel_format_);
-  status.set_param(get_name() + "/" + "payload", payload_);
 
   /** Stream parameters*/
+
+  status.set_param(get_name() + "/" + "payload", payload_);
 
   status.set_param(get_name() + "/" + "streaming", streaming_);
 
@@ -485,6 +487,12 @@ void AravisDetectorPlugin::get_camera_id(){
  * @param acq_mode std::string = one of the following: "Continuous", "SingleFrame","MultiFrame"
  */
 void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
+  
+  if(!(acq_mode == "Continuos" || acq_mode == "SingleFrame" ||acq_mode == "MultiFrame")){
+    LOG4CXX_ERROR(logger_, "the acquisition mode supplied: " << acq_mode <<" is invalid and must be of the following: Continuous, SingleFrame, MultiFrame");
+    return;
+  }
+  
   GErrorWrapper error;
   ArvAcquisitionMode temp= arv_acquisition_mode_from_string(acq_mode.c_str());
   arv_camera_set_acquisition_mode(camera_, temp, error.get());

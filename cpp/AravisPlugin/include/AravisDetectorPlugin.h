@@ -71,7 +71,7 @@ public:
     static const std::string CONFIG_FRAME_RATE;     ///< set frame rate in hz
     static const std::string CONFIG_FRAME_COUNT;    ///< set frame count
     static const std::string CONFIG_PIXEL_FORMAT;   ///< set pixel encoding Mono8/ 12bit/ etc
-    
+    static const std::string CONFIG_ACQUISITION_MODE;///< set the camera acquisition mode: "Continuous", "SingleFrame","MultiFrame"
     /** Names and settings */
 
     static const std::string DATA_SET_NAME;
