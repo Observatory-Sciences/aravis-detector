@@ -94,6 +94,7 @@ private:
     **********************************/
 
     void connect_aravis_camera(std::string ip); 
+    void check_connection();
     void display_aravis_cameras();
     void get_camera_serial();
     void get_camera_id();
@@ -143,9 +144,10 @@ private:
 
     LoggerPtr logger_;                      ///< Pointer to logger object for displaying info in terminal
     boost::thread *thread_;                 ///< Pointer to status thread
-    bool working_;                    ///< Is the status thread working?
-    bool streaming_;                 ///< Is the camera streaming data?
-    bool aravis_callback_;            ///< Is the camera emitting signals when a buffer is finished?
+    bool working_;                          ///< Is the status thread working?
+    bool streaming_;                        ///< Is the camera streaming data?
+    bool aravis_callback_;                  ///< Is the camera emitting signals when a buffer is finished?
+    bool camera_connected_;                  ///< is the camera connected?
 
     /*********************************
     **       Camera parameters      **
@@ -170,7 +172,7 @@ private:
 
     std::string acquisition_mode_;          ///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
 
-    size_t payload_;                  ///< frame size in bytes
+    size_t payload_;                        ///< frame size in bytes
 
     double frame_count_;                    ///< current frame count in MultiFrame mode
 
@@ -197,8 +199,9 @@ private:
     long unsigned int n_failed_buff_ {0};   ///< n of failed buffers
     long unsigned int n_underrun_buff_ {0}; ///< n of buffers overwritten (stream ran out of empty buffers)
 
-    unsigned long long image_height_px_{0};     ///< image height in pixels
-    unsigned long long image_width_px_{0};     ///< image width in pixels
+    unsigned long long image_height_px_{0}; ///< image height in pixels
+    unsigned long long image_width_px_{0};  ///< image width in pixels
+    
     std::vector<unsigned long long> frame_dimensions_;
 
 };

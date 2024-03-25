@@ -67,19 +67,20 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_CALLBACK     = "aravis_callback";
 
   /** Names and settings */
-
   const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
   const std::string AravisDetectorPlugin::FILE_NAME           = "file_name"; 
   const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "compression";
 
 /** @brief Construct for the plugin
  * 
- * On plugin call it will display the number of available devices, as well as their id
+ * Sets default values, starts the status monitoring thread and logger object
+ * Then it logs "AravisDetectorPlugin loaded"
  */
 AravisDetectorPlugin::AravisDetectorPlugin() :
   working_(true),
   streaming_(false),
   aravis_callback_(true),
+  camera_connected_(false),
   data_set_name_("data")
 {
   // Start the status thread to monitor the camera
@@ -97,8 +98,10 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
   LOG4CXX_TRACE(logger_, "AravisDetectorPlugin destructor.");
 }
 
-/** @brief Currently the function doesn't process the frame. It simply logs different messages depending if the plugin is connected or not
- * (still in progress)
+/** @brief Push the frame to the next plugin
+ * 
+ * No image processing is done here
+ * 
  * @param[in] frame - pointer to frame object 
  */
 void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
@@ -176,10 +179,15 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
 
 }
 
+/** @brief Provides python client with current status of the camera in json format
+ * 
+ * @param status - Response IpcMessage
+ */
 void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   /** Camera parameters */
 
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
+  status.set_param(get_name() + "/" + "camera_connected", camera_connected_);
 
   /** Stream parameters*/
 
@@ -336,12 +344,15 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
     case 2: 
     /** Constant camera parameter check */
 
-      get_frame_rate();
-      get_exposure();
-      get_pixel_format();
-      get_acquisition_mode();
-      get_frame_size();
+      check_connection();
 
+      if(camera_connected_){
+        get_frame_rate();
+        get_exposure();
+        get_pixel_format();
+        get_acquisition_mode();
+        get_frame_size();
+      }
       break;
     case 3:
     /** Stream Statistics*/ 
@@ -369,13 +380,6 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
   default:
     LOG4CXX_ERROR(logger_, "Invalid get_config option");      
 }
-
-  LOG4CXX_INFO(logger_, "acquiring config");
-  get_frame_rate();
-  get_exposure();
-  get_pixel_format();
-  get_acquisition_mode();
-  get_frame_size();
 }
 
 /*******************************
@@ -445,6 +449,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   ****************************************/
 
   camera_address_ = ip_string;
+  camera_connected_ = true;
 
   // get config values 
   get_config(1);
@@ -452,6 +457,54 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   // display configs
   read_config(1);
 }
+
+/** @brief check that camera is still connected
+ * 
+ */
+void AravisDetectorPlugin::check_connection(){
+
+  if(camera_ == NULL){
+    LOG4CXX_ERROR(logger_, "No connection, camera object removed unexpectedly during run");
+    camera_connected_ = false;
+    return;
+  }
+
+  arv_update_device_list();
+  unsigned int number_of_cameras = arv_get_n_devices();
+
+  if(number_of_cameras==0){camera_connected_= false;
+    LOG4CXX_INFO(logger_, "No connection, no cameras available");}
+
+  bool found_match = false;
+  for(int i=0; i<number_of_cameras; i++){
+    if (camera_address_ == arv_get_device_address(i)){
+      found_match =true;
+    }
+  }
+
+  if(!found_match){     camera_connected_= false;
+    LOG4CXX_INFO(logger_, "No connection, none of the cameras available match the address");
+  }
+
+  GErrorWrapper error;
+  std::string serial_temp = arv_camera_get_device_serial_number(camera_, error.get());
+
+  if(error){camera_connected_=false; 
+    LOG4CXX_INFO(logger_, "No connection, error: "<< error.message());  
+    }
+
+  if(camera_serial_ != serial_temp){camera_connected_=false; 
+    LOG4CXX_INFO(logger_, "Connected to different camera");    }
+
+  // If camera is connected after all that, then exit
+  if(camera_connected_) return;
+
+  // if not, we need to stop all camera related processes before the code crashes
+  if(streaming_)stop_stream();
+  camera_ = NULL;
+
+}
+
 
 /** @brief Checks for available devices
  * 
