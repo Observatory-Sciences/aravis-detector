@@ -38,4 +38,5 @@ docs/doxygen-awesome-css
 
 # Ignore for now
 .github/workflows/doc_build.yml
-config/
+config
+__pycache__
