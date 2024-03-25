@@ -72,7 +72,8 @@ public:
     static const std::string CONFIG_FRAME_COUNT;    ///< set frame count
     static const std::string CONFIG_PIXEL_FORMAT;   ///< set pixel encoding Mono8/ 12bit/ etc
     static const std::string CONFIG_ACQUISITION_MODE;///< set the camera acquisition mode: "Continuous", "SingleFrame","MultiFrame"
-    static const std::string CONFIG_CALLBACK;          ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
+    static const std::string CONFIG_CALLBACK;       ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
+    static const std::string CONFIG_QUERY_FREQ;     ///< miliseconds between querying the camera for config
 
     /** Names and settings */
     static const std::string DATA_SET_NAME;
@@ -112,6 +113,7 @@ private:
     void get_frame_rate();
 
     void set_frame_count(double frame_count);
+    void get_frame_count_bounds();
     void get_frame_count();
 
     void set_pixel_format(std::string pixel_format);
@@ -127,8 +129,9 @@ private:
     void start_stream();
     void stop_stream();
 
-    void acquire_single_buffer();
-    void acquire_stream_buffer();
+    void acquire_n_buffer(unsigned int n_buffers);
+    void acquire_buffer();
+    bool buffer_is_valid();
     void process_buffer();
     
     void get_stream_state();
@@ -147,7 +150,9 @@ private:
     bool working_;                          ///< Is the status thread working?
     bool streaming_;                        ///< Is the camera streaming data?
     bool aravis_callback_;                  ///< Is the camera emitting signals when a buffer is finished?
-    bool camera_connected_;                  ///< is the camera connected?
+    bool camera_connected_;                 ///< is the camera connected?
+    
+    size_t delay_ms_ {1000};                /// delay between config queries in milliseconds  
 
     /*********************************
     **       Camera parameters      **
@@ -159,8 +164,8 @@ private:
     std::string camera_address_ {"None"};   ///< camera address
 
     double exposure_time_us_;               ///< current exposure time in microseconds
-    double expo_min_;                       ///< minimum exposure time in microseconds
-    double expo_max_;                       ///< maximum exposure time in microseconds
+    double min_exposure_time_;              ///< minimum exposure time in microseconds
+    double max_exposure_time_;              ///< maximum exposure time in microseconds
 
     double frame_rate_hz_ {5};              ///< current frame rate in hertz, default to 5
     double min_frame_rate_;                 ///< minimum frame rate in hertz
@@ -174,7 +179,10 @@ private:
 
     size_t payload_;                        ///< frame size in bytes
 
-    double frame_count_;                    ///< current frame count in MultiFrame mode
+    unsigned int frame_count_;              ///< current frame count in MultiFrame mode
+    unsigned int min_frame_count_;          ///< current frame count in MultiFrame mode
+    unsigned int max_frame_count_;          ///< current frame count in MultiFrame mode
+
 
     /**********************************
     **   Stream/buffer parameters    **
