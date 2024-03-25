@@ -1,8 +1,0 @@
-{ "aravis":
-    {
-        "pixel_format": "RGB8",
-        "frame_count": 0,
-        "frame_rate": 5,
-        "exposure": 1000
-    }
-}
