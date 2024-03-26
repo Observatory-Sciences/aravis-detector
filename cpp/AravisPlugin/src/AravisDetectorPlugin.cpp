@@ -70,6 +70,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
   const std::string AravisDetectorPlugin::FILE_NAME           = "file_name"; 
   const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "compression";
+  const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
 
 /** @brief Construct for the plugin
  * 
@@ -121,6 +122,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(LIST_DEVICES)) display_aravis_cameras();
     if (config.has_param(ACQUIRE_BUFFER))acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER));
     if (config.has_param(CONFIG_CAMERA_IP)) connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
+    if (config.has_param(CONFIG_CALLBACK))temp_file_path_ = config.get_param<bool>(CONFIG_CALLBACK);
     if (config.has_param(CONFIG_EXPOSURE)){
       set_exposure(config.get_param<double>(CONFIG_EXPOSURE));
     }
@@ -437,7 +439,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   camera_address_ = ip_string;
   camera_connected_ = true;
 
-  save_genicam_xml("/home/gsc/Github/RFI_Odin/_images");
+  save_genicam_xml(temp_file_path_);
 
   // get config values 
   get_config(1);
@@ -1179,20 +1181,14 @@ void AravisDetectorPlugin::save_frame_pgm()
 /** @brief Saves the xml file from camera_ into filepath/serial-number.xml
  * 
  */
-void AravisDetectorPlugin::save_genicam_xml(std::string filepath)
-{ 
+void AravisDetectorPlugin::save_genicam_xml(std::string filepath){ 
   size_t xml_length;
-  // char* xml_content  = 
-
   std::string filename {filepath + camera_serial_ +".xml"};
+  std::ofstream xml_file(filename.c_str());
+  xml_file << arv_device_get_genicam_xml(arv_camera_get_device(camera_), &xml_length);
+  xml_file.close();
+  LOG4CXX_INFO(logger_,"Saving xml config to "<<filename);
 
-  std::ofstream new_file(filename.c_str());
-
-  new_file << arv_device_get_genicam_xml(arv_camera_get_device(camera_), &xml_length);
-
-  // FILE *pgmimg = fopen(filename.c_str(), "wb");
-  // fwrite(xml_content, sizeof(u_char), payload_, pgmimg);
-  new_file.close();
 }
 
 /** @brief Translates from the available pixel format to datatype

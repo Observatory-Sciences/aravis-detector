@@ -80,6 +80,7 @@ public:
     static const std::string DATA_SET_NAME;
     static const std::string FILE_NAME;
     static const std::string COMPRESSION_TYPE;
+    static const std::string TEMP_FILES_PATH;       ///< a location to store temporary files like camera xml
 
 
 private:
@@ -155,7 +156,9 @@ private:
     bool aravis_callback_;                  ///< Is the camera emitting signals when a buffer is finished?
     bool camera_connected_;                 ///< is the camera connected?
     
-    size_t delay_ms_ {1000};                /// delay between config queries in milliseconds  
+    size_t delay_ms_ {1000};                ///< delay between config queries in milliseconds  
+    std::string temp_file_path_{};           ///< 
+
 
     /*********************************
     **       Camera parameters      **
