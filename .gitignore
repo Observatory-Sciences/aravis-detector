@@ -36,7 +36,14 @@ build
 docs/docs_build
 docs/doxygen-awesome-css
 
+# python
+
+*.egg
+*.egg-info
+python/dist
+__pycache__
+
+
 # Ignore for now
 .github/workflows/doc_build.yml
 config
-__pycache__
