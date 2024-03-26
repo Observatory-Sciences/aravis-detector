@@ -52,6 +52,7 @@ $( document ).ready(function()
   setInterval(update_server_setup, 1000);
   setInterval(update_aravis, 200);
 
+  setInterval(get_live_image, 1000);
 
   // Configuration items
   $('#set-exposure').on('change', function(event){
@@ -79,6 +80,13 @@ $( document ).ready(function()
 		render(decodeURI(window.location.hash));
 	});
 });
+
+function get_live_image()
+{
+    iframe = $('#live-view');
+    iframe.attr('src', '/api/' + api_version + '/view/image');
+}
+
 
 function write_exposure()
 {
