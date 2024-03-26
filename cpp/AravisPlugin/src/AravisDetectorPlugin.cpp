@@ -81,7 +81,8 @@ AravisDetectorPlugin::AravisDetectorPlugin() :
   working_(false),
   streaming_(false),
   aravis_callback_(true),
-  camera_connected_(false)
+  camera_connected_(false),
+  frame_count_(0)
 {
   // Start the status thread to monitor the camera
   thread_ = new boost::thread(&AravisDetectorPlugin::status_task, this);
@@ -196,7 +197,7 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   status.set_param(get_name() + "/" + "input_buffers", n_input_buff_);
   status.set_param(get_name() + "/" + "output_buffers", n_output_buff_);
 
-  status.set_param(get_name()+ "/" + "frames made", static_cast<long int>(n_frames_made_));
+  status.set_param(get_name()+ "/" + "frames_made", static_cast<long int>(n_frames_made_));
   status.set_param(get_name() + "/" + "completed_buff", n_completed_buff_);
   status.set_param(get_name() + "/" + "failed_buff", n_failed_buff_);
   status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
@@ -626,11 +627,11 @@ void AravisDetectorPlugin::set_exposure(double exposure_time_us){
   GErrorWrapper error;
 
   // aravis already checks this but we warn the user
-  if(exposure_time_us < min_exposure_time_)
+  if(exposure_time_us < min_exposure_time_){
     LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: min="<< min_exposure_time_<<" and is set to minimum");
-  else if(exposure_time_us > max_exposure_time_)
+  } else if(exposure_time_us > max_exposure_time_){
     LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: max="<< max_exposure_time_ << " and is set to maximum");
-
+  }
   
   arv_camera_set_exposure_time(camera_, exposure_time_us, error.get());
 
@@ -693,11 +694,11 @@ void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
   GErrorWrapper error;
 
   // aravis already checks this but we warn the user
-  if(frame_rate_hz < min_frame_rate_)
+  if(frame_rate_hz < min_frame_rate_){
     LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: min="<< min_frame_rate_<<" and is set to minimum");
-  else if(frame_rate_hz > max_frame_rate_)
+  } else if(frame_rate_hz > max_frame_rate_){
     LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: max="<< max_frame_rate_ << " and is set to maximum");
-
+  }
 
   arv_camera_set_frame_rate(camera_, frame_rate_hz, error.get());
 
@@ -761,12 +762,18 @@ void AravisDetectorPlugin::set_frame_count(double frame_count){
   GErrorWrapper error;
 
   // aravis already checks this but we warn the user
-  if(frame_count_ < min_frame_count_)
-    LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<" and is set to minimum");
-  else if(frame_count_ > max_frame_count_)
-    LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: max="<< max_frame_count_ << " and is set to maximum");
+  //if(frame_count_ < min_frame_count_){
+  //  LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<" and is set to minimum");
+  //} else if(frame_count_ > max_frame_count_){
+  //  LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: max="<< max_frame_count_ << " and is set to maximum");
+  //}
 
-  arv_camera_set_frame_count(camera_, frame_count, error.get());
+  // TODO: Revisit this once we understand my multi frame mode does not work
+  // Set the internal frame_count_ member variable
+  frame_count_ = frame_count;
+
+  // We are handling frame count internally
+  //arv_camera_set_frame_count(camera_, frame_count, error.get());
 
   if(error){ 
     LOG4CXX_ERROR(logger_, "When setting frame count the following error ocurred: \n" << error.message());
@@ -807,16 +814,15 @@ void AravisDetectorPlugin::get_frame_count_bounds(){
 void AravisDetectorPlugin::get_frame_count(){
   GErrorWrapper error;
 
-
-
   int32_t temp = arv_camera_get_frame_count(camera_, error.get());
-  
+
   if(error){ 
     LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error.message());
     return;
   }
 
-  frame_count_ = temp;
+  // TODO: Reimplement this within the hardware once we understand why it doesn't work
+  //frame_count_ = temp;
 }
 
 
@@ -1130,11 +1136,19 @@ void AravisDetectorPlugin::process_buffer(){
   }
 
   
-  FrameMetaData metadata(n_frames_made_, data_set_name_ , data_type_, file_id_, frame_dimensions_, compression_type_);
+  FrameMetaData metadata(n_frames_made_, "data", data_type_, "", frame_dimensions_, compression_type_);
   boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &payload_), payload_, image_data_offset_));
 
-  n_frames_made_++;
+  if (frame_count_ > 0){
+    if (n_frames_made_ >= frame_count_){
+      // Multi frame mode and we have already processed the correct number of frames
+      // Do not push this frame and stop the streaming
+      boost::thread *task_ptr = new boost::thread(&AravisDetectorPlugin::stop_stream, this);
+      return;
+    }
+  }
   process_frame(new_frame);
+  n_frames_made_++;
 }
 
 
