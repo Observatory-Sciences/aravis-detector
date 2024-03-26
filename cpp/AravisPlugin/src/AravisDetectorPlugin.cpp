@@ -77,7 +77,7 @@ namespace FrameProcessor
  * Then it logs "AravisDetectorPlugin loaded"
  */
 AravisDetectorPlugin::AravisDetectorPlugin() :
-  working_(true),
+  working_(false),
   streaming_(false),
   aravis_callback_(true),
   camera_connected_(false)
@@ -418,11 +418,17 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
 
   camera_ = arv_camera_new(ip_string.c_str(), error.get());
 
-  if(error){ LOG4CXX_ERROR(logger_, "Error when connecting to camera. Please check ip address");
+  // camera_ = arv_camera_new_with_device(ip_string.c_str(), error.get());
+
+
+  if(error){ LOG4CXX_ERROR(logger_, "Error when connecting to camera: "<< error.message());
     return;}
 
-  if (ARV_IS_CAMERA (camera_))
-    LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera_, NULL));
+  if (!ARV_IS_CAMERA (camera_)){ LOG4CXX_ERROR(logger_, "Failed to create camera object. Please check ip address");
+    return;}
+
+  LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera_, NULL));
+  working_ = true;
     
   /***************************************
   **      Camera init routine
@@ -430,6 +436,8 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
 
   camera_address_ = ip_string;
   camera_connected_ = true;
+
+  save_genicam_xml("/home/gsc/Github/RFI_Odin/_images");
 
   // get config values 
   get_config(1);
@@ -446,6 +454,7 @@ void AravisDetectorPlugin::check_connection(){
   if(camera_ == NULL){
     LOG4CXX_ERROR(logger_, "No connection, camera object removed unexpectedly during run");
     camera_connected_ = false;
+    working_ = false;
     return;
   }
 
@@ -612,10 +621,12 @@ void AravisDetectorPlugin::set_aravis_callback(bool arv_callback){
 void AravisDetectorPlugin::set_exposure(double exposure_time_us){
   GErrorWrapper error;
 
-  // keep exposure in bounds
-  if(exposure_time_us < min_exposure_time_ || max_exposure_time_ < exposure_time_us){
-    LOG4CXX_ERROR(logger_, "The exposure value "<< exposure_time_us << " is out of bounds: min="<<min_exposure_time_<<"; max="<< max_exposure_time_);
-    return; }
+  // aravis already checks this but we warn the user
+  if(exposure_time_us < min_exposure_time_)
+    LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: min="<< min_exposure_time_<<" and is set to minimum");
+  else if(exposure_time_us > max_exposure_time_)
+    LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: max="<< max_exposure_time_ << " and is set to maximum");
+
   
   arv_camera_set_exposure_time(camera_, exposure_time_us, error.get());
 
@@ -677,10 +688,12 @@ void AravisDetectorPlugin::get_exposure(){
 void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
   GErrorWrapper error;
 
-  if(frame_rate_hz < min_frame_rate_ || max_frame_rate_ < frame_rate_hz){
-    LOG4CXX_ERROR(logger_, "The frame rate "<< frame_rate_hz << " is out of bounds: min="<< min_frame_rate_<<"; max="<< max_frame_rate_);
-    return;
-  }
+  // aravis already checks this but we warn the user
+  if(frame_rate_hz < min_frame_rate_)
+    LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: min="<< min_frame_rate_<<" and is set to minimum");
+  else if(frame_rate_hz > max_frame_rate_)
+    LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: max="<< max_frame_rate_ << " and is set to maximum");
+
 
   arv_camera_set_frame_rate(camera_, frame_rate_hz, error.get());
 
@@ -743,11 +756,11 @@ void AravisDetectorPlugin::get_frame_rate(){
 void AravisDetectorPlugin::set_frame_count(double frame_count){
   GErrorWrapper error;
 
-  if(frame_count_ < min_frame_count_ || max_frame_count_ < frame_count_){
-    LOG4CXX_ERROR(logger_, "The frame count "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<"; max="<< max_frame_count_);
-    return;
-  }
-
+  // aravis already checks this but we warn the user
+  if(frame_count_ < min_frame_count_)
+    LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<" and is set to minimum");
+  else if(frame_count_ > max_frame_count_)
+    LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: max="<< max_frame_count_ << " and is set to maximum");
 
   arv_camera_set_frame_count(camera_, frame_count, error.get());
 
@@ -939,6 +952,7 @@ void AravisDetectorPlugin::start_stream(){
 
   // Start the stream
   streaming_= true;
+  n_frames_made_ = 0;
   arv_camera_start_acquisition (camera_, error.get());
 
   if(error)
@@ -1160,6 +1174,25 @@ void AravisDetectorPlugin::save_frame_pgm()
   fclose(pgmimg);
   bmg_count++;
 
+}
+
+/** @brief Saves the xml file from camera_ into filepath/serial-number.xml
+ * 
+ */
+void AravisDetectorPlugin::save_genicam_xml(std::string filepath)
+{ 
+  size_t xml_length;
+  // char* xml_content  = 
+
+  std::string filename {filepath + camera_serial_ +".xml"};
+
+  std::ofstream new_file(filename.c_str());
+
+  new_file << arv_device_get_genicam_xml(arv_camera_get_device(camera_), &xml_length);
+
+  // FILE *pgmimg = fopen(filename.c_str(), "wb");
+  // fwrite(xml_content, sizeof(u_char), payload_, pgmimg);
+  new_file.close();
 }
 
 /** @brief Translates from the available pixel format to datatype

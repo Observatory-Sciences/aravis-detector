@@ -22,6 +22,7 @@ using namespace log4cxx::helpers;
 #include "FrameProcessorPlugin.h"
 #include "DataBlockFrame.h"
 #include "ClassLoader.h"
+#include <fstream>
 
 extern "C" {
     #include "arv.h"
@@ -137,6 +138,8 @@ private:
     void get_stream_state();
     
     void save_frame_pgm();
+    void save_genicam_xml(std::string filepath);
+
 
     DataType pixel_format_to_datatype(std::string pixel_form);
 
