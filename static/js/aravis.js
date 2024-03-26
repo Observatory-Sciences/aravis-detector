@@ -50,7 +50,7 @@ $( document ).ready(function()
   render(decodeURI(window.location.hash));
 
   setInterval(update_server_setup, 1000);
-  setInterval(update_aravis, 1000);
+  setInterval(update_aravis, 200);
 
 
   // Configuration items
@@ -142,6 +142,7 @@ function update_aravis() {
         }
         $('#get-pixel-format').html(response.config.pixel_format.value);
         $('#get-acq-state').html(led_html(response.status.streaming.value,'green', 20));
+        $('#get-frames-captured').html(response.status.frames_captured.value);
     });
 }
   

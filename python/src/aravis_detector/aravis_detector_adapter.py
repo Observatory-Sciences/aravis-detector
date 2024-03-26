@@ -45,7 +45,7 @@ class AravisDetectorAdapter(ApiAdapter):
         :param kwargs: Key Word arguments given from the configuration file,
         which is copied into the options dictionary.
         """
-        logging.error("Aravis Adapter init called")
+        logging.debug("Aravis Adapter init called")
         super(AravisDetectorAdapter, self).__init__(**kwargs)
 
         self._fp = None
@@ -53,14 +53,6 @@ class AravisDetectorAdapter(ApiAdapter):
         if DEFAULT_FP_NAME in self.options:
             self._fp_adapter_name = self.options[DEFAULT_FP_NAME]
 
-#        if self.options.get(ENDPOINTS_CONFIG_NAME, False):
-#            endpoints = [x.strip() for x in self.options.get(ENDPOINTS_CONFIG_NAME, "").split(',')]
-#        else:
-#            logging.debug("Setting default endpoint of '%s'", DEFAULT_ENDPOINT)
-#            endpoints = [DEFAULT_ENDPOINT]
-#
-#
-#        self.live_viewer = LiveViewer(endpoints, default_colormap)
         self.aravis = AravisDetectorControl()
 
 
@@ -68,7 +60,7 @@ class AravisDetectorAdapter(ApiAdapter):
         if self._fp_adapter_name in adapters:
             self._fp = adapters[self._fp_adapter_name]
             self.aravis.register_fp_adapter(self._fp)
-            logging.error("Aravis Detector adapter completed connection to FrameProcessor adapter")
+            logging.debug("Aravis Detector adapter completed connection to FrameProcessor adapter")
 
     @response_types('application/json', default='application/json')
     def get(self, path, request):

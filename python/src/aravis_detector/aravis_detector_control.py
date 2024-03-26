@@ -22,6 +22,7 @@ class AravisDetectorControl(object):
         self._pixel_format = None
         self._payload_bytes = 0
         self._streaming = False
+        self._frames_captured = 0
 
         # Setup the parameter tree
         self._parameter_tree = ParameterTree(self.create_parameter_tree())
@@ -44,6 +45,7 @@ class AravisDetectorControl(object):
             "status" : {
                 "camera_id": (lambda: self._camera_id, None),
                 "streaming": (lambda: self._streaming, None),
+                "frames_captured": (lambda: self._frames_captured, None),
                 "payload_bytes": (lambda: self._payload_bytes, None)
             }
         }
@@ -60,7 +62,7 @@ class AravisDetectorControl(object):
         self._fp = fp
 
     def set_mode(self, mode):
-        logging.error("Setting mode to: {}".format(mode))
+        logging.debug("Setting mode to: {}".format(mode))
         req = ApiAdapterRequest(data=json.dumps({"acquisition_mode": mode}))
         self._fp.put("config/aravis", req)
 
@@ -73,32 +75,38 @@ class AravisDetectorControl(object):
         self._fp.put("config/aravis", req)
 
     def start_acquisition(self, start_flag):
-        logging.error("Starting acquisition: {}".format(start_flag))
+        logging.debug("Starting acquisition: {}".format(start_flag))
         req = ApiAdapterRequest(data=json.dumps({"start": start_flag}))
         self._fp.put("config/aravis", req)
 
     def stop_acquisition(self, stop_flag):
-        logging.error("Stopping acquisition: {}".format(stop_flag))
+        logging.debug("Stopping acquisition: {}".format(stop_flag))
         req = ApiAdapterRequest(data=json.dumps({"stop": stop_flag}))
         self._fp.put("config/aravis", req)
 
     def read_status(self):
-        req = ApiAdapterRequest(data=json.dumps({}))
-        config = self._fp.get("config/aravis", req).data
-        status = self._fp.get("status/aravis", req).data
-        logging.error("Config: {}".format(config))
-        logging.error("Status: {}".format(status))
-        self._camera_id = status['value'][0]['camera_id']
-        self._acquisition_mode = config['value'][0]['acquisition_mode']
-        self._frame_rate = config['value'][0]['frame_rate']
-        self._exposure_time = config['value'][0]['exposure_time']
-        self._pixel_format = config['value'][0]['pixel_format']
-        self._payload_bytes = status['value'][0]['payload']
-        self._streaming = status['value'][0]['streaming']
+        try:
+            req = ApiAdapterRequest(data=json.dumps({}))
+            config = self._fp.get("config/aravis", req).data
+            status = self._fp.get("status/aravis", req).data
+            logging.debug("Reading configuration: {}".format(config))
+            logging.debug("Reading status: {}".format(status))
+            self._camera_id = status['value'][0]['camera_id']
+            self._acquisition_mode = config['value'][0]['acquisition_mode']
+            self._frame_rate = config['value'][0]['frame_rate']
+            self._frame_count = config['value'][0]['frame_count']
+            self._exposure_time = config['value'][0]['exposure_time']
+            self._pixel_format = config['value'][0]['pixel_format']
+            self._payload_bytes = status['value'][0]['payload']
+            self._streaming = status['value'][0]['streaming']
+            self._frames_captured = status['value'][0]['frames_made']
+        except Exception as ex:
+            logging.error("Unable to complete status and configuration read out of FrameProcessor")
+            logging.exception(ex)
 
     def update_loop(self):
         while self._running:
-            time.sleep(1.0)
+            time.sleep(0.2)
             if self._fp is not None:
                 self.read_status()
 
