@@ -122,7 +122,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(LIST_DEVICES)) display_aravis_cameras();
     if (config.has_param(ACQUIRE_BUFFER))acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER));
     if (config.has_param(CONFIG_CAMERA_IP)) connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
-    if (config.has_param(CONFIG_CALLBACK))temp_file_path_ = config.get_param<bool>(CONFIG_CALLBACK);
+    if (config.has_param(TEMP_FILES_PATH)) temp_file_path_ = config.get_param<std::string>(TEMP_FILES_PATH);
     if (config.has_param(CONFIG_EXPOSURE)){
       set_exposure(config.get_param<double>(CONFIG_EXPOSURE));
     }
@@ -429,7 +429,9 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   if (!ARV_IS_CAMERA (camera_)){ LOG4CXX_ERROR(logger_, "Failed to create camera object. Please check ip address");
     return;}
 
-  LOG4CXX_INFO(logger_,"Connected to camera " << arv_camera_get_model_name (camera_, NULL));
+
+  camera_model_ = arv_camera_get_model_name (camera_, NULL);
+  LOG4CXX_INFO(logger_,"Connected to camera " << camera_model_);
   working_ = true;
     
   /***************************************
@@ -439,10 +441,10 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   camera_address_ = ip_string;
   camera_connected_ = true;
 
-  save_genicam_xml(temp_file_path_);
-
   // get config values 
   get_config(1);
+
+  save_genicam_xml(temp_file_path_);
 
   // display configs
   read_config(1);
@@ -1183,7 +1185,7 @@ void AravisDetectorPlugin::save_frame_pgm()
  */
 void AravisDetectorPlugin::save_genicam_xml(std::string filepath){ 
   size_t xml_length;
-  std::string filename {filepath + camera_serial_ +".xml"};
+  std::string filename{temp_file_path_ + camera_model_+".xml"};
   std::ofstream xml_file(filename.c_str());
   xml_file << arv_device_get_genicam_xml(arv_camera_get_device(camera_), &xml_length);
   xml_file.close();

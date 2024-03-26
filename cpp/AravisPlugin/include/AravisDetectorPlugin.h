@@ -168,6 +168,7 @@ private:
     std::string camera_id_ {"None"};        ///< camera device id
     std::string camera_serial_ {"None"};    ///< camera serial number
     std::string camera_address_ {"None"};   ///< camera address
+    std::string camera_model_{"None"};      ///< camera model
 
     double exposure_time_us_;               ///< current exposure time in microseconds
     double min_exposure_time_;              ///< minimum exposure time in microseconds
