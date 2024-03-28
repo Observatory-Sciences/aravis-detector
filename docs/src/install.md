@@ -1,24 +1,10 @@
-# Aravis detector
+\page Build
 
-An Odin detector for aravis compatible cameras.
+# Install
 
----
+**This install guide is only designed for Ubuntu and is unlikely to work on different systems.**
 
-- [Aravis detector](#aravis-detector)
-  - [Install](#install)
-    - [Setup Aravis](#setup-aravis)
-    - [Build aravis-detector](#build-aravis-detector)
-  - [Dependencies](#dependencies)
-  - [Docs](#docs)
-  - [Contributions](#contributions)
-  
----
-
-## Install
-
-**This install guide is temporary and only works for Ubuntu and is unlikely to work on different systems.**
-
-1. Install dependencies:
+## Install dependencies
 
 ```shell
   sudo apt -y update
@@ -27,14 +13,14 @@ An Odin detector for aravis compatible cameras.
   sudo apt install libzmq3-dev libpcap-dev liblog4cxx-dev libblosc-dev libhdf5-dev librdkafka-dev
 ```
 
-2. Make a prefix directory:
+## Make a prefix directory
 
 ```shell
   PREFIX=path/to/folder/prefix
   mkdir -p $PREFIX
 ```
 
-3. Build Odin-data:
+## Build Odin-data
 
 ```shell
   git clone https://github.com/odin-detector/odin-data.git && cd odin-data
@@ -94,16 +80,3 @@ arv-fake-gv-camera-0.8 -s GV02 -d all
   make -j8 VERBOSE=1 && make install VERBOSE=1
   ls -la $PREFIX
 ```
-
-## Dependencies
-
-1. Aravis
-   1. Glib
-   2. Gobject
-2. odin-data
-   1. log4cxx
-   2. seromq
-
-## Docs
-
-## Contributions

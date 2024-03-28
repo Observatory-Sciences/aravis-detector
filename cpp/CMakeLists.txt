@@ -14,14 +14,17 @@ set(CMAKE_CONFIG_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_config)
 # directories of additional CMake modules (ie. MacroOutOfSourceBuild.cmake):
 set(CMAKE_MODULE_PATH ${SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
+
 # Find and add external packages required for application and test
 find_package(
     Boost 1.41.0 REQUIRED
     COMPONENTS program_options system unit_test_framework date_time thread
 )
+find_package(ARAVIS REQUIRED)
 find_package(LOG4CXX 0.10.0 REQUIRED)
 find_package(ZEROMQ 3.2.4 REQUIRED)
 find_package(ODINDATA REQUIRED)
+find_package(GLIB REQUIRED)
 
 # Git versioning
 message("Determining aravis-detector version")
@@ -38,7 +41,7 @@ message("-- major:${VERSION_MAJOR} minor:${VERSION_MINOR} patch:${VERSION_PATCH}
 message("-- short version: ${VERSION_SHORT}")
 
 set(COMMON_DIR ${SOURCE_DIR}/common)
-set(DATA_DIR ${SOURCE_DIR}/data)
+set(DATA_DIR ${SOURCE_DIR}/AravisPlugin)
 
 # Add configure output include directory to include path
 configure_file(${COMMON_DIR}/include/version.h.in "${CMAKE_BINARY_DIR}/include/version.h")
@@ -46,4 +49,3 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 # Add subdirectories
 add_subdirectory(${DATA_DIR})
-
