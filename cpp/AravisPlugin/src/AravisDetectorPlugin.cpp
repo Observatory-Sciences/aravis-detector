@@ -78,7 +78,7 @@ namespace FrameProcessor
  * Then it logs "AravisDetectorPlugin loaded"
  */
 AravisDetectorPlugin::AravisDetectorPlugin() :
-  working_(false),
+  working_(true),
   streaming_(false),
   aravis_callback_(true),
   camera_connected_(false),
@@ -232,9 +232,12 @@ void AravisDetectorPlugin::status_task()
   while (working_) {
     boost::this_thread::sleep(boost::posix_time::milliseconds(delay_ms));
 
-    get_config(2);
-    if(streaming_) 
-      get_config(3);
+    if (camera_connected_){
+      get_config(2);
+      if(streaming_){
+        get_config(3);
+      }
+    }
   }
 }
 
@@ -433,7 +436,6 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
 
   camera_model_ = arv_camera_get_model_name (camera_, NULL);
   LOG4CXX_INFO(logger_,"Connected to camera " << camera_model_);
-  working_ = true;
     
   /***************************************
   **      Camera init routine
@@ -459,7 +461,6 @@ void AravisDetectorPlugin::check_connection(){
   if(camera_ == NULL){
     LOG4CXX_ERROR(logger_, "No connection, camera object removed unexpectedly during run");
     camera_connected_ = false;
-    working_ = false;
     return;
   }
 
@@ -738,7 +739,6 @@ void AravisDetectorPlugin::get_frame_rate_bounds(){
 void AravisDetectorPlugin::get_frame_rate(){
   GErrorWrapper error;
   double temp = arv_camera_get_frame_rate(camera_, error.get());
-
   if(error){ 
     LOG4CXX_ERROR(logger_, "When reading frame rate the following error ocurred: \n" << error.message());
     return;
