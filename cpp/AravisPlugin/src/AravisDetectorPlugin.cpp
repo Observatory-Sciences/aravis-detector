@@ -1023,6 +1023,7 @@ void AravisDetectorPlugin::acquire_n_buffer(unsigned int n_buffers){
  */
 void AravisDetectorPlugin::acquire_buffer(){
   GErrorWrapper error;
+  ArvBuffer *buffer;
 
   if (!ARV_IS_CAMERA (camera_)){
     LOG4CXX_ERROR(logger_, "Cannot acquire buffer without connecting to a camera first.");
@@ -1035,39 +1036,42 @@ void AravisDetectorPlugin::acquire_buffer(){
       return;}
 
     // use try_pop_buffer and not pop_buffer because try is thread safe
-    buffer_ = arv_stream_try_pop_buffer(stream_);
-  }else if(acquisition_mode_ == "MultiFrame"){
-    
-    if(streaming_){
-      LOG4CXX_ERROR(logger_,"Cannot acquire Multiple buffers while also streaming");
-      return;
-    }
-    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
-    
-    if(error)
-      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
-        
-  }else if(acquisition_mode_ == "SingleFrame"){
-    
-    if(streaming_){
-      LOG4CXX_ERROR(logger_,"Cannot acquire single buffers while also streaming");
-      return;
-    }
+    buffer = arv_stream_pop_buffer(stream_);
 
-    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
-    
-    if(error)
-      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
-        
+  }
+//  }else if(acquisition_mode_ == "MultiFrame"){
+//    
+//    if(streaming_){
+//      LOG4CXX_ERROR(logger_,"Cannot acquire Multiple buffers while also streaming");
+//      return;
+//    }
+//    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
+//    
+//    if(error)
+//      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
+//        
+//  }else if(acquisition_mode_ == "SingleFrame"){
+//    
+//    if(streaming_){
+//      LOG4CXX_ERROR(logger_,"Cannot acquire single buffers while also streaming");
+//      return;
+//    }
+//
+//    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
+//    
+//    if(error)
+//      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
+//        
+//  }
+
+  if(buffer_is_valid(buffer)){
+    process_buffer(buffer);
   }
 
-  if(buffer_is_valid()){
-  process_buffer();}
-
   // for stream we need to replenish the buffers
-  if(acquisition_mode_ == "Continuous")
-    arv_stream_push_buffer(stream_, arv_buffer_new(payload_, NULL));
- 
+  if(acquisition_mode_ == "Continuous"){
+    arv_stream_push_buffer(stream_, buffer);
+  } 
  }
 
 /** @brief Captures one frame buffer from a continuos stream
@@ -1076,13 +1080,13 @@ void AravisDetectorPlugin::acquire_buffer(){
  * 
  * Essentially calls arv_buffer_get_status and sends the result through a switch
  */
-bool AravisDetectorPlugin::buffer_is_valid(){
+bool AravisDetectorPlugin::buffer_is_valid(ArvBuffer *buffer){
   bool buffer_state = false;
   // if buffer is empty then it isn't finished.
-  if (!ARV_IS_BUFFER (buffer_))
+  if (!ARV_IS_BUFFER (buffer))
     LOG4CXX_ERROR(logger_, "Buffer is empty");
 
-  switch(arv_buffer_get_status(buffer_)){
+  switch(arv_buffer_get_status(buffer)){
     case ARV_BUFFER_STATUS_SUCCESS:
       buffer_state = true;
       break;
@@ -1120,13 +1124,13 @@ bool AravisDetectorPlugin::buffer_is_valid(){
 /** @brief Changes buffer object to DataBlockFrame object pointer. 
  * 
  */
-void AravisDetectorPlugin::process_buffer(){
+void AravisDetectorPlugin::process_buffer(ArvBuffer *buffer){
 
   data_type_ = pixel_format_to_datatype(pixel_format_);
 
   // Will need to change this at some point 
-  image_height_px_ = arv_buffer_get_image_height(buffer_);
-  image_width_px_ = arv_buffer_get_image_width(buffer_);
+  image_height_px_ = arv_buffer_get_image_height(buffer);
+  image_width_px_ = arv_buffer_get_image_width(buffer);
   if(frame_dimensions_.empty()){
     frame_dimensions_.push_back(image_height_px_);
     frame_dimensions_.push_back(image_width_px_);
@@ -1137,7 +1141,7 @@ void AravisDetectorPlugin::process_buffer(){
 
   
   FrameMetaData metadata(n_frames_made_, "data", data_type_, "", frame_dimensions_, compression_type_);
-  boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer_, &payload_), payload_, image_data_offset_));
+  boost::shared_ptr<DataBlockFrame> new_frame(new DataBlockFrame(metadata, arv_buffer_get_image_data(buffer, &payload_), payload_, image_data_offset_));
 
   if (frame_count_ > 0){
     if (n_frames_made_ >= frame_count_){
@@ -1176,14 +1180,14 @@ void AravisDetectorPlugin::get_stream_state(){
  * 
  * There are better formats to use in practice
  */
-void AravisDetectorPlugin::save_frame_pgm()
+void AravisDetectorPlugin::save_frame_pgm(ArvBuffer *buffer)
 { 
-  unsigned int height = arv_buffer_get_image_height(buffer_);
-  unsigned int width = arv_buffer_get_image_width(buffer_);
+  unsigned int height = arv_buffer_get_image_height(buffer);
+  unsigned int width = arv_buffer_get_image_width(buffer);
   size_t size_temp = height*width;
 
   static size_t bmg_count {1} ; // current number of buffers saved as bmg
-  const u_char* decoded_frame = reinterpret_cast<u_char*>(const_cast<void*>(arv_buffer_get_image_data(buffer_, &size_temp)));
+  const u_char* decoded_frame = reinterpret_cast<u_char*>(const_cast<void*>(arv_buffer_get_image_data(buffer, &size_temp)));
   std::string filename {"/home/gsc/Github/RFI_Odin/_images/test_" + std::to_string(bmg_count)+ ".pgm"};
 
   FILE *pgmimg = fopen(filename.c_str(), "wb");

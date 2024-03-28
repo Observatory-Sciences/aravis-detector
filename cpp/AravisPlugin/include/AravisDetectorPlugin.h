@@ -133,12 +133,12 @@ private:
 
     void acquire_n_buffer(unsigned int n_buffers);
     void acquire_buffer();
-    bool buffer_is_valid();
-    void process_buffer();
+    bool buffer_is_valid(ArvBuffer *buffer);
+    void process_buffer(ArvBuffer *buffer);
     
     void get_stream_state();
     
-    void save_frame_pgm();
+    void save_frame_pgm(ArvBuffer *buffer);
     void save_genicam_xml(std::string filepath);
 
 
@@ -195,7 +195,6 @@ private:
     **   Stream/buffer parameters    **
     ***********************************/
 
-	ArvBuffer *buffer_;                     ///< Pointer to ArvBuffer object. It holds frames/packets from the camera
     ArvStream *stream_;                     ///< Pointer to ArvStream object. For continuos frame acquisition
 
     DataType data_type_;                    ///< currently used data_type
