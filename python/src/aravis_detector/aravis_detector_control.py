@@ -36,7 +36,7 @@ class AravisDetectorControl(object):
             "config": {
                 "mode": (lambda: self._acquisition_mode, self.set_mode),
                 "frame_count": (lambda: self._frame_count, self.set_frame_count),
-                "frame_rate": (lambda: self._frame_rate, None),
+                "frame_rate": (lambda: self._frame_rate, self.set_frame_rate),
                 "exposure_time": (lambda: self._exposure_time, self.set_exposure_time),
                 "pixel_format": (lambda: self._pixel_format, None),
                 "start_acquisition": (lambda: 0, self.start_acquisition),
@@ -64,6 +64,10 @@ class AravisDetectorControl(object):
     def set_mode(self, mode):
         logging.debug("Setting mode to: {}".format(mode))
         req = ApiAdapterRequest(data=json.dumps({"acquisition_mode": mode}))
+        self._fp.put("config/aravis", req)
+
+    def set_frame_rate(self, frame_rate):
+        req = ApiAdapterRequest(data=json.dumps({"frame_rate": frame_rate}))
         self._fp.put("config/aravis", req)
 
     def set_frame_count(self, frame_count):

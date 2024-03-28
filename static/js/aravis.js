@@ -64,6 +64,9 @@ $( document ).ready(function()
   $('#set-period').on('change', function(event){
     write_acq_period();
   });
+  $('#set-rate').on('change', function(event){
+    write_frame_rate();
+  });
   $('#set-num-frames').on('change', function(event){
     write_num_frames();
   });
@@ -92,6 +95,12 @@ function write_exposure()
 {
     val = $('#set-exposure').val();
     $.put('/api/' + api_version + '/aravis/config/exposure_time', parseFloat(val), function(response){});
+}
+
+function write_frame_rate()
+{
+    val = $('#set-rate').val();
+    $.put('/api/' + api_version + '/aravis/config/frame_rate', parseFloat(val), function(response){});
 }
 
 function write_mode()
