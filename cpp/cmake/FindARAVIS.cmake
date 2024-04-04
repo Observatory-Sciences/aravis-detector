@@ -37,7 +37,7 @@ set(ARAVIS_VERSIONED "aravis-0.8")
 
 message ("\nLooking for ARAVIS headers and libraries")
 
-
+set(ARAVIS_ROOT_DIR "/usr/local")
 
 if (ARAVIS_ROOT_DIR) 
     message (STATUS "Root dir: ${ARAVIS_ROOT_DIR}")
@@ -55,10 +55,11 @@ find_path(ARAVIS_INCLUDE_DIR
 	NAMES
 	arv.h
     PATHS 
-		${ARAVIS_ROOT_DIR}/include/${ARAVIS_VERSIONED}/
+		${ARAVIS_ROOT_DIR}/include/
 		${PC_ARAVIS_INCLUDEDIR} 
         ${PC_ARAVIS_INCLUDE_DIRS}
 	PATH_SUFFIXES
+    ${ARAVIS_VERSIONED}
 )
 
 find_library(ARAVIS_LIBRARY

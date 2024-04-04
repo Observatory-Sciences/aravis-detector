@@ -1,52 +1,80 @@
-name: 'Build Cpp'
+name: 'Build and test AravisDetectorPlugin'
 
 on:
   workflow_dispatch:
 
 env:
   INSTALL_PREFIX: ${{ github.workspace }}/prefix
+  TEMP_: ${{github.workspace}}/temp
+  cwd: ${{github.workspace}}
 
 jobs:
-  build:
+  build_dependencies:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
         with:
-          fetch-depth: 0
+          python-version: '3.10'
+          cache: 'pip' 
+      - run: pip install -r requirements.txt
 
-      - name: Install dependencies
+      - name: install general dependencies # Can't cache this without breaking paths :/
         run: |
-            sudo apt -y update
-            sudo apt install cmake
-            pip3 install meson ninja 
-            sudo apt update
-            sudo apt install python3 libusb-1.0-0-dev gobject-introspection valgrind libgstreamer-plugins-bad1.0-dev libgtk-3-dev libgirepository1.0-dev python3-gi libunwind-dev gettext
-            sudo apt install libboost-program-options-dev libboost-filesystem-dev libboost-date-time-dev libboost-dev  libboost-system-dev libboost-test-dev libboost-thread-dev libboost-regex-dev
-            sudo apt install libzmq3-dev libpcap-dev liblog4cxx-dev libblosc-dev libhdf5-dev librdkafka-dev
+          mkdir -p ${INSTALL_PREFIX} && echo "INSTALL_PREFIX is ${INSTALL_PREFIX}"
+          mkdir -p ${TEMP_} && echo "TEMP_ is ${TEMP_}"
+          sudo apt-get -y update
+          sudo apt-get install cmake
+          sudo apt-get install libboost-program-options-dev libboost-filesystem-dev libboost-date-time-dev libboost-dev  libboost-system-dev libboost-test-dev libboost-thread-dev libboost-regex-dev
+          sudo apt-get install libzmq3-dev libpcap-dev liblog4cxx-dev libblosc-dev libhdf5-dev librdkafka-dev pkg-config
+          sudo apt-get install libusb-1.0-0-dev gobject-introspection valgrind libgstreamer-plugins-bad1.0-dev libgtk-3-dev libgirepository1.0-dev python3-gi libunwind-dev gettext
 
-      - name: Prepare build
-        run: mkdir -p ${INSTALL_PREFIX} && echo "INSTALL_PREFIX is ${INSTALL_PREFIX}"
+      - name: Cache Odin Data
+        id: cache-odin-data
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-odin-data
+        with:
+          path: ${{ github.workspace }}/prefix
+          key: ${{ runner.os }}-build-${{ env.cache-name}}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name}}
 
-      - name: Build odin-data
+      - if: ${{steps.cache-odin-data.outputs.cache-hit != 'true' }}
+        name: install odin data
         run: |
           git clone https://github.com/odin-detector/odin-data.git && cd odin-data
-          mkdir build && cd build
+          mkdir build
+          cd build
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
           cd ..
-      - name: Build aravis
+
+      - name: Cache Aravis
+        id: cache-aravis
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-aravis
+        with:
+          path: ${{github.workspace}}/prefix
+          key: ${{ runner.os }}-build-${{ env.cache-name}}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name}}
+
+      - if: ${{steps.cache-aravis.outputs.cache-hit != 'true' }}
+        name: install aravis
         run: |
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          meson setup build
-          cd build
-          meson compile
-      - name: Build aravis-detector
+          meson setup --prefix=${INSTALL_PREFIX} --build.pkg-config-path "$PKG_CONFIG_PATH" build
+          ninja -v -C build install
+
+      - name: Build Aravis Plugin
         run: |
-          mkdir build && cd build
+          mkdir plugin_build
+          cd plugin_build
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
+      
