@@ -19,7 +19,7 @@ jobs:
           python-version: '3.10'
           cache: 'pip' 
       - run: pip install -r requirements.txt
-
+      
       - name: install general dependencies # Can't cache this without breaking paths :/
         run: |
           mkdir -p ${INSTALL_PREFIX} && echo "INSTALL_PREFIX is ${INSTALL_PREFIX}"
@@ -51,6 +51,22 @@ jobs:
           ls -la ${INSTALL_PREFIX}
           cd ..
 
+      - name: Cache Odin control
+        id: cache-odin-control
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-odin-data
+        with:
+          path: ${{ github.workspace }}/venv/bin
+          key: ${{ runner.os }}-build-${{ env.cache-name}}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name}}
+
+      - if: ${{steps.cache-odin-control.outputs.cache-hit != 'true' }}
+        name: Build Odin Control # should autmatically cache
+        run: |
+          git clone https://github.com/odin-detector/odin-control
+          pip install -e odin-control
+
       - name: Cache Aravis
         id: cache-aravis
         uses: actions/cache@v3
@@ -77,4 +93,6 @@ jobs:
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
-      
+
+      - name: Build AravisDetector client
+        run: pip install -e python
