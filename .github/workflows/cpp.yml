@@ -51,18 +51,7 @@ jobs:
           ls -la ${INSTALL_PREFIX}
           cd ..
 
-      - name: Cache Odin control
-        id: cache-odin-control
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-odin-data
-        with:
-          path: ${{ github.workspace }}/venv/bin
-          key: ${{ runner.os }}-build-${{ env.cache-name}}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name}}
-
-      - if: ${{steps.cache-odin-control.outputs.cache-hit != 'true' }}
-        name: Build Odin Control # should autmatically cache
+      - name: Build Odin Control
         run: |
           git clone https://github.com/odin-detector/odin-control
           pip install -e odin-control
