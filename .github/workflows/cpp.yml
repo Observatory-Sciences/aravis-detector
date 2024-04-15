@@ -1,7 +1,6 @@
 name: 'Build and test AravisDetectorPlugin'
 
-on:
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 env:
   INSTALL_PREFIX: ${{ github.workspace }}/prefix
@@ -12,7 +11,9 @@ jobs:
   build_dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4        
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v4
         with:
@@ -77,8 +78,6 @@ jobs:
 
       - name: Build Aravis Plugin
         run: |
-          git clone https://github.com/Observatory-Sciences/aravis-detector && cd aravis-detector
-          mkdir plugin_build
           cd plugin_build
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
