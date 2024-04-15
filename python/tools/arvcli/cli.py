@@ -1,10 +1,19 @@
 # Main CLI implementation
-from python_cli.control import get_HTTP_request, put_HTTP_request
-from python_cli import __app_name__, __version__
+from arvcli.control import get_HTTP_request, put_HTTP_request
+from arvcli import __app_name__, __version__
+from rich.progress import track
 from typing import Optional
+from pathlib import Path
 from rich import print
 from enum import Enum
 import typer
+import time
+import json
+
+APP_NAME = "arvcli"
+server_address = "192.168.1.194"
+port = "5025"
+
 
 app = typer.Typer()
 
@@ -102,7 +111,7 @@ def _get_callback(key: silly_enum) -> None:
     if key is None:
         return
 
-    data = get_HTTP_request(cmd_map[key.value]['http'])
+    data = get_HTTP_request(cmd_map[key.value]['http'], server_address, port)
     sub_data = data
     for item in cmd_map[key.value]['json']:
         sub_data = sub_data[item]
@@ -112,15 +121,29 @@ def _get_callback(key: silly_enum) -> None:
 
 def _status_callback(val: bool) -> None:
     if val:
-        data = get_HTTP_request(cmd_map['status']['http'])
+        data = get_HTTP_request(cmd_map['status']['http'], server_address, port)
         print("[yellow bold]Status[/yellow bold] is: ", data['value'][0])
         raise typer.Exit()
 
 
 def _config_callback(val: bool) -> None:
     if val:
-        data = get_HTTP_request(cmd_map['config']['http'])
+        data = get_HTTP_request(cmd_map['config']['http'], server_address, port)
         print("[yellow bold]Config[/yellow bold] is: ", data['value'][0])
+        raise typer.Exit()
+
+
+def _ipaddress_callback(val: str) -> None:
+    if val is not None:
+        server_address = val
+        print("[yellow bold]New server address[/yellow bold] is: ", val)
+        raise typer.Exit()
+
+
+def _port_callback(val: bool) -> None:
+    if val:
+        port = val
+        print("[yellow bold]New server port[/yellow bold] is: ", val)
         raise typer.Exit()
 
 
@@ -160,16 +183,30 @@ def stream(
     start: Optional[bool] = typer.Option(None, "-on", "--start",
                                          help="start acquiring frames in continuous mode"),
     stop: Optional[bool] = typer.Option(None, "-off", "--stop",
-                                        help="stop acquiring frames in continuous mode"),) -> None:
+                                        help="stop acquiring frames in continuous mode"),
+    n_frames: Optional[int] = typer.Option(None, "-t", "--take",
+                                           help="Acquire a fixed number of frames in continuous mode"),
+                                       ) -> None:
     """
     Control camera frame acquisition
     """
     if start:
         print("[green]Video starting[/green]")
-        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1)
+        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
     if stop:
         print("[red]Video stopping[/red]")
-        put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1)
+        put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1, server_address, port)
+    if n_frames is not None:
+        fps = 5
+        time_per_frame = 1/fps  # find how long it takes for a frame
+        put_HTTP_request("/api/0.1/aravis/config/frame_count", n_frames, server_address, port)
+        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
+        for val in track(range(n_frames+1), description="Acquiring..."):
+            time.sleep(time_per_frame)
+            if val % (fps*10) == 0 or val == n_frames:
+                # every 10 seconds check progress
+
+                print(f"Acquired {val} frames")
 
 
 @app.command()
@@ -186,23 +223,23 @@ def hdf(
                                         help="number of files to save"),) -> None:
     response = {}
     if stop:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 0)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 0, server_address, port)
         if response != {}:
             print("response:", response['error'])
     if files is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/frames', files)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/frames', files, server_address, port)
         if response != {}:
             print("response:", response['error'])
     if file_name is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/name', file_name)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/name', file_name, server_address, port)
         if response != {}:
             print("response:", response['error'])
     if file_path is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/path', file_path)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/path', file_path, server_address, port)
         if response != {}:
             print("response:", response['error'])
     if start:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', file_path)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', file_path, server_address, port)
         if response != {}:
             print("response:", response['error'])
 
@@ -237,9 +274,9 @@ def http(
     """
     if put:
         if value is None:
-            put_HTTP_request(put, 1)
+            put_HTTP_request(put, 1, server_address, port)
         else:
-            put_HTTP_request(put, value)
+            put_HTTP_request(put, value, server_address, port)
     if get:
         get_HTTP_request(request=get)
 
@@ -252,10 +289,21 @@ def main(
     config: Optional[bool] = typer.Option(None, '--config', '-c', case_sensitive=False,
                                           help="Print current config values of all plugins",
                                           callback=_config_callback),
+    ipaddress: Optional[str] = typer.Option(None, '--ip', '-i', case_sensitive=False,
+                                            help="Specify an ip address for the server",
+                                            callback=_ipaddress_callback, is_eager=True),
+    port: Optional[str] = typer.Option(None, '--port', '-p', case_sensitive=False,
+                                       help="SPecify a port for the server",
+                                       callback=_port_callback, is_eager=True),
     g: Optional[silly_enum] = typer.Option(None, '--get', '-g', case_sensitive=False,
                                            help="Print out a specific value",
                                            callback=_get_callback),
     version: Optional[bool] = typer.Option(None, "--version", "-v",
                                            help="Display arvcli's current version and exit",
                                            callback=_version_callback, is_eager=True)) -> None:
-    return
+    app_dir = typer.get_app_dir(APP_NAME)
+    config_path: Path = Path(app_dir) / "config.json"
+    global configs
+    # configs = json.load(config_path)
+    if not config_path.is_file():
+        print("Config file doesn't exist yet")
