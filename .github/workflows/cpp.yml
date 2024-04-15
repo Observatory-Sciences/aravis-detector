@@ -78,7 +78,7 @@ jobs:
 
       - name: Build Aravis Plugin
         run: |
-          cd plugin_build
+          mkdir plugin_build && cd plugin_build
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
