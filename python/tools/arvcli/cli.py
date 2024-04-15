@@ -110,13 +110,23 @@ def _get_callback(key: silly_enum) -> None:
     """
     if key is None:
         return
+    val = get_value(key)
+    print(f"[yellow bold]{key.value}[/yellow bold] is: ", val)
+    raise typer.Exit()
 
+
+def get_value(key: silly_enum) -> None:
+    """
+    Deals with the http request and json response
+
+    Args:
+        key: (silly_enum): value used to get
+    """
     data = get_HTTP_request(cmd_map[key.value]['http'], server_address, port)
     sub_data = data
     for item in cmd_map[key.value]['json']:
         sub_data = sub_data[item]
-    print(f"[yellow bold]{key.value}[/yellow bold] is: ", sub_data)
-    raise typer.Exit()
+    return sub_data
 
 
 def _status_callback(val: bool) -> None:
@@ -185,7 +195,8 @@ def stream(
     stop: Optional[bool] = typer.Option(None, "-off", "--stop",
                                         help="stop acquiring frames in continuous mode"),
     n_frames: Optional[int] = typer.Option(None, "-t", "--take",
-                                           help="Acquire a fixed number of frames in continuous mode"),
+                                           help="Acquire a fixed number of frames in \
+                                            continuous mode"),
                                        ) -> None:
     """
     Control camera frame acquisition
@@ -197,16 +208,14 @@ def stream(
         print("[red]Video stopping[/red]")
         put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1, server_address, port)
     if n_frames is not None:
-        fps = 5
+        fps = get_value(silly_enum.frame_rate)
         time_per_frame = 1/fps  # find how long it takes for a frame
         put_HTTP_request("/api/0.1/aravis/config/frame_count", n_frames, server_address, port)
         put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
         for val in track(range(n_frames+1), description="Acquiring..."):
             time.sleep(time_per_frame)
-            if val % (fps*10) == 0 or val == n_frames:
-                # every 10 seconds check progress
-
-                print(f"Acquired {val} frames")
+        frames_acquired = get_value(silly_enum.frames_captured)
+        print(f"Acquired {frames_acquired} frames")
 
 
 @app.command()
@@ -219,29 +228,36 @@ def hdf(
                                             help="saving file name"),
     file_path: Optional[str] = typer.Option(None, "-p", "--path",
                                             help="path to the directory"),
-    files: Optional[int] = typer.Option(None, "-n", "--num",
-                                        help="number of files to save"),) -> None:
+    num: Optional[int] = typer.Option(None, "-n", "--num",
+                                      help="number of files to save"),) -> None:
     response = {}
     if stop:
         response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 0, server_address, port)
         if response != {}:
-            print("response:", response['error'])
-    if files is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/frames', files, server_address, port)
+            print("stop response:", response['error'])
+    if num is not None:
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/frames',
+                                    json.dumps(num), server_address, port)
         if response != {}:
-            print("response:", response['error'])
+            print("num response:", response['error'])
     if file_name is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/name', file_name, server_address, port)
+        response = put_HTTP_request("/api/0.1/fp/config/hdf/name",
+                                    {'name': file_name}, server_address, port)
         if response != {}:
-            print("response:", response['error'])
+            print("file response:", response['error'])
     if file_path is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/path', file_path, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/master', 'data', server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/path',
+                                    {'name': file_path}, server_address, port)
         if response != {}:
-            print("response:", response['error'])
+            print("path response:", response['error'])
     if start:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', file_path, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/master', 'data', server_address, port)
         if response != {}:
-            print("response:", response['error'])
+            print("start master response:", response['error'])
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 1, server_address, port)
+        if response != {}:
+            print("start response:", response['error'])
 
 
 @app.command()
