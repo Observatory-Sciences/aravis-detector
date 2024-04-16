@@ -8,7 +8,6 @@ from rich import print
 from enum import Enum
 import typer
 import time
-import json
 
 APP_NAME = "arvcli"
 server_address = "192.168.1.194"
@@ -18,8 +17,13 @@ port = "5025"
 app = typer.Typer()
 
 # Map the command to the http request and json path
-# The keys are the commands and they should be case insensitive
 cmd_map = {
+    # It looks horrible, but it's quite simple.
+    # Every entry has the following shape:
+    # 'cli command name' : {'http': http api call, 'json': ['path', 'to file', 'in the json tree']}
+    # The get_value function sends an api call and then, if successful, it gets back a json tree
+    # that tree then gets parsed using the json path.
+
     # fp
     'fp': {'http': '/api/0.1/fp', 'json': []},
     # fp/config
@@ -80,33 +84,39 @@ cmd_map = {
     'frames_captured': {'http': '/api/0.1/aravis/status/frames_captured',
                         'json': ['frames_captured', 'value']},
 }
+"""
+There is a very lovely feature in typer: predefined commands. This feature stops the user from
+typing in wrong options to a command, and the lets them know of the correct ones.
 
-# There is a very lovely feature in typer: predefined commands. This feature stops the user from
-# typing in wrong options to a command, and the lets them know of the correct ones.
+There is one gigantic problem with it. It only uses enumerations. Which, for this particular case,
+where you need to translate between a command and a specific value that cannot be a var name, it
+completely falls apart!
 
-# There is one gigantic problem with it. It only uses enumerations. Which, for this particular case,
-# where you need to translate between a command and a specific value that cannot be a var name, it
-# completely falls apart!
-
-# My best attempt at fixing this was to create a decoy dictionary that just maps the keys together
-# and then convert that to a pointless enum.
-# It's all ridiculous and silly, hence the names:
+My best attempt at fixing this was to create a decoy dictionary that just maps the keys together
+and then convert that to a pointless enum.
+It's all ridiculous and silly, hence the names:
+"""
 ridiculous_dict = {k: k for k in cmd_map.keys()}
 silly_enum = Enum('silly_enum', ridiculous_dict)
 
 
 def _version_callback(value: bool) -> None:
+    """Returns current cli version"""
+
+    # TODO: figure out how to get the odin version in here
     if value:
-        typer.echo(f"{__app_name__} v{__version__}")
+        typer.echo(f"{__app_name__} {__version__}")
         raise typer.Exit()
 
 
 def _get_callback(key: silly_enum) -> None:
     """
-    Deals with the http request and json response
+    Callback function that wraps get_value
+
+    Prints out the value returned by get_value and exits.
 
     Args:
-        key: (silly_enum): value used to get
+        key: (silly_enum): a cmd_map key (maps cli command to http request)
     """
     if key is None:
         return
@@ -117,10 +127,11 @@ def _get_callback(key: silly_enum) -> None:
 
 def get_value(key: silly_enum) -> None:
     """
-    Deals with the http request and json response
+    Sends an api get request for the value specified then parses the json
+    response and returns the target value
 
     Args:
-        key: (silly_enum): value used to get
+        key: (silly_enum): a cmd_map key (maps cli command to http request)
     """
     data = get_HTTP_request(cmd_map[key.value]['http'], server_address, port)
     sub_data = data
@@ -130,6 +141,12 @@ def get_value(key: silly_enum) -> None:
 
 
 def _status_callback(val: bool) -> None:
+    """
+    Returns the server status in json format and exits
+
+    Args:
+        val (bool): true when called
+    """
     if val:
         data = get_HTTP_request(cmd_map['status']['http'], server_address, port)
         print("[yellow bold]Status[/yellow bold] is: ", data['value'][0])
@@ -137,6 +154,12 @@ def _status_callback(val: bool) -> None:
 
 
 def _config_callback(val: bool) -> None:
+    """
+    Returns the server config in json format and exits
+
+    Args:
+        val (bool): true when called
+    """
     if val:
         data = get_HTTP_request(cmd_map['config']['http'], server_address, port)
         print("[yellow bold]Config[/yellow bold] is: ", data['value'][0])
@@ -144,17 +167,27 @@ def _config_callback(val: bool) -> None:
 
 
 def _ipaddress_callback(val: str) -> None:
+    """
+    Sets the ip address of the odin server
+
+    Args:
+        val (str): ip address
+    """
     if val is not None:
         server_address = val
         print("[yellow bold]New server address[/yellow bold] is: ", val)
-        raise typer.Exit()
 
 
-def _port_callback(val: bool) -> None:
+def _port_callback(val: str) -> None:
+    """
+    Sets the port of the odin server
+
+    Args:
+        val (str): port
+    """
     if val:
         port = val
         print("[yellow bold]New server port[/yellow bold] is: ", val)
-        raise typer.Exit()
 
 
 # @app.command()
@@ -169,7 +202,7 @@ def connect(
     Not implemented. Connects the AravisDetector plugin to a camera.
 
     If no arguments are given it connects to the first available camera
-
+    Currently I don't know if the server can specify which camera to use.
     Args:
         camera_ip (str): ip address . Defaults to typer.Option(None, "-ip", "--ip_address").
         camera_id (str): camera id. Defaults to typer.Option(None, "-id", "--name").
@@ -199,7 +232,9 @@ def stream(
                                             continuous mode"),
                                        ) -> None:
     """
-    Control camera frame acquisition
+    Control camera frame acquisition in continuous mode
+
+
     """
     if start:
         print("[green]Video starting[/green]")
@@ -222,42 +257,113 @@ def stream(
 def hdf(
     start: Optional[bool] = typer.Option(None, "-on", "--start",
                                          help="start saving frames"),
+    arm: Optional[bool] = typer.Option(None, "-a", "--arm",
+                                       help="start saving frames"),
     stop: Optional[bool] = typer.Option(None, "-off", "--stop",
                                         help="stop saving frames"),
+    disarm: Optional[bool] = typer.Option(None, "-da", "--disarm",
+                                          help="stop saving frames"),
     file_name: Optional[str] = typer.Option(None, "-f", "--file",
                                             help="saving file name"),
     file_path: Optional[str] = typer.Option(None, "-p", "--path",
                                             help="path to the directory"),
     num: Optional[int] = typer.Option(None, "-n", "--num",
                                       help="number of files to save"),) -> None:
+    """
+    Control the file writer plugin 
+
+    Args:
+        start (Optional[bool], optional): Starts acquiring and saving frames
+        arm (Optional[bool], optional): Prepares the hdf plugin to save files as soon as
+                                        acquisition starts.
+        stop (Optional[bool], optional): Stops acquiring and saving files
+        disarm (Optional[bool], optional): Stops saving files without stopping acquisition
+        file_name (Optional[str], optional): sets the file name. Defaults to the current
+                                             date and time as file name.
+        file_path (Optional[str], optional): sets the file path. Will reuse the last value
+                                             specified to the server or to the config value
+        num (Optional[int], optional): sets the number of frames to save.
+    """
     response = {}
+    params = {
+            'process': {
+                'number': 1,
+                'rank': 0
+            },
+            'master': 'data',
+            'acquisition_id': '',
+            'file': {
+                'extension': 'h5'
+            }
+        }
+
+    # exit quickly if stop is called
     if stop:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 0, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False, server_address, port)
         if response != {}:
-            print("stop response:", response['error'])
-    if num is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/frames',
-                                    json.dumps(num), server_address, port)
+            print(f"[/red] Error occurred: stop response: {response['error']}[/red]")
+        else:
+            print("[red]Video stopping[/red]")
+            put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1, server_address, port)
+            print("[green]File writing has[/green] [red]stopped[/red]")
+        return
+    if disarm:
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False, server_address, port)
         if response != {}:
-            print("num response:", response['error'])
-    if file_name is not None:
-        response = put_HTTP_request("/api/0.1/fp/config/hdf/name",
-                                    {'name': file_name}, server_address, port)
-        if response != {}:
-            print("file response:", response['error'])
-    if file_path is not None:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/master', 'data', server_address, port)
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/path',
-                                    {'name': file_path}, server_address, port)
+            print(f"[/red] Error occurred: stop response: {response['error']}[/red]")
+        else:
+            print("[green]File writing was[/green] [red]disarmed[/red]")
+        return
+    if num is None:
+        num = get_value(silly_enum.frames)
+        if num is None:
+            num = 100
+        print(f"[yellow]Number of frames unspecified, writing {num}[/yellow]")
+    if file_name is None:
+        cd = time.localtime()
+        file_name = f'run_{cd.tm_min}_{cd.tm_hour}_{cd.tm_mday}_{cd.tm_mon}_{cd.tm_year}'
+        print(f"[yellow]File name unspecified, using: [bold]{file_name}[/bold][/yellow]")
+    if file_path is None:
+        file_path = get_value(silly_enum.file_path)
+        if file_path is None:
+            file_path = '/home/temp'
+        print(f"[yellow]File path unspecified, using: [bold]{file_path}[/bold][/yellow]")
+
+    params['frames'] = num
+    params['file']['name'] = file_name
+    params['file']['path'] = file_path
+
+    if arm:
+        params['write'] = True
+        response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
         if response != {}:
             print("path response:", response['error'])
+        else:
+            print("[green]File writing has been [bold]armed[/bold][/green]")
+        return
     if start:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/master', 'data', server_address, port)
+        params['write'] = True
+        response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
         if response != {}:
-            print("start master response:", response['error'])
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', 1, server_address, port)
-        if response != {}:
-            print("start response:", response['error'])
+            print("path response:", response['error'])
+        else:
+            print("[green]File writing has [bold]started[/bold][/green]")
+            fps = get_value(silly_enum.frame_rate)
+            time_per_frame = 1/fps  # find how long it takes for a frame
+            put_HTTP_request("/api/0.1/aravis/config/frame_count", num, server_address, port)
+            put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
+            for val in track(range(num+1), description="Acquiring..."):
+                time.sleep(time_per_frame)
+            frames_acquired = get_value(silly_enum.frames_captured)
+            print(f"Acquired {frames_acquired} frames")
+
+        return
+
+    response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
+    if response != {}:
+        print("path response:", response['error'])
+    else:
+        print(f"[blue]The following parameters were set: [/blue] {num=}, {file_name=}, {file_path}")
 
 
 @app.command()
