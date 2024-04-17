@@ -85,3 +85,8 @@ jobs:
 
       - name: Build AravisDetector client
         run: pip install -e python
+      
+      - name: Build Tools
+        run: |
+          cd python
+          pip install -e tools
