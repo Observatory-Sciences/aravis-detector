@@ -1,0 +1,4 @@
+ip: 192.168.1.194
+port: '5025'
+default_n_frames: 100
+default_path: /home/rfiodin/odin_camera_driver/temp

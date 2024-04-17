@@ -3,16 +3,14 @@ from arvcli.control import get_HTTP_request, put_HTTP_request
 from arvcli import __app_name__, __version__
 from rich.progress import track
 from typing import Optional
-from pathlib import Path
 from rich import print
 from enum import Enum
+import yaml
 import typer
 import time
+import os
 
 APP_NAME = "arvcli"
-server_address = "192.168.1.194"
-port = "5025"
-
 
 app = typer.Typer()
 
@@ -133,7 +131,7 @@ def get_value(key: silly_enum) -> None:
     Args:
         key: (silly_enum): a cmd_map key (maps cli command to http request)
     """
-    data = get_HTTP_request(cmd_map[key.value]['http'], server_address, port)
+    data = get_HTTP_request(cmd_map[key.value]['http'], configs['ip'], configs['port'])
     sub_data = data
     for item in cmd_map[key.value]['json']:
         sub_data = sub_data[item]
@@ -148,7 +146,7 @@ def _status_callback(val: bool) -> None:
         val (bool): true when called
     """
     if val:
-        data = get_HTTP_request(cmd_map['status']['http'], server_address, port)
+        data = get_HTTP_request(cmd_map['status']['http'], configs['ip'], configs['port'])
         print("[yellow bold]Status[/yellow bold] is: ", data['value'][0])
         raise typer.Exit()
 
@@ -161,7 +159,7 @@ def _config_callback(val: bool) -> None:
         val (bool): true when called
     """
     if val:
-        data = get_HTTP_request(cmd_map['config']['http'], server_address, port)
+        data = get_HTTP_request(cmd_map['config']['http'], configs['ip'], configs['port'])
         print("[yellow bold]Config[/yellow bold] is: ", data['value'][0])
         raise typer.Exit()
 
@@ -174,7 +172,14 @@ def _ipaddress_callback(val: str) -> None:
         val (str): ip address
     """
     if val is not None:
-        server_address = val
+        app_path = os.path.dirname(os.path.realpath(__file__))
+        config_path = app_path+"/config.yaml"
+
+        with open(config_path, 'r') as con_file:
+            configs = yaml.safe_load(con_file)
+        configs['ip'] = val
+        with open(config_path, 'w') as con_file:
+            yaml.dump(configs, con_file)
         print("[yellow bold]New server address[/yellow bold] is: ", val)
 
 
@@ -186,8 +191,15 @@ def _port_callback(val: str) -> None:
         val (str): port
     """
     if val:
-        port = val
-        print("[yellow bold]New server port[/yellow bold] is: ", val)
+        app_path = os.path.dirname(os.path.realpath(__file__))
+        config_path = app_path+"/config.yaml"
+
+        with open(config_path, 'r') as con_file:
+            configs = yaml.safe_load(con_file)
+        configs['port'] = val
+        with open(config_path, 'w') as con_file:
+            yaml.dump(configs, con_file)
+        print("[yellow bold]New server address[/yellow bold] is: ", val)
 
 
 # @app.command()
@@ -233,20 +245,22 @@ def stream(
                                        ) -> None:
     """
     Control camera frame acquisition in continuous mode
-
-
     """
     if start:
         print("[green]Video starting[/green]")
-        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
+        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1,
+                         configs['ip'], configs['port'])
     if stop:
         print("[red]Video stopping[/red]")
-        put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1, server_address, port)
+        put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1,
+                         configs['ip'], configs['port'])
     if n_frames is not None:
         fps = get_value(silly_enum.frame_rate)
         time_per_frame = 1/fps  # find how long it takes for a frame
-        put_HTTP_request("/api/0.1/aravis/config/frame_count", n_frames, server_address, port)
-        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
+        put_HTTP_request("/api/0.1/aravis/config/frame_count", n_frames,
+                         configs['ip'], configs['port'])
+        put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1,
+                         configs['ip'], configs['port'])
         for val in track(range(n_frames+1), description="Acquiring..."):
             time.sleep(time_per_frame)
         frames_acquired = get_value(silly_enum.frames_captured)
@@ -268,9 +282,9 @@ def hdf(
     file_path: Optional[str] = typer.Option(None, "-p", "--path",
                                             help="path to the directory"),
     num: Optional[int] = typer.Option(None, "-n", "--num",
-                                      help="number of files to save"),) -> None:
+                                      help="number of files to save")) -> None:
     """
-    Control the file writer plugin 
+    Control the file writer plugin
 
     Args:
         start (Optional[bool], optional): Starts acquiring and saving frames
@@ -282,7 +296,8 @@ def hdf(
                                              date and time as file name.
         file_path (Optional[str], optional): sets the file path. Will reuse the last value
                                              specified to the server or to the config value
-        num (Optional[int], optional): sets the number of frames to save.
+        num (Optional[int], optional): sets the number of frames to save. Defaults to value
+                                      given in configs.yaml
     """
     response = {}
     params = {
@@ -299,34 +314,38 @@ def hdf(
 
     # exit quickly if stop is called
     if stop:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False,
+                                    configs['ip'], configs['port'])
         if response != {}:
             print(f"[/red] Error occurred: stop response: {response['error']}[/red]")
         else:
-            print("[red]Video stopping[/red]")
-            put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1, server_address, port)
             print("[green]File writing has[/green] [red]stopped[/red]")
+            put_HTTP_request("/api/0.1/aravis/config/stop_acquisition", 1,
+                             configs['ip'], configs['port'])
+            print("[red]Video stopping[/red]")
+
         return
     if disarm:
-        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf/write', False,
+                                    configs['ip'], configs['port'])
         if response != {}:
             print(f"[/red] Error occurred: stop response: {response['error']}[/red]")
         else:
             print("[green]File writing was[/green] [red]disarmed[/red]")
         return
     if num is None:
-        num = get_value(silly_enum.frames)
         if num is None:
-            num = 100
+            num = configs['default_n_frames']
         print(f"[yellow]Number of frames unspecified, writing {num}[/yellow]")
     if file_name is None:
         cd = time.localtime()
-        file_name = f'run_{cd.tm_min}_{cd.tm_hour}_{cd.tm_mday}_{cd.tm_mon}_{cd.tm_year}'
+        file_name = f'run_{cd.tm_sec}s{cd.tm_min}m{cd.tm_hour}h' + \
+                    f'{cd.tm_mday}d{cd.tm_mon}m{cd.tm_year}y'
         print(f"[yellow]File name unspecified, using: [bold]{file_name}[/bold][/yellow]")
     if file_path is None:
         file_path = get_value(silly_enum.file_path)
-        if file_path is None:
-            file_path = '/home/temp'
+        if file_path == '':
+            file_path = configs['default_path']
         print(f"[yellow]File path unspecified, using: [bold]{file_path}[/bold][/yellow]")
 
     params['frames'] = num
@@ -335,7 +354,8 @@ def hdf(
 
     if arm:
         params['write'] = True
-        response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf', params,
+                                    configs['ip'], configs['port'])
         if response != {}:
             print("path response:", response['error'])
         else:
@@ -343,15 +363,18 @@ def hdf(
         return
     if start:
         params['write'] = True
-        response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
+        response = put_HTTP_request('/api/0.1/fp/config/hdf', params,
+                                    configs['ip'], configs['port'])
         if response != {}:
             print("path response:", response['error'])
         else:
             print("[green]File writing has [bold]started[/bold][/green]")
             fps = get_value(silly_enum.frame_rate)
             time_per_frame = 1/fps  # find how long it takes for a frame
-            put_HTTP_request("/api/0.1/aravis/config/frame_count", num, server_address, port)
-            put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1, server_address, port)
+            put_HTTP_request("/api/0.1/aravis/config/frame_count", num,
+                             configs['ip'], configs['port'])
+            put_HTTP_request("/api/0.1/aravis/config/start_acquisition", 1,
+                             configs['ip'], configs['port'])
             for val in track(range(num+1), description="Acquiring..."):
                 time.sleep(time_per_frame)
             frames_acquired = get_value(silly_enum.frames_captured)
@@ -359,7 +382,7 @@ def hdf(
 
         return
 
-    response = put_HTTP_request('/api/0.1/fp/config/hdf', params, server_address, port)
+    response = put_HTTP_request('/api/0.1/fp/config/hdf', params, configs['ip'], configs['port'])
     if response != {}:
         print("path response:", response['error'])
     else:
@@ -396,9 +419,9 @@ def http(
     """
     if put:
         if value is None:
-            put_HTTP_request(put, 1, server_address, port)
+            put_HTTP_request(put, 1, configs['ip'], configs['port'])
         else:
-            put_HTTP_request(put, value, server_address, port)
+            put_HTTP_request(put, value, configs['ip'], configs['port'])
     if get:
         get_HTTP_request(request=get)
 
@@ -423,9 +446,11 @@ def main(
     version: Optional[bool] = typer.Option(None, "--version", "-v",
                                            help="Display arvcli's current version and exit",
                                            callback=_version_callback, is_eager=True)) -> None:
-    app_dir = typer.get_app_dir(APP_NAME)
-    config_path: Path = Path(app_dir) / "config.json"
-    global configs
-    # configs = json.load(config_path)
-    if not config_path.is_file():
+    app_path = os.path.dirname(os.path.realpath(__file__))
+    global config_path
+    config_path = app_path+"/config.yaml"
+    if not os.path.isfile(config_path):
         print("Config file doesn't exist yet")
+    global configs
+    with open(config_path, 'r') as con_file:
+        configs = yaml.safe_load(con_file)
