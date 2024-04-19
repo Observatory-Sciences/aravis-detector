@@ -1,0 +1,30 @@
+root: index
+subtrees:
+  - caption: User Guide
+    entries:
+      - file: user/index
+        entries:
+          - file: user/tutorials/index
+            entries:
+              - file: user/tutorials/build
+              - file: user/tutorials/run
+              - file: user/tutorials/tools
+          - file: user/explanations/index
+            entries:
+              - file: user/explanations/aravis-detector
+          - file: user/reference/index
+            entries:
+              - file: user/reference/camera
+  - caption: Developer Guide
+    entries:
+      - file: developer/index
+        entries:
+          - file: developer/explanations/index
+            entries:
+              - file: developer/explanations/aravis-detector
+              - file: developer/explanations/arvcli
+          - file: developer/reference/index
+            entries:
+              - file: developer/reference/aravis-detector
+              - file: developer/reference/arvcli
+
