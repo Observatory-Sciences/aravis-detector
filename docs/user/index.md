@@ -13,7 +13,7 @@
 
 +++
 
-Tutorials for installation and typical usage
+Tutorials for installation and use
 
 :::
 

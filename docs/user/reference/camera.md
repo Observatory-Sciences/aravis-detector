@@ -1,6 +1,6 @@
 # Technical Camera Documentation
 
-This page provides an over view of the standards and libraries used to communicate with the camera, as well as a collection of technical information and manuals.
+This page provides an overview of the standards and libraries used to communicate with the camera, as well as a collection of technical information and manuals.
 
 ## Aravis
 
@@ -8,7 +8,7 @@ The plugin uses the latest stable release of Aravis (0.8.30) to interface with g
 
 ## The Gen\<I>Cam Standard
 
-The genicam standard provides modern cameras with a standard programming interface. While this standard applies to a wide range of devices, AravisDetector Plugin is designed for GigE Vision cameras. More details are available at the [GenICam website](https://www.emva.org/standards-technology/genicam/).
+The Genicam standard provides modern cameras with a standard programming interface. While this standard applies to a wide range of devices, the AravisDetector Plugin is designed for GigE Vision cameras. More details are available at the [GenICam website](https://www.emva.org/standards-technology/genicam/).
 
 ## GigE Vision Camera installation
 

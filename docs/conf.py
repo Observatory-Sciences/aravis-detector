@@ -118,7 +118,8 @@ pygments_style = "sphinx"
 # This means you can link things like `str` and `asyncio` to the relevant
 # docs in the python documentation.
 intersphinx_mapping = dict(python=("https://docs.python.org/3/", None),
-                           odin=("https://github.com/odin-detector/odin-data", None),
+                           odin=("https://odin-detector.github.io/odin-data/master/index.html",
+                                 "odin-objects.inv"),
                            odin_control=('https://github.com/odin-detector/odin-control', None),
                            aravis=("https://github.com/AravisProject/aravis", None),
                            genicam=("https://www.genicam.org", None),

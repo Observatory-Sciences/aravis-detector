@@ -4,7 +4,7 @@ As of version 0.0.1 prerelease the only available python tool is the Client Line
 
 ## ArvCLI
 
-Aravis CLI allows the user to control the frame Processor through the use of the command line interface. It also provides the user with an example on how to send http requests to the odin server. It can be installed using ```pip install python/tools -e``` from the aravis detector directory.
+Aravis CLI allows the user to control the frame processor through the use of the command line interface. It also provides the user with an example of how to send http requests to the odin server. It can be installed using ```pip install python/tools -e``` from the aravis detector directory.
 
 The following options are available through the CLI:
 
@@ -137,11 +137,11 @@ $arvcli --get frames_captured
 frames_captured is:  441306
 ```
 
-The predefined keys correspond directly to a values returned by the status and config commands, but arvcli uses specific http requests for each key and parses the json file in order to return the most specific response possible.
+The predefined keys correspond directly to values returned by the status and config commands, but arvcli uses specific http requests for each key and parses the json file in order to return the most specific response possible.
 
 ### Frame acquisition
 
-By the frame acquisition we refer strictly to the capture of image buffers and their conversion to odin frame objects. This can be saved by activating the hdf plugin (as explained in the following section).
+By "frame acquisition" we refer strictly to the capture of image buffers and their conversion to odin frame objects. These frames can then be saved by activating the hdf plugin (as explained in the following section).
 
 The acquisition control is done through the ```stream``` command:
 
@@ -191,17 +191,19 @@ $ arvcli hdf --help
 │ --arm     -a                 start saving frames                             │
 │ --stop    -off               stop saving frames                              │
 │ --disarm  -da                stop saving frames                              │
-│ --file    -f        TEXT     saving file name [default: None]                │
-│ --path    -p        TEXT     path to the directory [default: None]           │
+│ --file    -f        TEXT     saving file name [default: run_]                │
+│ --path    -p        TEXT     path to the directory [default: config]         │
 │ --num     -n        INTEGER  number of files to save [default: None]         │
 │ --help                       Show this message and exit.                     │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
+The file name defaults to a string value of the form "run_<time stamp\>" and the path and file number default to the values specified in the config file.
+
 ### Settings and custom commands
 
-Arvcli uses a config.yml file to store the ip address and port of the odin server as well as default values. This file can be edited directly (and this is encouraged) but the user can also change the ip address and port using the ```--ip``` and ```-port``` commands.
+Arvcli uses a config.yml file to store the IP address and port of the odin-control server as well as default values. This file can be edited directly (and this is encouraged) but the user can also change the IP address and port using the ```--ip``` and ```-port``` commands.
 
 Additionally, the ```http``` command can be used to send direct put/get requests to the odin server:
 

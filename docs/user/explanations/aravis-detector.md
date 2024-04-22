@@ -1,4 +1,4 @@
-# Aravis-plugin
+# Aravis-detector
 
 This section only covers instructions specific to the Aravis-Detector plugin. For a general overview of Odin Data frameProcessor plugins please refer to the [user](https://odin-detector.github.io/odin-data/master/user/explanations/frame-processor.html) and [developer](https://odin-detector.github.io/odin-data/master/developer/how-to/frame-processor-plugin.html) guides from the odin documentation.
 
@@ -16,7 +16,7 @@ The Aravis-detector should be loaded first in the FrameProcessor plugin chain. I
 ```
 
 :::{Note}
-Here, index refers to the plugin alias for the frame processor and can be treated as a variable name. It will later be used to target the plugin when providing the fp with configuration values. The name field must be the same value as the main file name and library field should provide the FP with a complete path to the library file installed. Please consult the [build](../tutorials/build.md) documentation for installation information.
+Here, index refers to the plugin alias for the frame processor and can be treated as a variable name. It will later be used to target the plugin when providing the frame processor with configuration values. The name field must be the same value as the main file name and library field should provide the frame processor with a complete path to the file installed.If you followed the [build](../tutorials/build.md) instructions you should find this in ..../odin_camera_driver/prefix/libraries/.
 :::
 
 The rest of the plugins can then be connected to the aravis-detector. Odin allows plugins to be connected in a tree structure, where plugins can be chained one to another or multiple plugins can be connected into one. For the default aravis plugin config file the live view and hdf plugins are both directly connected to it, similar to plugins 1 and 3 in the following example:
@@ -78,15 +78,15 @@ The recommended way to change plugin configuration is through the use of the odi
 
 ## Supported genicam features
 
-As of version 0.0.1, pre-release, the following features are implemented int the Aravis Plugin:
+As of version 0.0.1, pre-release, the following features are implemented in the Aravis Plugin:
 
 | Feature | Plugin support | API implementation | Notes|
 |---------|----------------|--------------------|------|
 | connecting to cameras| Can detect connected cameras and connect using the ip address | Only displays the model name of the camera| |
-| Acquisition modes | Only Continuous mode is implemented at the moment | Uses continuous mode  only | The number of buffers acquired can be limited through the use of the variable frame_count (Number of frames on the web GUI). This value sounds similar to the frame_count function in Aravis which set the number of frames in MultiFrame mode. This is not implemented in the plugin and the number of frames is limited by stopping Continuous mode.|
-| Frame rate | Can be set and read | Can be controlled through both the web GUI and arvcli| The plugin will not allow the user to set the frame rate above the hardware limit. In case the frame rate doesn't change please confirm the value is not beyond those bounds.|
+| Acquisition modes | Only Continuous mode is implemented at the moment | Uses continuous mode  only | The number of buffers acquired can be limited through the use of the variable frame_count (Number of frames, on the web GUI). Note: this value sounds similar to the frame_count function in Aravis which sets the number of frames in MultiFrame mode. This is not implemented in the plugin.|
+| Frame rate | Can be set and read | Can be controlled through both the web GUI and arvcli| The plugin will not allow the user to set the frame rate above the hardware limit..|
 | Exposure time | Can be set and read | Can be controlled through both the web GUI and arvcli| Similar to frame rate, the plugin will keep the exposure time within hardware bounds specified in the genicam xml file|
-| Pixel format | Currently the software can read available formats and change them. | Not yet fully implemented |Some formats are not usable because they require further processing, like Mono12 |
+| Pixel format | Currently the software can read available formats and change them. | Not yet fully implemented |Some formats are not supported because they require further processing (Mono12) |
 | Resolution | Can be read | Is not displayed in the gui but it can be requested through the cli | Resolution can only be changed through AOI/ROI or Binning which are not yet implemented |
 | XML readout | Automatically saves the XML file when connecting to camera | n/a |This feature is mostly useful for trouble shooting. Saves the xml file in the specified temporary folder  |
 
