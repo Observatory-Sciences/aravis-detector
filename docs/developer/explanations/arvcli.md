@@ -48,7 +48,7 @@ The stream command is written within a function and has three possible subcomman
 
 The hdf command has several subcommands that allow the user to:
 
-- set a file name. IF not used it defaults to run_seconds_minutes_hours_day_month_year.
+- set a file name, defaults to run_seconds_minutes_hours_day_month_year.
 - set a file path, defaults to the value given in config.yml
 - number of frames to save.
 

@@ -45,5 +45,4 @@ __pycache__
 
 
 # Ignore for now
-.github/workflows/doc_build.yml
 config

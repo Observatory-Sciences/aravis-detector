@@ -81,7 +81,6 @@ Similar to "cwd" short cut, the commands written here use a prefix and it's shor
 ```shell
  mkdir prefix
  PREFIX=$cwd/prefix
- mkdir -p $PREFIX
 ```
 
 ### Build Odin-data
@@ -91,7 +90,7 @@ PREFIX=$cwd/prefix
 cd $cwd/odin-data
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=$PREFIX ../cpp
-make -j8 VERBOSE=1 && make install VERBOSE=1
+make -j4 && make install
 ls -la $PREFIX
 ```
 
@@ -112,9 +111,6 @@ odin_control
 Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
 
 ```shell
-cd your/workdir
-git clone https://github.com/AravisProject/aravis
-sudo apt install meson ninja-build
 cd aravis
 git checkout 96cea98
 ```
@@ -136,7 +132,7 @@ cd src
 arv-fake-gv-camera-0.8 -s GV02 -d all
 ```
 
-This should run 7 tests with no errors and then you will activate the simulated camera provided by Aravis. To connect to the camera you can use the aravis app. If connected to a genicam you should be able to see it listed as well.
+This should run 7 tests with no errors and then you will activate the simulated camera provided by Aravis. To connect to the camera you can use the aravis app. If connected to a genicam you shou1ld be able to see it listed as well.
 
 ### Build aravis-detector
 
