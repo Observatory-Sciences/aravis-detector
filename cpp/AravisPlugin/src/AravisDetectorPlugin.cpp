@@ -44,11 +44,19 @@ namespace FrameProcessor
 {
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
-  const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 0;
-  const bool        AravisDetectorPlugin::DEFAULT_CALLBACK      = true;
+  const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
+  const std::string AravisDetectorPlugin::DEFAULT_AQUISIT_MODE  = "Continuous";
+  const size_t      AravisDetectorPlugin::DEFAULT_STATUS_FREQ   = 1000;
+  const int         AravisDetectorPlugin::DEFAULT_EMPTY_BUFF    = 50;
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "";
+  const std::string AravisDetectorPlugin::DEFAULT_FILE_PATH     = "/";
+  const std::string AravisDetectorPlugin::DEFAULT_DATASET       = "data";
+  const std::string AravisDetectorPlugin::DEFAULT_FILE_NAME     = "test";
   
   /** Flags*/
   const std::string AravisDetectorPlugin::START_STREAM        = "start";
@@ -57,21 +65,24 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::ACQUIRE_BUFFER      = "frames";
 
   /** Config names*/
-  const std::string AravisDetectorPlugin::READ_CONFIG         = "read_config";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
   const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure_time";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
   const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
   const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "acquisition_mode";
-  const std::string AravisDetectorPlugin::CONFIG_CALLBACK     = "aravis_callback";
   const std::string AravisDetectorPlugin::CONFIG_STATUS_FREQ  = "status_frequency_ms";
+  const std::string AravisDetectorPlugin::CONFIG_EMPTY_BUFF   = "empty_buffers";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_ID    = "camera_id";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_SERIAL= "camera_serial_number";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_MODEL = "camera_model";
+  
 
   /** Names and settings */
+  const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
   const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
   const std::string AravisDetectorPlugin::FILE_NAME           = "file_name"; 
   const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "compression";
-  const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
 
 /** @brief Constructor for the plugin
  * 
@@ -120,7 +131,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     /** List all devices*/
     if (config.has_param(START_STREAM)) start_stream();
     if (config.has_param(STOP_STREAM)) stop_stream();
-    if (config.has_param(LIST_DEVICES)) display_aravis_cameras();
+    if (config.has_param(LIST_DEVICES)) find_aravis_cameras();
     if (config.has_param(ACQUIRE_BUFFER))acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER));
     if (config.has_param(CONFIG_CAMERA_IP)) connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     if (config.has_param(TEMP_FILES_PATH)) temp_file_path_ = config.get_param<std::string>(TEMP_FILES_PATH);
@@ -181,6 +192,15 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   /** Camera parameters */
 
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
+  status.set_param(get_name() + "/" + "camera_ip", camera_address_);
+  status.set_param(get_name() + "/" + "camera_model", camera_model_);
+
+  status.set_param(get_name()+ "/" + "connected_devices",connected_devices_);
+  for (auto& [key, val]: available_cameras_){
+    status.set_param(get_name() + "/" + "camera_" + key + "_id", val.first);
+    status.set_param(get_name() + "/" + "camera_" + key + "_address", val.second);
+  }
+
   status.set_param(get_name() + "/" + "camera_connected", camera_connected_);
 
   /** Stream parameters*/
@@ -459,7 +479,7 @@ void AravisDetectorPlugin::check_connection(){
  * [unsigned int] cameras were detected:
  * Device index [int] has the id [str] and address [str]
  */
-void AravisDetectorPlugin::display_aravis_cameras(){
+void AravisDetectorPlugin::find_aravis_cameras(){
   // Updating the device list is required before using get device id
   arv_update_device_list();
   unsigned int number_of_cameras = arv_get_n_devices();
@@ -467,9 +487,9 @@ void AravisDetectorPlugin::display_aravis_cameras(){
   if(number_of_cameras==0){ LOG4CXX_WARN(logger_, "No cameras were detected. Please confirm camera is connected");
     return;}
 
-  LOG4CXX_INFO(logger_, number_of_cameras << " cameras were detected: \n ");
+  connected_devices_ = number_of_cameras;
   for(int i=0; i<number_of_cameras; i++){
-    LOG4CXX_INFO(logger_,"Device index "<< i <<" has the id "<<arv_get_device_id(i)<<" and address "<< arv_get_device_address(i)<<" \n");
+    available_cameras_[std::to_string(i)] = std::make_pair(arv_get_device_id(i),arv_get_device_address(i));
   }
 }
 

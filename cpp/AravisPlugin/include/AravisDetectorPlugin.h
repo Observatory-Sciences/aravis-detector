@@ -16,6 +16,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include <map>
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/propertyconfigurator.h>
@@ -59,10 +60,18 @@ public:
     /** Default Config Values*/
     static const std::string DEFAULT_CAMERA_IP;     ///< Ip address of the current camera
     static const std::string DEFAULT_PIXEL_FORMAT;  ///< Default pixel encoding
+    static const std::string DEFAULT_CAMERA_ID;     ///< Default camera ID
+    static const std::string DEFAULT_CAMERA_SERIAL; ///< Default serial number of camera 
+    static const std::string DEFAULT_CAMERA_MODEL;  ///< Default camera model
+    static const std::string DEFAULT_FILE_PATH;     ///< Default temporary file path
+    static const std::string DEFAULT_DATASET;       ///< Default data set name
+    static const std::string DEFAULT_FILE_NAME;     ///< Default data file name 
+    static const std::string DEFAULT_AQUISIT_MODE;  ///< Default acquisition mode 
     static const double      DEFAULT_EXPOSURE_TIME; ///< Exposure time in microseconds
+    static const size_t      DEFAULT_STATUS_FREQ;   ///< Time between status checks in miliseconds
     static const double      DEFAULT_FRAME_RATE;    ///< Frame rate in hertz
     static const double      DEFAULT_FRAME_COUNT;   ///< Frame count
-    static const bool        DEFAULT_CALLBACK;      ///< default callback value
+    static const int         DEFAULT_EMPTY_BUFF;    ///< Number of empty buffers used to initialize the stream 
 
     /** Flags*/
     static const std::string START_STREAM;          ///< starts continuos mode acquisition   
@@ -81,11 +90,15 @@ public:
     static const std::string CONFIG_CALLBACK;       ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
     static const std::string CONFIG_QUERY_FREQ;     ///< miliseconds between querying the camera for config
     static const std::string CONFIG_STATUS_FREQ;    ///< set the status polling frequency in miliseconds
+    static const std::string CONFIG_EMPTY_BUFF;     ///< number of empty buffers in a stream object 
+    static const std::string CONFIG_CAMERA_ID;      ///< camera's manufacturer id
+    static const std::string CONFIG_CAMERA_SERIAL;  ///< camera's serial number
+    static const std::string CONFIG_CAMERA_MODEL;   ///< camera's model
 
     /** Names and settings */
-    static const std::string DATA_SET_NAME;
-    static const std::string FILE_NAME;
-    static const std::string COMPRESSION_TYPE;
+    static const std::string DATA_SET_NAME;         ///< name of data set used in frame creation
+    static const std::string FILE_NAME;             ///< file name used in frame creation
+    static const std::string COMPRESSION_TYPE;      ///< compression type used
     static const std::string TEMP_FILES_PATH;       ///< a location to store temporary files like camera xml
 
 
@@ -103,7 +116,7 @@ private:
 
     void connect_aravis_camera(std::string ip); 
     void check_connection();
-    void display_aravis_cameras();
+    void find_aravis_cameras();
     void get_camera_serial();
     void get_camera_id();
 
@@ -152,73 +165,74 @@ private:
     **        Plugin states         **
     **********************************/
 
-    LoggerPtr logger_;                      ///< Pointer to logger object for displaying info in terminal
-    boost::thread *thread_;                 ///< Pointer to status thread
-    bool working_;                          ///< Is the status thread working?
-    bool streaming_;                        ///< Is the camera streaming data?
-    bool camera_connected_;                 ///< is the camera connected?
+    LoggerPtr logger_;                                  ///< Pointer to logger object for displaying info in terminal
+    boost::thread *thread_;                             ///< Pointer to status thread
+    bool working_;                                      ///< Is the status thread working?
+    bool streaming_;                                    ///< Is the camera streaming data?
+    bool camera_connected_;                             ///< is the camera connected?
     
-    size_t delay_ms_ {1000};                ///< delay between config queries in milliseconds  
-    std::string temp_file_path_{};          ///< temporary file path for  
+    size_t delay_ms_ {DEFAULT_STATUS_FREQ};             ///< delay between config queries in milliseconds  
+    std::string temp_file_path_{DEFAULT_FILE_PATH};     ///< temporary file path for  
 
 
     /*********************************
     **       Camera parameters      **
     **********************************/
 
-    ArvCamera *camera_;                     ///< Pointer to ArvCamera object
-    std::string camera_id_ {"None"};        ///< camera device id
-    std::string camera_serial_ {"None"};    ///< camera serial number
-    std::string camera_address_ {"None"};   ///< camera address
-    std::string camera_model_{"None"};      ///< camera model
+    ArvCamera *camera_;                                 ///< Pointer to ArvCamera object
+    int connected_devices_ {0};
+    std::map<std::string, std::pair<std::string, std::string>> available_cameras_;  ///< camera index (camera id, ip address)
+    std::string camera_id_ {DEFAULT_CAMERA_ID};         ///< camera device id
+    std::string camera_serial_ {DEFAULT_CAMERA_SERIAL}; ///< camera serial number
+    std::string camera_address_ {DEFAULT_CAMERA_IP};    ///< camera address
+    std::string camera_model_{DEFAULT_CAMERA_MODEL};    ///< camera model
 
-    double exposure_time_us_;               ///< current exposure time in microseconds
-    double min_exposure_time_;              ///< minimum exposure time in microseconds
-    double max_exposure_time_;              ///< maximum exposure time in microseconds
+    double exposure_time_us_ {DEFAULT_EXPOSURE_TIME};   ///< current exposure time in microseconds
+    double min_exposure_time_ {};                       ///< minimum exposure time in microseconds
+    double max_exposure_time_ {};                       ///< maximum exposure time in microseconds
 
-    double frame_rate_hz_ {5};              ///< current frame rate in hertz, default to 5
-    double min_frame_rate_;                 ///< minimum frame rate in hertz
-    double max_frame_rate_;                 ///< maximum frame rate in hertz
+    double frame_rate_hz_ {DEFAULT_FRAME_RATE};         ///< current frame rate in hertz, default to 5
+    double min_frame_rate_ {};                          ///< minimum frame rate in hertz
+    double max_frame_rate_ {};                          ///< maximum frame rate in hertz
 
-    unsigned int n_pixel_formats_;          ///< total number of pixel formats
-    std::string available_pixel_formats_;   ///< a set of available pixel formats in string form
-    std::string pixel_format_;              ///< current pixel format
+    unsigned int n_pixel_formats_ {};                   ///< total number of pixel formats
+    std::string available_pixel_formats_ {};            ///< a set of available pixel formats in string form
+    std::string pixel_format_ {DEFAULT_PIXEL_FORMAT};   ///< current pixel format
 
-    std::string acquisition_mode_;          ///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
+    std::string acquisition_mode_ {DEFAULT_AQUISIT_MODE};///< string describing current camera mode: "Continuous", "SingleFrame","MultiFrame"
 
-    size_t payload_;                        ///< frame size in bytes
+    size_t payload_ {};                                 ///< frame size in bytes
 
-    unsigned int frame_count_;              ///< current frame count in MultiFrame mode
-    unsigned int min_frame_count_;          ///< current frame count in MultiFrame mode
-    unsigned int max_frame_count_;          ///< current frame count in MultiFrame mode
+    unsigned int frame_count_ {DEFAULT_FRAME_COUNT};    ///< current frame count in MultiFrame mode
+    unsigned int min_frame_count_;                      ///< current frame count in MultiFrame mode
+    unsigned int max_frame_count_;                      ///< current frame count in MultiFrame mode
 
 
     /**********************************
     **   Stream/buffer parameters    **
     ***********************************/
 
-    ArvStream *stream_;                     ///< Pointer to ArvStream object. For continuos frame acquisition
+    ArvStream *stream_;                                 ///< Pointer to ArvStream object. For continuos frame acquisition
 
-    DataType data_type_;                    ///< currently used data_type
-    CompressionType compression_type_;      ///< currently used compression type
+    DataType data_type_;                                ///< currently used data_type
+    CompressionType compression_type_;                  ///< currently used compression type
 
-    std::string data_set_name_;             ///< name of the data set the plugin is writing to
-    std::string file_id_;                   ///< name of the file the plugin is writing to 
-    int image_data_offset_{0};              ///< size of buffer metadata (usually none)
+    std::string data_set_name_ {DEFAULT_DATASET};       ///< name of the data set the plugin is writing to
+    std::string file_id_  {DEFAULT_FILE_NAME};          ///< name of the file the plugin is writing to 
+    int image_data_offset_{0};                          ///< size of buffer metadata (usually none)
 
-    long long n_frames_made_ {0};           ///< Number of frames created from buffers
+    long long n_frames_made_ {0};                       ///< Number of frames created from buffers
 
-    int n_empty_buffers_{500};              ///< number of empty buffers to initialise the current stream with. Defaults to 50
-    int n_input_buff_;                      ///< n of input buffers in the current stream
-    int n_output_buff_;                     ///< n of output buffers in the current stream
-    long unsigned int n_completed_buff_ {0};///< n of successful buffers
-    long unsigned int n_failed_buff_ {0};   ///< n of failed buffers
-    long unsigned int n_underrun_buff_ {0}; ///< n of buffers overwritten (stream ran out of empty buffers)
+    int n_empty_buffers_{DEFAULT_EMPTY_BUFF};           ///< number of empty buffers to initialise the current stream with. Defaults to 50
+    int n_input_buff_ {0};                              ///< n of input buffers in the current stream
+    int n_output_buff_ {0};                             ///< n of output buffers in the current stream
+    long unsigned int n_completed_buff_ {0};            ///< n of successful buffers
+    long unsigned int n_failed_buff_ {0};               ///< n of failed buffers
+    long unsigned int n_underrun_buff_ {0};             ///< n of buffers overwritten (stream ran out of empty buffers)
 
-    unsigned long long image_height_px_{0}; ///< image height in pixels
-    unsigned long long image_width_px_{0};  ///< image width in pixels
-    
-    std::vector<unsigned long long> frame_dimensions_;
+    unsigned long long image_height_px_{0};             ///< image height in pixels
+    unsigned long long image_width_px_{0};              ///< image width in pixels
+    std::vector<unsigned long long> frame_dimensions_;  ///< image dimensions for frame creation
 
 };
 
