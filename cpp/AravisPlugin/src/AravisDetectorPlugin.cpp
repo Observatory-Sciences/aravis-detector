@@ -72,7 +72,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::COMPRESSION_TYPE    = "compression";
   const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
 
-/** @brief Construct for the plugin
+/** @brief Constructor for the plugin
  * 
  * Sets default values, starts the status monitoring thread and logger object
  * Then it logs "AravisDetectorPlugin loaded"
@@ -80,7 +80,6 @@ namespace FrameProcessor
 AravisDetectorPlugin::AravisDetectorPlugin() :
   working_(true),
   streaming_(false),
-  aravis_callback_(true),
   camera_connected_(false),
   frame_count_(0)
 {
@@ -172,7 +171,6 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_COUNT, frame_count_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_PIXEL_FORMAT, pixel_format_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_ACQUISITION_MODE, acquisition_mode_);
-    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CALLBACK, aravis_callback_);
 
 }
 
@@ -604,17 +602,6 @@ void AravisDetectorPlugin::get_acquisition_mode(){
   acquisition_mode_ = arv_acquisition_mode_to_string(temp);
 }
 
-void AravisDetectorPlugin::set_aravis_callback(bool arv_callback){
-  aravis_callback_=arv_callback;
-
-  // if there is no active stream, just exit
-  if(stream_ == NULL) return;
-
-
-  // some code to handle changing this mode during runs. 
-}
-
-
 /** @brief Set exposure time in microseconds
  * 
  * On success prints:
@@ -955,10 +942,8 @@ void AravisDetectorPlugin::start_stream(){
   }
 
   // stream callback mechanism
-  if(aravis_callback_){
-    arv_stream_set_emit_signals (stream_, TRUE);
-    g_signal_connect (stream_, "new-buffer", G_CALLBACK (buffer_callback), this);
-  }
+  arv_stream_set_emit_signals (stream_, TRUE);
+  g_signal_connect (stream_, "new-buffer", G_CALLBACK (buffer_callback), this);
 
   // Start the stream
   streaming_= true;
@@ -978,9 +963,8 @@ void AravisDetectorPlugin::stop_stream(){
     return;
   }
 
-  if(aravis_callback_){
-    arv_stream_set_emit_signals (stream_, FALSE);
-  }
+  arv_stream_set_emit_signals (stream_, FALSE);
+
 
   arv_camera_stop_acquisition (camera_, error.get());
   streaming_ = false;

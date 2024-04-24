@@ -153,7 +153,6 @@ private:
     boost::thread *thread_;                 ///< Pointer to status thread
     bool working_;                          ///< Is the status thread working?
     bool streaming_;                        ///< Is the camera streaming data?
-    bool aravis_callback_;                  ///< Is the camera emitting signals when a buffer is finished?
     bool camera_connected_;                 ///< is the camera connected?
     
     size_t delay_ms_ {1000};                ///< delay between config queries in milliseconds  
