@@ -108,6 +108,7 @@ private:
     **       Plugin Functions       **
     **********************************/
 
+    void log_error(std::string msg);
     void get_config(int32_t get_option);
 
     /*********************************

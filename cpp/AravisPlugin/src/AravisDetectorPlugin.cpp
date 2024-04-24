@@ -255,6 +255,11 @@ void AravisDetectorPlugin::status_task()
   }
 }
 
+/** @brief log error message and pass it to the FP*/
+void AravisDetectorPlugin::log_error(std::string msg){
+  this->set_error(msg);
+  LOG4CXX_ERROR(logger_, msg);
+}
 
 /** @brief Populates config variables
  * 
@@ -325,7 +330,7 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
       break;
       
   default:
-    LOG4CXX_ERROR(logger_, "Invalid get_config option");      
+    log_error("Invalid get_config option");      
 }
 }
 
@@ -379,7 +384,8 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   unsigned int number_of_cameras = arv_get_n_devices();
 
   if(number_of_cameras == 0){
-    LOG4CXX_ERROR(logger_, "No compatible cameras found, recheck connection");
+    this->set_error("No compatible cameras found, recheck connection");
+    log_error("No compatible cameras found, recheck connection");
     return;
   }
 
@@ -388,10 +394,10 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   // camera_ = arv_camera_new_with_device(ip_string.c_str(), error.get());
 
 
-  if(error){ LOG4CXX_ERROR(logger_, "Error when connecting to camera: "<< error.message());
+  if(error){ log_error("Error when connecting to camera: "+ error.message());
     return;}
 
-  if (!ARV_IS_CAMERA (camera_)){ LOG4CXX_ERROR(logger_, "Failed to create camera object. Please check ip address");
+  if (!ARV_IS_CAMERA (camera_)){ log_error("Failed to create camera object. Please check ip address");
     return;}
 
 
@@ -430,7 +436,7 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
 void AravisDetectorPlugin::check_connection(){
 
   if(camera_ == NULL){
-    LOG4CXX_ERROR(logger_, "No connection, camera object removed unexpectedly during run");
+    log_error("No connection, camera object removed unexpectedly during run");
     camera_connected_ = false;
     return;
   }
@@ -501,14 +507,14 @@ void AravisDetectorPlugin::get_camera_serial(){
   GErrorWrapper error;
 
   if(camera_ == NULL){
-    LOG4CXX_ERROR(logger_, "Cannot get camera serial number without connecting to camera");
+    log_error("Cannot get camera serial number without connecting to camera");
     return;
   }
 
   std::string serial_temp = arv_camera_get_device_serial_number(camera_, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading camera serial number the following error occurred: \n" << error.message());
+    log_error("When reading camera serial number the following error occurred: \n" + error.message());
       return;
     }
 
@@ -523,14 +529,14 @@ void AravisDetectorPlugin::get_camera_id(){
   GErrorWrapper error;
 
   if(camera_ == NULL){
-    LOG4CXX_ERROR(logger_, "Cannot get camera id without connecting to camera");
+    log_error("Cannot get camera id without connecting to camera");
     return;
   }
 
   std::string id_temp = arv_camera_get_device_id(camera_, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading camera id the following error occurred: \n" << error.message());
+    log_error("When reading camera id the following error occurred: \n" + error.message());
       return;
     }
 
@@ -545,7 +551,7 @@ void AravisDetectorPlugin::get_camera_id(){
 void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
   
   if(!(acq_mode == "Continuous" || acq_mode == "SingleFrame" ||acq_mode == "MultiFrame")){
-    LOG4CXX_ERROR(logger_, "the acquisition mode supplied: " << acq_mode <<" is invalid and must be of the following: Continuous, SingleFrame, MultiFrame");
+    log_error("the acquisition mode supplied: " + acq_mode +" is invalid and must be of the following: Continuous, SingleFrame, MultiFrame");
     return;
   }
   
@@ -553,7 +559,7 @@ void AravisDetectorPlugin::set_acquisition_mode(std::string acq_mode){
   ArvAcquisitionMode temp= arv_acquisition_mode_from_string(acq_mode.c_str());
   arv_camera_set_acquisition_mode(camera_, temp, error.get());
   if(error){
-    LOG4CXX_ERROR(logger_, "When setting acquisition mode the following error ocurred: \n" << error.message());
+    log_error("When setting acquisition mode the following error ocurred: \n" + error.message());
     return;
   }
   LOG4CXX_INFO(logger_, "Acquisition mode set to " << acq_mode);
@@ -569,7 +575,7 @@ void AravisDetectorPlugin::get_acquisition_mode(){
   GErrorWrapper error;
   ArvAcquisitionMode temp = arv_camera_get_acquisition_mode(camera_, error.get());
   if(error){
-    LOG4CXX_ERROR(logger_, "When getting acquisition mode the following error ocurred: \n" << error.message());
+    log_error("When getting acquisition mode the following error ocurred: \n" + error.message());
     return;
   }
   acquisition_mode_ = arv_acquisition_mode_to_string(temp);
@@ -589,15 +595,15 @@ void AravisDetectorPlugin::set_exposure(double exposure_time_us){
 
   // aravis already checks this but we warn the user
   if(exposure_time_us < min_exposure_time_){
-    LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: min="<< min_exposure_time_<<" and is set to minimum");
+    log_error("The exposure time: "+ std::to_string(exposure_time_us) + " is out of bounds: min="+std::to_string(min_exposure_time_)+" and is set to minimum");
   } else if(exposure_time_us > max_exposure_time_){
-    LOG4CXX_ERROR(logger_, "The exposure time: "<< exposure_time_us << " is out of bounds: max="<< max_exposure_time_ << " and is set to maximum");
+    log_error("The exposure time: "+ std::to_string(exposure_time_us) + " is out of bounds: max="+std::to_string(max_exposure_time_) +" and is set to maximum");
   }
   
   arv_camera_set_exposure_time(camera_, exposure_time_us, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When setting exposure time the following error ocurred: \n" << error.message());
+    log_error("When setting exposure time the following error ocurred: \n" + error.message());
     return;
   }   
   LOG4CXX_INFO(logger_, "Setting exposure time to " << exposure_time_us);
@@ -612,7 +618,7 @@ void AravisDetectorPlugin::get_exposure_bounds(){
   arv_camera_get_exposure_time_bounds(camera_, &min_expo, &max_expo, error.get());
 
   if(error){
-    LOG4CXX_ERROR(logger_, "When reading exposure time the following error ocurred: \n" << error.message());
+    log_error("When reading exposure time the following error ocurred: \n" + error.message());
     return;
   } 
 
@@ -632,7 +638,7 @@ void AravisDetectorPlugin::get_exposure(){
   double temp = arv_camera_get_exposure_time(camera_, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading exposure time the following error ocurred: \n" << error.message());
+    log_error("When reading exposure time the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -656,15 +662,15 @@ void AravisDetectorPlugin::set_frame_rate(double frame_rate_hz){
 
   // aravis already checks this but we warn the user
   if(frame_rate_hz < min_frame_rate_){
-    LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: min="<< min_frame_rate_<<" and is set to minimum");
+    log_error("The frame rate: "+ std::to_string(frame_rate_hz) + " is out of bounds: min="+ std::to_string( min_frame_rate_)+" and is set to minimum");
   } else if(frame_rate_hz > max_frame_rate_){
-    LOG4CXX_ERROR(logger_, "The frame rate: "<< frame_rate_hz << " is out of bounds: max="<< max_frame_rate_ << " and is set to maximum");
+    log_error("The frame rate: "+ std::to_string( frame_rate_hz) + " is out of bounds: max="+ std::to_string(max_frame_rate_) + " and is set to maximum");
   }
 
   arv_camera_set_frame_rate(camera_, frame_rate_hz, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When setting frame rate the following error ocurred: \n" << error.message());
+    log_error("When setting frame rate the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -681,7 +687,7 @@ void AravisDetectorPlugin::get_frame_rate_bounds(){
   arv_camera_get_frame_rate_bounds(camera_, &min_temp , &max_temp, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading frame rate bounds the following error ocurred: \n" << error.message());
+    log_error("When reading frame rate bounds the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -700,7 +706,7 @@ void AravisDetectorPlugin::get_frame_rate(){
   GErrorWrapper error;
   double temp = arv_camera_get_frame_rate(camera_, error.get());
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading frame rate the following error ocurred: \n" << error.message());
+    log_error("When reading frame rate the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -723,9 +729,9 @@ void AravisDetectorPlugin::set_frame_count(double frame_count){
 
   // aravis already checks this but we warn the user
   //if(frame_count_ < min_frame_count_){
-  //  LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<" and is set to minimum");
+  //  log_error("The frame count: "<< frame_count_ << " is out of bounds: min="<< min_frame_count_<<" and is set to minimum");
   //} else if(frame_count_ > max_frame_count_){
-  //  LOG4CXX_ERROR(logger_, "The frame count: "<< frame_count_ << " is out of bounds: max="<< max_frame_count_ << " and is set to maximum");
+  //  log_error("The frame count: "<< frame_count_ << " is out of bounds: max="<< max_frame_count_ << " and is set to maximum");
   //}
 
   // TODO: Revisit this once we understand my multi frame mode does not work
@@ -736,7 +742,7 @@ void AravisDetectorPlugin::set_frame_count(double frame_count){
   //arv_camera_set_frame_count(camera_, frame_count, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When setting frame count the following error ocurred: \n" << error.message());
+    log_error("When setting frame count the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -755,7 +761,7 @@ void AravisDetectorPlugin::get_frame_count_bounds(){
   arv_camera_get_frame_count_bounds(camera_, &min_temp, &max_temp, error.get());
   
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error.message());
+    log_error("When reading frame count the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -777,7 +783,7 @@ void AravisDetectorPlugin::get_frame_count(){
   int32_t temp = arv_camera_get_frame_count(camera_, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading frame count the following error ocurred: \n" << error.message());
+    log_error("When reading frame count the following error ocurred: \n" + error.message());
     return;
   }
 
@@ -797,7 +803,7 @@ void AravisDetectorPlugin::set_pixel_format(std::string pixel_format){
   arv_camera_set_pixel_format_from_string(camera_, pixel_format.c_str(), error.get());
 
   if(error){
-    LOG4CXX_ERROR(logger_, "When setting pixel format the following error ocurred: \n" << error.message());
+    log_error("When setting pixel format the following error ocurred: \n" + error.message());
     return;
   }
   
@@ -819,7 +825,7 @@ void AravisDetectorPlugin::get_available_pixel_formats(){
   const char** formats_temp = arv_camera_dup_available_pixel_formats_as_strings(camera_,&temp, error.get());
 
   if(error){
-    LOG4CXX_ERROR(logger_, "When reading pixel formats the following error occurred: \n" << error.message());
+    log_error("When reading pixel formats the following error occurred: \n" + error.message());
     return;
   }
 
@@ -845,7 +851,7 @@ void AravisDetectorPlugin::get_pixel_format(){
   std::string temp = arv_camera_get_pixel_format_as_string(camera_, error.get());
 
   if(error){ 
-    LOG4CXX_ERROR(logger_, "When reading current the pixel format the following error occurred: \n" << error.message());
+    log_error("When reading current the pixel format the following error occurred: \n" + error.message());
       return;
     }
 
@@ -858,7 +864,7 @@ void AravisDetectorPlugin::get_frame_size(){
   int temp = arv_camera_get_payload(camera_, error.get());
 
   if(error){    
-    LOG4CXX_ERROR(logger_, "When getting frame size the following error occurred: \n" << error.message());
+    log_error("When getting frame size the following error occurred: \n" + error.message());
     return;
   }
 
@@ -885,7 +891,7 @@ void AravisDetectorPlugin::start_stream(){
   
   // check you are connected to a camera
   if (!ARV_IS_CAMERA(camera_)){
-    LOG4CXX_ERROR(logger_, "Cannot start stream without connecting >to a camera first.");
+    log_error("Cannot start stream without connecting >to a camera first.");
     return;}
 
   // delete old stream
@@ -903,10 +909,10 @@ void AravisDetectorPlugin::start_stream(){
   stream_ = arv_camera_create_stream (camera_, NULL, NULL, error.get());
   
   if(error){
-    LOG4CXX_ERROR(logger_, "When creating camera stream the following error ocurred: \n" << error.message());
+    log_error("When creating camera stream the following error ocurred: \n" + error.message());
     return;}
   if(stream_== NULL){
-    LOG4CXX_ERROR(logger_, "Stream was not initialized, error undetected");
+    log_error("Stream was not initialized, error undetected");
     return;}
 
   // and populate it with a few empty buffers (frames)
@@ -924,7 +930,7 @@ void AravisDetectorPlugin::start_stream(){
   arv_camera_start_acquisition (camera_, error.get());
 
   if(error)
-    LOG4CXX_ERROR(logger_, "When starting video stream the following error occurred: \n" << error.message());
+    log_error("When starting video stream the following error occurred: \n" + error.message());
 
 }
 
@@ -932,7 +938,7 @@ void AravisDetectorPlugin::stop_stream(){
   GErrorWrapper error;
 
   if(camera_ == NULL || stream_ == NULL){
-    LOG4CXX_ERROR(logger_, "There is no stream to stop. Exiting process");
+    log_error("There is no stream to stop. Exiting process");
     return;
   }
 
@@ -944,7 +950,7 @@ void AravisDetectorPlugin::stop_stream(){
   g_object_unref(stream_);
   stream_ = NULL;
   if(error)
-    LOG4CXX_ERROR(logger_, "Stream acquisition failed to stop, error : \n" << error.message());
+    log_error("Stream acquisition failed to stop, error : \n" + error.message());
   LOG4CXX_INFO(logger_,"Stopping continuos camera acquisition");
 }
 
@@ -961,7 +967,7 @@ void AravisDetectorPlugin::acquire_n_buffer(unsigned int n_buffers){
 
   // check you are connected to a camera
   if (!ARV_IS_CAMERA(camera_)){
-    LOG4CXX_ERROR(logger_, "Cannot start stream without connecting >to a camera first.");
+    log_error("Cannot start stream without connecting >to a camera first.");
     return;}
 
   // set camera on stream mode
@@ -983,11 +989,11 @@ void AravisDetectorPlugin::acquire_buffer(){
   ArvBuffer *buffer;
 
   if (!ARV_IS_CAMERA (camera_)){
-    LOG4CXX_ERROR(logger_, "Cannot acquire buffer without connecting to a camera first.");
+    log_error("Cannot acquire buffer without connecting to a camera first.");
     return;}
 
   if (!ARV_IS_STREAM (stream_)){
-    LOG4CXX_ERROR(logger_, "Cannot acquire buffer without initialising a stream first");
+    log_error("Cannot acquire buffer without initialising a stream first");
     return;}
 
   buffer = arv_stream_pop_buffer(stream_);
@@ -1010,38 +1016,38 @@ bool AravisDetectorPlugin::buffer_is_valid(ArvBuffer *buffer){
   bool buffer_state = false;
   // if buffer is empty then it isn't finished.
   if (!ARV_IS_BUFFER (buffer))
-    LOG4CXX_ERROR(logger_, "Buffer is empty");
+    log_error("Buffer is empty");
 
   switch(arv_buffer_get_status(buffer)){
     case ARV_BUFFER_STATUS_SUCCESS:
       buffer_state = true;
       break;
     case ARV_BUFFER_STATUS_UNKNOWN:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: status unknown");
+      log_error("Error when getting the buffer: status unknown");
       break;
     case ARV_BUFFER_STATUS_TIMEOUT:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: timeout");
+      log_error("Error when getting the buffer: timeout");
       break;
     case ARV_BUFFER_STATUS_MISSING_PACKETS:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: missing packets.");
+      log_error("Error when getting the buffer: missing packets.");
       break;
     case ARV_BUFFER_STATUS_WRONG_PACKET_ID:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: wrong packet id");
+      log_error("Error when getting the buffer: wrong packet id");
       break;
     case ARV_BUFFER_STATUS_SIZE_MISMATCH:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: size mismatch");
+      log_error("Error when getting the buffer: size mismatch");
       break;
     case ARV_BUFFER_STATUS_FILLING:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: status still filling");
+      log_error("Error when getting the buffer: status still filling");
       break;
     case ARV_BUFFER_STATUS_ABORTED:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: aborted");
+      log_error("Error when getting the buffer: aborted");
       break;
     case ARV_BUFFER_STATUS_PAYLOAD_NOT_SUPPORTED:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: payload not supported");
+      log_error("Error when getting the buffer: payload not supported");
       break;
     default:
-      LOG4CXX_ERROR(logger_, "Error when getting the buffer: unexpected buffer status");
+      log_error("Error when getting the buffer: unexpected buffer status");
   }
   return buffer_state;
  }
@@ -1091,7 +1097,7 @@ void AravisDetectorPlugin::process_buffer(ArvBuffer *buffer){
 void AravisDetectorPlugin::get_stream_state(){
 
   if(stream_==NULL){
-    LOG4CXX_ERROR(logger_, "Stream not initialized, cannot get stream state");
+    log_error("Stream not initialized, cannot get stream state");
     return;
   }
 
