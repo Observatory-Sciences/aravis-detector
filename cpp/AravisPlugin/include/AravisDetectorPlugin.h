@@ -142,7 +142,6 @@ private:
     
     void get_stream_state();
     
-    void save_frame_pgm(ArvBuffer *buffer);
     void save_genicam_xml(std::string filepath);
 
 

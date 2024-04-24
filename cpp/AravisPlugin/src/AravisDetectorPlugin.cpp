@@ -966,49 +966,18 @@ void AravisDetectorPlugin::acquire_buffer(){
     LOG4CXX_ERROR(logger_, "Cannot acquire buffer without connecting to a camera first.");
     return;}
 
-  // Use different buffer acquisition logic for different methods
-  if(acquisition_mode_ == "Continuous"){
-    if (!ARV_IS_STREAM (stream_)){
-      LOG4CXX_ERROR(logger_, "Cannot acquire buffer without initialising a stream first");
-      return;}
+  if (!ARV_IS_STREAM (stream_)){
+    LOG4CXX_ERROR(logger_, "Cannot acquire buffer without initialising a stream first");
+    return;}
 
-    // use try_pop_buffer and not pop_buffer because try is thread safe
-    buffer = arv_stream_pop_buffer(stream_);
-
-  }
-//  }else if(acquisition_mode_ == "MultiFrame"){
-//    
-//    if(streaming_){
-//      LOG4CXX_ERROR(logger_,"Cannot acquire Multiple buffers while also streaming");
-//      return;
-//    }
-//    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
-//    
-//    if(error)
-//      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
-//        
-//  }else if(acquisition_mode_ == "SingleFrame"){
-//    
-//    if(streaming_){
-//      LOG4CXX_ERROR(logger_,"Cannot acquire single buffers while also streaming");
-//      return;
-//    }
-//
-//    buffer_ = arv_camera_acquisition(camera_, 0, error.get());
-//    
-//    if(error)
-//      LOG4CXX_ERROR(logger_, "When acquiring image buffer from camera, the following error occurred: \n"<<error.message());
-//        
-//  }
+  buffer = arv_stream_pop_buffer(stream_);
 
   if(buffer_is_valid(buffer)){
     process_buffer(buffer);
   }
 
   // for stream we need to replenish the buffers
-  if(acquisition_mode_ == "Continuous"){
-    arv_stream_push_buffer(stream_, buffer);
-  } 
+  arv_stream_push_buffer(stream_, buffer);
  }
 
 /** @brief Captures one frame buffer from a continuos stream
@@ -1110,30 +1079,6 @@ void AravisDetectorPlugin::get_stream_state(){
   arv_stream_get_statistics(stream_, &n_completed_buff_, &n_failed_buff_, &n_underrun_buff_);
 }
 
-
-/** @brief Saves current buffer_ to pgm format. 
- * 
- * @warning For testing purposes only
- * 
- * There are better formats to use in practice
- */
-void AravisDetectorPlugin::save_frame_pgm(ArvBuffer *buffer)
-{ 
-  unsigned int height = arv_buffer_get_image_height(buffer);
-  unsigned int width = arv_buffer_get_image_width(buffer);
-  size_t size_temp = height*width;
-
-  static size_t bmg_count {1} ; // current number of buffers saved as bmg
-  const u_char* decoded_frame = reinterpret_cast<u_char*>(const_cast<void*>(arv_buffer_get_image_data(buffer, &size_temp)));
-  std::string filename {"/home/gsc/Github/RFI_Odin/_images/test_" + std::to_string(bmg_count)+ ".pgm"};
-
-  FILE *pgmimg = fopen(filename.c_str(), "wb");
-  fprintf(pgmimg, "P5\n%d %d\n255\n", width, height);
-  fwrite(decoded_frame, sizeof(u_char), payload_, pgmimg);
-  fclose(pgmimg);
-  bmg_count++;
-
-}
 
 /** @brief Saves the xml file from camera_ into filepath/serial-number.xml
  * 
