@@ -8,6 +8,11 @@
 #ifndef FRAMEPROCESSOR_ARAVISDETECTORPLUGIN_H_
 #define FRAMEPROCESSOR_ARAVISDETECTORPLUGIN_H_
 
+#define GET_CONFIG_CAMERA_INIT 1
+#define GET_CONFIG_CAMERA_PARAMS 2
+#define GET_CONFIG_STREAM_STAT 3
+#define GET_CONFIG_ALL 4
+
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -57,7 +62,7 @@ public:
     static const double      DEFAULT_EXPOSURE_TIME; ///< Exposure time in microseconds
     static const double      DEFAULT_FRAME_RATE;    ///< Frame rate in hertz
     static const double      DEFAULT_FRAME_COUNT;   ///< Frame count
-    static const bool        DEFAULT_CALLBACK;  ///< default callback value
+    static const bool        DEFAULT_CALLBACK;      ///< default callback value
 
     /** Flags*/
     static const std::string START_STREAM;          ///< starts continuos mode acquisition   
@@ -75,6 +80,7 @@ public:
     static const std::string CONFIG_ACQUISITION_MODE;///< set the camera acquisition mode: "Continuous", "SingleFrame","MultiFrame"
     static const std::string CONFIG_CALLBACK;       ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
     static const std::string CONFIG_QUERY_FREQ;     ///< miliseconds between querying the camera for config
+    static const std::string CONFIG_STATUS_FREQ;    ///< set the status polling frequency in miliseconds
 
     /** Names and settings */
     static const std::string DATA_SET_NAME;
@@ -89,7 +95,6 @@ private:
     **       Plugin Functions       **
     **********************************/
 
-    void read_config(int32_t display_option);
     void get_config(int32_t get_option);
 
     /*********************************
@@ -155,7 +160,7 @@ private:
     bool camera_connected_;                 ///< is the camera connected?
     
     size_t delay_ms_ {1000};                ///< delay between config queries in milliseconds  
-    std::string temp_file_path_{};           ///< 
+    std::string temp_file_path_{};          ///< temporary file path for  
 
 
     /*********************************

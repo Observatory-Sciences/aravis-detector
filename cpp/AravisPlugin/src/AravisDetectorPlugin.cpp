@@ -65,6 +65,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_PIXEL_FORMAT = "pixel_format";
   const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "acquisition_mode";
   const std::string AravisDetectorPlugin::CONFIG_CALLBACK     = "aravis_callback";
+  const std::string AravisDetectorPlugin::CONFIG_STATUS_FREQ  = "status_frequency_ms";
 
   /** Names and settings */
   const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
@@ -123,6 +124,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(ACQUIRE_BUFFER))acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER));
     if (config.has_param(CONFIG_CAMERA_IP)) connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     if (config.has_param(TEMP_FILES_PATH)) temp_file_path_ = config.get_param<std::string>(TEMP_FILES_PATH);
+    if (config.has_param(CONFIG_STATUS_FREQ)) delay_ms_ = static_cast<size_t>(config.get_param<int>(CONFIG_STATUS_FREQ));
     if (config.has_param(CONFIG_EXPOSURE)){
       set_exposure(config.get_param<double>(CONFIG_EXPOSURE));
     }
@@ -221,73 +223,18 @@ void AravisDetectorPlugin::status_task()
 
   // Main worker task of this callback
   // Check the queue for messages
-
-  size_t delay_ms {1000}; // delay in milliseconds  
-
   while (working_) {
-    boost::this_thread::sleep(boost::posix_time::milliseconds(delay_ms));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(delay_ms_));
 
     if (camera_connected_){
-      get_config(2);
+      get_config(GET_CONFIG_CAMERA_PARAMS);
       if(streaming_){
-        get_config(3);
+        get_config(GET_CONFIG_STREAM_STAT);
       }
     }
   }
 }
 
-
-/** @brief Displays the config info received from the camera
- * 
- * TODO: change display style and grouping 
- * 
- * @param display_option (int32_t): 0- all,  1- Camera init routine, 2- Camera parameter check, 3- Stream statistics, Others: warning 
- */
-void AravisDetectorPlugin::read_config(int32_t display_option){
-    switch(display_option){
-      case 1:
-      /** Camera Innit routine */
-      
-        LOG4CXX_INFO(logger_, "The exposure time bounds are min: " << min_exposure_time_ << " and max: "<< max_exposure_time_);
-        LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
-        
-        LOG4CXX_INFO(logger_, "The frame rate bounds are min: " << min_frame_rate_ << " and max: "<< max_frame_rate_);
-        LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
-        
-        LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: \n" << available_pixel_formats_);
-        LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
-
-        LOG4CXX_INFO(logger_, "Camera acquisition mode is set on: "<< acquisition_mode_);
-        LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
-        break;
-      case 2:
-      /** Regular config values*/
-
-        LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
-        LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
-        LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
-        LOG4CXX_INFO(logger_, "Camera acquisition mode is set on: "<< acquisition_mode_);
-        LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
-
-        break;
-      
-      case 3:
-      /** Stream statistics*/
-        LOG4CXX_INFO(logger_, "Input buffers: "<< n_input_buff_ << "; Output buffers: "<< n_output_buff_);
-        LOG4CXX_INFO(logger_, "Successful buffers: "<< n_completed_buff_ << "; Failed buffers: "<< n_failed_buff_ << "; Underrun buffers: "<< n_underrun_buff_);
-
-        break;
-
-      case 0:
-        read_config(1);
-        read_config(3);
-
-        break;
-
-      default:
-        LOG4CXX_WARN(logger_, "Parameter must be an integer from 0 to 3");
-    }
-}
 
 /** @brief Populates config variables
  * 
@@ -299,7 +246,7 @@ void AravisDetectorPlugin::read_config(int32_t display_option){
 void AravisDetectorPlugin::get_config(int32_t get_option){
 
   switch(get_option){
-    case 1:
+    case GET_CONFIG_CAMERA_INIT:
      /** Camera init routine */
 
       get_camera_serial();
@@ -322,7 +269,7 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
 
       break;
 
-    case 2: 
+    case GET_CONFIG_CAMERA_PARAMS: 
     /** Constant camera parameter check */
 
       check_connection();
@@ -335,13 +282,12 @@ void AravisDetectorPlugin::get_config(int32_t get_option){
         get_frame_size();
       }
       break;
-    case 3:
+    case GET_CONFIG_STREAM_STAT:
     /** Stream Statistics*/ 
       get_stream_state();
-      
       break;
     
-    case 0:
+    case GET_CONFIG_ALL:
     /** All values */
       get_exposure_bounds();
       get_exposure();
@@ -445,7 +391,17 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   save_genicam_xml(temp_file_path_);
 
   // display configs
-  read_config(1);
+  LOG4CXX_INFO(logger_, "The exposure time bounds are min: " << min_exposure_time_ << " and max: "<< max_exposure_time_);
+  LOG4CXX_INFO(logger_, "The exposure time is set at " << exposure_time_us_ << " microseconds");
+  
+  LOG4CXX_INFO(logger_, "The frame rate bounds are min: " << min_frame_rate_ << " and max: "<< max_frame_rate_);
+  LOG4CXX_INFO(logger_, "Frame rate is "<< frame_rate_hz_ << " frames per second");
+  
+  LOG4CXX_INFO(logger_, "There are "<< n_pixel_formats_ <<" pixel formats: \n" << available_pixel_formats_);
+  LOG4CXX_INFO(logger_, "Currently using "<< pixel_format_ <<" format");
+
+  LOG4CXX_INFO(logger_, "Camera acquisition mode is set on: "<< acquisition_mode_);
+  LOG4CXX_INFO(logger_, "Frame size: "<< payload_);
 }
 
 /** @brief check that camera is still connected
