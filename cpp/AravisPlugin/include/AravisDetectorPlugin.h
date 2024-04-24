@@ -104,7 +104,6 @@ private:
 
     void set_acquisition_mode(std::string acq_mode);
     void get_acquisition_mode();
-    void set_aravis_callback(bool arv_callback);
 
     void set_exposure(double exposure_time_us);
     void get_exposure_bounds();

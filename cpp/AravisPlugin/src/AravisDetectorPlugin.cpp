@@ -138,9 +138,6 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(CONFIG_ACQUISITION_MODE)){
       set_acquisition_mode(config.get_param<std::string>(CONFIG_ACQUISITION_MODE));
     }
-    if (config.has_param(CONFIG_CALLBACK)){
-      set_aravis_callback(config.get_param<bool>(CONFIG_CALLBACK));
-    }
     if (config.has_param(DATA_SET_NAME)){
       data_set_name_= config.get_param<std::string>(DATA_SET_NAME);
     }
