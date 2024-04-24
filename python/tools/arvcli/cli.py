@@ -53,6 +53,8 @@ cmd_map = {
     # fp/status/aravis
     'aravis_status': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0]},
     'connected': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0, 'camera_connected']},
+    'connected_devices': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0,
+                                                                        'connected_devices']},
     'img_height': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0, 'image_height']},
     'img_width': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0, 'image_width']},
     'input_buffers': {'http': '/api/0.1/fp/status/aravis', 'json': ['value', 0, 'input_buffers']},
@@ -116,6 +118,7 @@ def _get_callback(key: silly_enum) -> None:
     Args:
         key: (silly_enum): a cmd_map key (maps cli command to http request)
     """
+    initiate_config()
     if key is None:
         return
     val = get_value(key)
@@ -202,14 +205,12 @@ def _port_callback(val: str) -> None:
         print("[yellow bold]New server address[/yellow bold] is: ", val)
 
 
-# @app.command()
+@app.command()
 def connect(
     camera_ip: Optional[str] = typer.Option(None, "-ip", "--ip_address",
                                             help="using the ip address of the GigE cam"),
-    camera_id: Optional[str] = typer.Option(None, "-id", "--name",
-                                            help="using the manufacturers id"),
-    camera_index: Optional[int] = typer.Option(None, "-ix", "--index",
-                                               help="using the camera index")) -> None:
+    list: Optional[bool] = typer.Option(None, "-l", "--list",
+                                        help="list all the cameras detected")) -> None:
     """
     Not implemented. Connects the AravisDetector plugin to a camera.
 
@@ -220,17 +221,14 @@ def connect(
         camera_id (str): camera id. Defaults to typer.Option(None, "-id", "--name").
         camera_index (int): index. Defaults to typer.Option(None, "-ix", "--index").
     """
-    print("[red bold]Function not yet implemented[/red bold]")
-    if camera_id is not None:
-        print(f"Connecting to camera with id {camera_id}")
-        return
     if camera_ip is not None:
-        print(f"Connecting to camera with address {camera_ip}")
+        print("[red]Unsuccessful, api not implemented yet[/red]")
+        # print(f"Connecting to camera with address {camera_ip}.")
         return
-    if camera_index is not None:
-        print(f"Connecting to camera with index {camera_index}")
-        return
-    print("Connecting to the first camera available")
+    if list:
+        aravis_status = get_value(silly_enum['aravis_status'])
+        for i in range(aravis_status['connected_devices']):
+            print(aravis_status[f'camera_{i}_id'], ' = ', aravis_status[f'camera_{i}_address'])
 
 
 @app.command()
@@ -426,6 +424,17 @@ def http(
         get_HTTP_request(request=get)
 
 
+def initiate_config():
+    app_path = os.path.dirname(os.path.realpath(__file__))
+    global config_path
+    config_path = app_path+"/config.yaml"
+    if not os.path.isfile(config_path):
+        print("Config file doesn't exist yet")
+    global configs
+    with open(config_path, 'r') as con_file:
+        configs = yaml.safe_load(con_file)
+
+
 @app.callback()
 def main(
     status: Optional[bool] = typer.Option(None, '--status', '-s', case_sensitive=False,
@@ -446,11 +455,4 @@ def main(
     version: Optional[bool] = typer.Option(None, "--version", "-v",
                                            help="Display arvcli's current version and exit",
                                            callback=_version_callback, is_eager=True)) -> None:
-    app_path = os.path.dirname(os.path.realpath(__file__))
-    global config_path
-    config_path = app_path+"/config.yaml"
-    if not os.path.isfile(config_path):
-        print("Config file doesn't exist yet")
-    global configs
-    with open(config_path, 'r') as con_file:
-        configs = yaml.safe_load(con_file)
+    initiate_config()
