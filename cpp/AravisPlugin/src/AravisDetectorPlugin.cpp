@@ -44,9 +44,9 @@ namespace FrameProcessor
 {
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "fake";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "fake";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "fake";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "";
 
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
@@ -193,7 +193,6 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::TEMP_FILES_PATH, temp_file_path_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::DATA_SET_NAME, data_set_name_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::FILE_NAME, file_id_);
-    reply.set_param(get_name() + "/" + AravisDetectorPlugin::COMPRESSION_TYPE, compression_type_);
 
 }
 
@@ -417,11 +416,13 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   **      Camera init routine
   ****************************************/
 
+  LOG4CXX_INFO(logger_, "camera address old:"<< camera_address_ << " new:" << ip_string );
+
   camera_address_ = ip_string;
   camera_connected_ = true;
 
   // get config values 
-  get_config(1);
+  get_config(GET_CONFIG_CAMERA_INIT);
 
   save_genicam_xml(temp_file_path_);
 
@@ -483,7 +484,6 @@ void AravisDetectorPlugin::check_connection(){
   // if not, we need to stop all camera related processes before the code crashes
   if(streaming_)stop_stream();
   camera_ = NULL;
-
 }
 
 
