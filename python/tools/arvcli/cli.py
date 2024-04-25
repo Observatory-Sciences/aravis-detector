@@ -167,30 +167,32 @@ def _config_callback(val: bool) -> None:
         raise typer.Exit()
 
 
-@app.command()
-def change(
-        address: Optional[str] = typer.Option(None, "-ip", "--address",
-                                              help="Sets the ip address of the odin server"),
-        port: Optional[str] = typer.Option(None, "-p", "--port",
-                                           help="using the ip address of the GigE cam"),
-) -> None:
+def _ipaddress_callback(val: str) -> None:
     """
-    Change a config value in the config file
+    Sets the ip address of the odin server
+
+    Requires a command
 
     Args:
-        address (str): address of odin server
-        port (str): port to odin server
+        val (str): ip address
     """
-    if address is not None:
-        configs['ip'] = address
-        with open(config_path, 'w') as con_file:
-            yaml.dump(configs, con_file)
-        print("[yellow bold]New server address[/yellow bold] is: ", address)
-    if port:
-        configs['port'] = port
-        with open(config_path, 'w') as con_file:
-            yaml.dump(configs, con_file)
-        print("[yellow bold]New server address[/yellow bold] is: ", port)
+    if val is not None:
+        configs['ip'] = val
+        print("[yellow bold]Using server address[/yellow bold] is: ", val)
+
+
+def _port_callback(val: str) -> None:
+    """
+    Sets the port of the odin server
+
+    Requires a command
+
+    Args:
+        val (str): port
+    """
+    if val:
+        configs['port'] = val
+        print("[yellow bold]Using server port[/yellow bold] is: ", val)
 
 
 @app.command()
@@ -431,6 +433,12 @@ def main(
     config: Optional[bool] = typer.Option(None, '--config', '-c', case_sensitive=False,
                                           help="Print current config values of all plugins",
                                           callback=_config_callback),
+    ipaddress: Optional[str] = typer.Option(None, '--ip', '-i', case_sensitive=False,
+                                            help="Specify an ip address for the server",
+                                            callback=_ipaddress_callback, is_eager=True),
+    port: Optional[str] = typer.Option(None, '--port', '-p', case_sensitive=False,
+                                       help="Specify a port for the server",
+                                       callback=_port_callback, is_eager=True),
     g: Optional[silly_enum] = typer.Option(None, '--get', '-g', case_sensitive=False,
                                            help="Print out a specific value",
                                            callback=_get_callback),
