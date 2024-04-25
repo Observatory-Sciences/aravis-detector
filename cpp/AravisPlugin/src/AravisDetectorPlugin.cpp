@@ -44,9 +44,9 @@ namespace FrameProcessor
 {
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "fake";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "fake";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "fake";
 
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
@@ -202,22 +202,21 @@ void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
  * @param status - Response IpcMessage
  */
 void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
-  /** Camera parameters */
 
+  /** Camera parameters */
   status.set_param(get_name() + "/" + "camera_id", camera_id_);
   status.set_param(get_name() + "/" + "camera_ip", camera_address_);
   status.set_param(get_name() + "/" + "camera_model", camera_model_);
+  status.set_param(get_name() + "/" + "camera_connected", camera_connected_);
 
+  /** List all devices found on network by index*/
   status.set_param(get_name()+ "/" + "connected_devices",connected_devices_);
   for (auto& [key, val]: available_cameras_){
     status.set_param(get_name() + "/" + "camera_" + key + "_id", val.first);
     status.set_param(get_name() + "/" + "camera_" + key + "_address", val.second);
   }
 
-  status.set_param(get_name() + "/" + "camera_connected", camera_connected_);
-
   /** Stream parameters*/
-
   status.set_param(get_name() + "/" + "payload", payload_);
   status.set_param(get_name()+ "/" + "image_height",static_cast<long unsigned int>(image_height_px_));
   status.set_param(get_name()+ "/" + "image_width", static_cast<long unsigned int>(image_width_px_));
@@ -233,6 +232,7 @@ void AravisDetectorPlugin::status(OdinData::IpcMessage &status){
   status.set_param(get_name() + "/" + "underrun_buff", n_underrun_buff_);
 }
 
+/** @brief Reset stream statistics */
 bool AravisDetectorPlugin::reset_statistics(){
     n_input_buff_ =0;
     n_output_buff_ =0;
@@ -397,15 +397,11 @@ void AravisDetectorPlugin::connect_aravis_camera(std::string ip_string){
   unsigned int number_of_cameras = arv_get_n_devices();
 
   if(number_of_cameras == 0){
-    this->set_error("No compatible cameras found, recheck connection");
     log_error("No compatible cameras found, recheck connection");
     return;
   }
 
   camera_ = arv_camera_new(ip_string.c_str(), error.get());
-
-  // camera_ = arv_camera_new_with_device(ip_string.c_str(), error.get());
-
 
   if(error){ log_error("Error when connecting to camera: "+ error.message());
     return;}
