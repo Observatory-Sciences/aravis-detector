@@ -171,6 +171,8 @@ def _ipaddress_callback(val: str) -> None:
     """
     Sets the ip address of the odin server
 
+    Requires a command
+
     Args:
         val (str): ip address
     """
@@ -189,6 +191,8 @@ def _ipaddress_callback(val: str) -> None:
 def _port_callback(val: str) -> None:
     """
     Sets the port of the odin server
+
+    Requires a command
 
     Args:
         val (str): port
@@ -447,7 +451,7 @@ def main(
                                             help="Specify an ip address for the server",
                                             callback=_ipaddress_callback, is_eager=True),
     port: Optional[str] = typer.Option(None, '--port', '-p', case_sensitive=False,
-                                       help="SPecify a port for the server",
+                                       help="Specify a port for the server",
                                        callback=_port_callback, is_eager=True),
     g: Optional[silly_enum] = typer.Option(None, '--get', '-g', case_sensitive=False,
                                            help="Print out a specific value",
