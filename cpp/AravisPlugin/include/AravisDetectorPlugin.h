@@ -88,7 +88,6 @@ public:
     static const std::string CONFIG_PIXEL_FORMAT;   ///< set pixel encoding Mono8/ 12bit/ etc
     static const std::string CONFIG_ACQUISITION_MODE;///< set the camera acquisition mode: "Continuous", "SingleFrame","MultiFrame"
     static const std::string CONFIG_CALLBACK;       ///< Choose weather to activate the Aravis callback mechanism for frame acquisition
-    static const std::string CONFIG_QUERY_FREQ;     ///< miliseconds between querying the camera for config
     static const std::string CONFIG_STATUS_FREQ;    ///< set the status polling frequency in miliseconds
     static const std::string CONFIG_EMPTY_BUFF;     ///< number of empty buffers in a stream object 
     static const std::string CONFIG_CAMERA_ID;      ///< camera's manufacturer id
@@ -172,7 +171,7 @@ private:
     bool streaming_;                                    ///< Is the camera streaming data?
     bool camera_connected_;                             ///< is the camera connected?
     
-    size_t delay_ms_ {DEFAULT_STATUS_FREQ};             ///< delay between config queries in milliseconds  
+    size_t status_freq_ms {DEFAULT_STATUS_FREQ};        ///< delay between config queries in milliseconds  
     std::string temp_file_path_{DEFAULT_FILE_PATH};     ///< temporary file path for  
 
 

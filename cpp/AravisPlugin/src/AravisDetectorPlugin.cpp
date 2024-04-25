@@ -36,7 +36,7 @@ struct GErrorWrapper {
    */
   std::string message(){
     if(error) return error->message;
-    return "Error message called when error is NULL";
+    return "Error message was called when error is NULL";
     }
 };
 
@@ -44,6 +44,10 @@ namespace FrameProcessor
 {
   /** Default configurations */
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
+  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "";
+
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 0;
@@ -51,9 +55,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::DEFAULT_AQUISIT_MODE  = "Continuous";
   const size_t      AravisDetectorPlugin::DEFAULT_STATUS_FREQ   = 1000;
   const int         AravisDetectorPlugin::DEFAULT_EMPTY_BUFF    = 50;
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
-  const std::string AravisDetectorPlugin::DEFAULT_CAMERA_MODEL  = "";
+
   const std::string AravisDetectorPlugin::DEFAULT_FILE_PATH     = "/";
   const std::string AravisDetectorPlugin::DEFAULT_DATASET       = "data";
   const std::string AravisDetectorPlugin::DEFAULT_FILE_NAME     = "test";
@@ -66,6 +68,10 @@ namespace FrameProcessor
 
   /** Config names*/
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_ID    = "camera_id";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_SERIAL= "camera_serial_number";
+  const std::string AravisDetectorPlugin::CONFIG_CAMERA_MODEL = "camera_model";
+
   const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure_time";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
@@ -73,10 +79,6 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_ACQUISITION_MODE = "acquisition_mode";
   const std::string AravisDetectorPlugin::CONFIG_STATUS_FREQ  = "status_frequency_ms";
   const std::string AravisDetectorPlugin::CONFIG_EMPTY_BUFF   = "empty_buffers";
-  const std::string AravisDetectorPlugin::CONFIG_CAMERA_ID    = "camera_id";
-  const std::string AravisDetectorPlugin::CONFIG_CAMERA_SERIAL= "camera_serial_number";
-  const std::string AravisDetectorPlugin::CONFIG_CAMERA_MODEL = "camera_model";
-  
 
   /** Names and settings */
   const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
@@ -112,7 +114,7 @@ AravisDetectorPlugin::~AravisDetectorPlugin()
 
 /** @brief Push the frame to the next plugin
  * 
- * No image processing is done here
+ * No image processing is done here at the moment
  * 
  * @param[in] frame - pointer to frame object 
  */
@@ -135,7 +137,7 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
     if (config.has_param(ACQUIRE_BUFFER))acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER));
     if (config.has_param(CONFIG_CAMERA_IP)) connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP));
     if (config.has_param(TEMP_FILES_PATH)) temp_file_path_ = config.get_param<std::string>(TEMP_FILES_PATH);
-    if (config.has_param(CONFIG_STATUS_FREQ)) delay_ms_ = static_cast<size_t>(config.get_param<int>(CONFIG_STATUS_FREQ));
+    if (config.has_param(CONFIG_STATUS_FREQ)) status_freq_ms = static_cast<size_t>(config.get_param<int>(CONFIG_STATUS_FREQ));
     if (config.has_param(CONFIG_EXPOSURE)){
       set_exposure(config.get_param<double>(CONFIG_EXPOSURE));
     }
@@ -176,11 +178,22 @@ void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::Ipc
  */
 void AravisDetectorPlugin::requestConfiguration(OdinData::IpcMessage& reply){
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CAMERA_IP, camera_address_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CAMERA_ID, camera_id_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CAMERA_SERIAL, camera_serial_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_CAMERA_MODEL, camera_model_);
+
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_EXPOSURE, exposure_time_us_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_RATE, frame_rate_hz_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_FRAME_COUNT, frame_count_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_PIXEL_FORMAT, pixel_format_);
     reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_ACQUISITION_MODE, acquisition_mode_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_STATUS_FREQ, status_freq_ms);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::CONFIG_EMPTY_BUFF, n_empty_buffers_);
+
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::TEMP_FILES_PATH, temp_file_path_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::DATA_SET_NAME, data_set_name_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::FILE_NAME, file_id_);
+    reply.set_param(get_name() + "/" + AravisDetectorPlugin::COMPRESSION_TYPE, compression_type_);
 
 }
 
@@ -244,7 +257,7 @@ void AravisDetectorPlugin::status_task()
   // Main worker task of this callback
   // Check the queue for messages
   while (working_) {
-    boost::this_thread::sleep(boost::posix_time::milliseconds(delay_ms_));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(status_freq_ms));
 
     if (camera_connected_){
       get_config(GET_CONFIG_CAMERA_PARAMS);
