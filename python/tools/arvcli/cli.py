@@ -118,7 +118,7 @@ def _get_callback(key: silly_enum) -> None:
     Args:
         key: (silly_enum): a cmd_map key (maps cli command to http request)
     """
-    initiate_config()
+    # initiate_config()
     if key is None:
         return
     val = get_value(key)
@@ -455,4 +455,5 @@ def main(
     version: Optional[bool] = typer.Option(None, "--version", "-v",
                                            help="Display arvcli's current version and exit",
                                            callback=_version_callback, is_eager=True)) -> None:
-    initiate_config()
+    # initiate_config()
+    pass
