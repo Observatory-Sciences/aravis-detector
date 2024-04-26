@@ -42,7 +42,7 @@ struct GErrorWrapper {
 
 namespace FrameProcessor
 {
-  /** Default configurations */
+  /** Default config values*/
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_IP     = "127.0.0.1";
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_ID     = "";
   const std::string AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL = "";
@@ -60,18 +60,21 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::DEFAULT_DATASET       = "data";
   const std::string AravisDetectorPlugin::DEFAULT_FILE_NAME     = "test";
   
+  /** Config names */
+
   /** Flags*/
   const std::string AravisDetectorPlugin::START_STREAM        = "start";
   const std::string AravisDetectorPlugin::STOP_STREAM         = "stop";
   const std::string AravisDetectorPlugin::LIST_DEVICES        = "list_devices";
   const std::string AravisDetectorPlugin::ACQUIRE_BUFFER      = "frames";
 
-  /** Config names*/
+  /** Camera name*/
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_IP    = "ip_address";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_ID    = "camera_id";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_SERIAL= "camera_serial_number";
   const std::string AravisDetectorPlugin::CONFIG_CAMERA_MODEL = "camera_model";
-
+  
+  /** Camera config*/
   const std::string AravisDetectorPlugin::CONFIG_EXPOSURE     = "exposure_time";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_RATE   = "frame_rate";
   const std::string AravisDetectorPlugin::CONFIG_FRAME_COUNT  = "frame_count";
@@ -80,7 +83,7 @@ namespace FrameProcessor
   const std::string AravisDetectorPlugin::CONFIG_STATUS_FREQ  = "status_frequency_ms";
   const std::string AravisDetectorPlugin::CONFIG_EMPTY_BUFF   = "empty_buffers";
 
-  /** Names and settings */
+  /** Frame creation*/
   const std::string AravisDetectorPlugin::TEMP_FILES_PATH     = "file_path";
   const std::string AravisDetectorPlugin::DATA_SET_NAME       = "data_set_name";
   const std::string AravisDetectorPlugin::FILE_NAME           = "file_name"; 
@@ -128,47 +131,64 @@ void AravisDetectorPlugin::process_frame(boost::shared_ptr<Frame> frame)
  * @param[in] config - IpcMessage containing configuration data
  * @param[out] reply - Response IpcMessage
  */
-void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply){
-  try{
-    /** List all devices*/
-    if (config.has_param(START_STREAM)){
-      start_stream(reply);}
-    if (config.has_param(STOP_STREAM)){
-      stop_stream(reply);}
-    if (config.has_param(LIST_DEVICES)){
-      find_aravis_cameras(reply);}
-    if (config.has_param(ACQUIRE_BUFFER)){
-      acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER), reply);}
-    if (config.has_param(CONFIG_CAMERA_IP)){
-      connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP), reply);}
-    if (config.has_param(TEMP_FILES_PATH)){
-      set_file_path(config.get_param<std::string>(TEMP_FILES_PATH), reply);}
-    if (config.has_param(CONFIG_STATUS_FREQ)){
-      set_status_poll_frequency(static_cast<size_t>(config.get_param<int>(CONFIG_STATUS_FREQ)), reply);}
-    if (config.has_param(CONFIG_EXPOSURE)){
-      set_exposure(config.get_param<double>(CONFIG_EXPOSURE), reply);
-    }
-    if (config.has_param(CONFIG_FRAME_RATE)){
-      set_frame_rate(config.get_param<double>(CONFIG_FRAME_RATE), reply);
-    }
-    if (config.has_param(CONFIG_FRAME_COUNT)){
-      set_frame_count(config.get_param<int32_t>(CONFIG_FRAME_COUNT), reply);
-    }
-    if (config.has_param(CONFIG_PIXEL_FORMAT)){
-      set_pixel_format(config.get_param<std::string>(CONFIG_PIXEL_FORMAT), reply);
-    }
-    if (config.has_param(CONFIG_ACQUISITION_MODE)){
-      set_acquisition_mode(config.get_param<std::string>(CONFIG_ACQUISITION_MODE), reply);
-    }
-    if (config.has_param(DATA_SET_NAME)){
-      set_dataset_name(config.get_param<std::string>(DATA_SET_NAME), reply);
-    }
-    if (config.has_param(FILE_NAME)){
-      set_file_name(config.get_param<std::string>(FILE_NAME), reply);
-    }   
-    if (config.has_param(COMPRESSION_TYPE)){
-      set_compression_type(config.get_param<std::string>(COMPRESSION_TYPE), reply);
-    }
+void AravisDetectorPlugin::configure(OdinData::IpcMessage& config, OdinData::IpcMessage& reply)
+{  try{
+    /** Flags*/
+    if (config.has_param(START_STREAM))
+{      start_stream(reply);
+}
+    if (config.has_param(STOP_STREAM))
+{      stop_stream(reply);
+}
+    if (config.has_param(LIST_DEVICES))
+{      find_aravis_cameras(reply);
+}    
+    if (config.has_param(ACQUIRE_BUFFER))
+{      acquire_n_buffer(config.get_param<int>(ACQUIRE_BUFFER), reply);
+}
+    
+    /** Connect to camera*/
+    if (config.has_param(CONFIG_CAMERA_IP))
+{      connect_aravis_camera(config.get_param<std::string>(CONFIG_CAMERA_IP), reply);
+}
+
+    /** Camera config*/
+    if (config.has_param(CONFIG_EXPOSURE))
+{      set_exposure(config.get_param<double>(CONFIG_EXPOSURE), reply);
+}
+    if (config.has_param(CONFIG_FRAME_RATE))
+{      set_frame_rate(config.get_param<double>(CONFIG_FRAME_RATE), reply);
+}
+    if (config.has_param(CONFIG_FRAME_COUNT))
+{      set_frame_count(config.get_param<int32_t>(CONFIG_FRAME_COUNT), reply);
+}
+    if (config.has_param(CONFIG_PIXEL_FORMAT))
+{      set_pixel_format(config.get_param<std::string>(CONFIG_PIXEL_FORMAT), reply);
+}
+    if (config.has_param(CONFIG_ACQUISITION_MODE))
+{      set_acquisition_mode(config.get_param<std::string>(CONFIG_ACQUISITION_MODE), reply);
+}
+    if (config.has_param(CONFIG_STATUS_FREQ))
+{      set_status_poll_frequency(static_cast<size_t>(config.get_param<int>(CONFIG_STATUS_FREQ)), reply);
+}  
+    if (config.has_param(CONFIG_EMPTY_BUFF))
+{      set_empty_buffers(static_cast<size_t>(config.get_param<int>(CONFIG_EMPTY_BUFF)), reply);
+}  
+
+    /** Frame creation*/
+    if (config.has_param(TEMP_FILES_PATH))
+{      set_file_path(config.get_param<std::string>(TEMP_FILES_PATH), reply);
+}
+    if (config.has_param(DATA_SET_NAME))
+{      set_dataset_name(config.get_param<std::string>(DATA_SET_NAME), reply);
+}
+    if (config.has_param(FILE_NAME))
+{      set_file_name(config.get_param<std::string>(FILE_NAME), reply);
+}
+    if (config.has_param(COMPRESSION_TYPE))
+{      set_compression_type(config.get_param<std::string>(COMPRESSION_TYPE), reply);
+}
+
   }
   catch (std::runtime_error& e)
   {
@@ -1010,6 +1030,13 @@ void AravisDetectorPlugin::set_frame_count(unsigned int frame_count, OdinData::I
   LOG4CXX_INFO(logger_, "frame_count_ | old: "<< frame_count_ << " | new:" << frame_count);
   frame_count_ = frame_count;
 }
+/** @brief Sets maximum number of frames taken in stream mode
+ * @param n_empty_buffers unsigned int: frame limit
+ */
+void AravisDetectorPlugin::set_empty_buffers(int n_empty_buffers, OdinData::IpcMessage& reply){
+  LOG4CXX_INFO(logger_, "n_empty_buffers_ | old: "<< n_empty_buffers_ << " | new:" << n_empty_buffers);
+  n_empty_buffers_ = n_empty_buffers;
+}
 
 
 /** @brief processes a fixed number of buffers
@@ -1189,6 +1216,8 @@ DataType AravisDetectorPlugin::pixel_format_to_datatype(std::string pixel_form){
     return DataType::raw_8bit;
   if(pixel_form == "Mono12")
     log_error("Pixel type unsupported, return unkown");
+  if(pixel_form == "Mono16")
+    return DataType::raw_16bit;
   if(pixel_form == "RGB8")
     return DataType::raw_8bit;
   

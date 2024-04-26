@@ -157,6 +157,8 @@ private:
     void auto_stop_stream();
 
     void set_frame_count(unsigned int frame_count, OdinData::IpcMessage& reply);
+    void set_empty_buffers(int n_empty_buffers, OdinData::IpcMessage& reply);
+
 
     void acquire_n_buffer(unsigned int n_buffers, OdinData::IpcMessage& reply);
     void acquire_buffer();
@@ -214,8 +216,7 @@ private:
     size_t payload_ {};                                 ///< frame size in bytes
 
     unsigned int frame_count_ {DEFAULT_FRAME_COUNT};    ///< current frame count in MultiFrame mode
-    unsigned int min_frame_count_;                      ///< current frame count in MultiFrame mode
-    unsigned int max_frame_count_;                      ///< current frame count in MultiFrame mode
+
 
 
     /**********************************
@@ -233,7 +234,7 @@ private:
 
     long long n_frames_made_ {0};                       ///< Number of frames created from buffers
 
-    int n_empty_buffers_{DEFAULT_EMPTY_BUFF};           ///< number of empty buffers to initialise the current stream with. Defaults to 50
+    int n_empty_buffers_ {DEFAULT_EMPTY_BUFF};           ///< number of empty buffers to initialise the current stream with. Defaults to 50
     int n_input_buff_ {0};                              ///< n of input buffers in the current stream
     int n_output_buff_ {0};                             ///< n of output buffers in the current stream
     long unsigned int n_completed_buff_ {0};            ///< n of successful buffers
