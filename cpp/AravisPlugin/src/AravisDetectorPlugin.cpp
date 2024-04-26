@@ -1188,10 +1188,8 @@ DataType AravisDetectorPlugin::pixel_format_to_datatype(std::string pixel_form){
   if(pixel_form == "Mono8")
     return DataType::raw_8bit;
   if(pixel_form == "Mono12")
-    log_error("Pixel type unsupported, return raw_unkown");
+    log_error("Pixel type unsupported, return unkown");
   if(pixel_form == "RGB8")
-    return DataType::raw_8bit;
-  if(pixel_form == "Mono8")
     return DataType::raw_8bit;
   
 
