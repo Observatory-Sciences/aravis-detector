@@ -17,6 +17,7 @@
 #include <boost/thread.hpp>
 
 #include <map>
+#include <sys/stat.h>
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/propertyconfigurator.h>
@@ -107,35 +108,41 @@ private:
     **       Plugin Functions       **
     **********************************/
 
+    void log_error(std::string msg, OdinData::IpcMessage& reply);
     void log_error(std::string msg);
+    void log_warning(std::string msg, OdinData::IpcMessage& reply);
+    void log_warning(std::string msg);
+
     void get_config(int32_t get_option);
 
+    void set_file_name(std::string file_id,  OdinData::IpcMessage& reply);
+    void set_file_path(std::string new_file_path, OdinData::IpcMessage& reply);
+    void set_dataset_name(std::string data_set_name,  OdinData::IpcMessage& reply);
+    void set_compression_type(std::string compression_type,  OdinData::IpcMessage& reply);
+    void set_status_poll_frequency(size_t new_frequency,  OdinData::IpcMessage& reply);
+    
     /*********************************
     **       Camera Functions       **
     **********************************/
 
-    void connect_aravis_camera(std::string ip); 
+    void connect_aravis_camera(std::string ip, OdinData::IpcMessage& reply); 
     void check_connection();
-    void find_aravis_cameras();
+    void find_aravis_cameras(OdinData::IpcMessage& reply);
     void get_camera_serial();
     void get_camera_id();
 
-    void set_acquisition_mode(std::string acq_mode);
+    void set_acquisition_mode(std::string acq_mode, OdinData::IpcMessage& reply);
     void get_acquisition_mode();
 
-    void set_exposure(double exposure_time_us);
+    void set_exposure(double exposure_time_us, OdinData::IpcMessage& reply);
     void get_exposure_bounds();
     void get_exposure();
 
-    void set_frame_rate(double frame_rate_hz);
+    void set_frame_rate(double frame_rate_hz, OdinData::IpcMessage& reply);
     void get_frame_rate_bounds();
     void get_frame_rate();
 
-    void set_frame_count(double frame_count);
-    void get_frame_count_bounds();
-    void get_frame_count();
-
-    void set_pixel_format(std::string pixel_format);
+    void set_pixel_format(std::string pixel_format,OdinData::IpcMessage& reply);
     void get_available_pixel_formats();
     void get_pixel_format();
 
@@ -145,10 +152,13 @@ private:
     **    Stream/buffer functions    **
     ***********************************/
 
-    void start_stream();
-    void stop_stream();
+    void start_stream(OdinData::IpcMessage& reply);
+    void stop_stream(OdinData::IpcMessage& reply);
+    void auto_stop_stream();
 
-    void acquire_n_buffer(unsigned int n_buffers);
+    void set_frame_count(unsigned int frame_count, OdinData::IpcMessage& reply);
+
+    void acquire_n_buffer(unsigned int n_buffers, OdinData::IpcMessage& reply);
     void acquire_buffer();
     bool buffer_is_valid(ArvBuffer *buffer);
     void process_buffer(ArvBuffer *buffer);
@@ -171,7 +181,7 @@ private:
     bool streaming_;                                    ///< Is the camera streaming data?
     bool camera_connected_;                             ///< is the camera connected?
     
-    size_t status_freq_ms {DEFAULT_STATUS_FREQ};        ///< delay between config queries in milliseconds  
+    size_t status_freq_ms_ {DEFAULT_STATUS_FREQ};        ///< delay between config queries in milliseconds  
     std::string temp_file_path_{DEFAULT_FILE_PATH};     ///< temporary file path for  
 
 
