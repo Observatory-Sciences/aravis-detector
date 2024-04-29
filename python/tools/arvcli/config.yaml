@@ -1,4 +1,4 @@
 ip: 127.0.0.1
 port: '8888'
 default_n_frames: 100
-default_path: /home/rfiodin/odin_camera_driver/temp
+default_path: /home/temp
