@@ -9,60 +9,35 @@ Aravis CLI allows the user to control the frame processor through the use of the
 The following options are available through the CLI:
 
 ```shell
-$  arvcli --help
+$ arvcli --help
+                                                                                               
+ Usage: arvcli [OPTIONS] COMMAND [ARGS]...                                                     
+                                                                                               
+╭─ Options ───────────────────────────────────────────────────────────────────────────────────╮
+│ --status              -s             Print current status values of all plugins             │
+│ --config              -c             Print current config values of all plugins             │
+│ --ip                  -i       TEXT  Specify an ip address for the server [default: None]   │
+│ --port                -po      TEXT  Specify a port for the server [default: None]          │
+│ --get                 -g       TEXT  Print a specific value. Paths must be of the form:     │
+│                                      fp/{status/ config / aravis}/<target> or               │
+│                                      aravis/{config/status}/<target>                        │
+│                                      [default: None]                                        │
+│ --put                 -p       TEXT  Change a specific value. Paths must be of the form:    │
+│                                      fp/config/aravis/<target> or aravis/config/<target>    │
+│                                      [default: None]                                        │
+│ --version             -v             Display arvcli's current version and exit              │
+│ --install-completion                 Install completion for the current shell.              │
+│ --show-completion                    Show completion for the current shell, to copy it or   │
+│                                      customize the installation.                            │
+│ --help                               Show this message and exit.                            │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ──────────────────────────────────────────────────────────────────────────────────╮
+│ connect   Connects the AravisDetector plugin to a camera.                                   │
+│ hdf       Control the file writer plugin                                                    │
+│ http      send custom HTTP requests                                                         │
+│ stream    Control camera frame acquisition in continuous mode                               │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
 
- Usage: arvcli [OPTIONS] COMMAND [ARGS]...                                      
-
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --status              -s                              Print current status   │
-│                                                       values of all plugins  │
-│ --config              -c                              Print current config   │
-│                                                       values of all plugins  │
-│ --ip                  -i      TEXT                    Specify an ip address  │
-│                                                       for the server         │
-│                                                       [default: None]        │
-│ --port                -p      TEXT                    SPecify a port for the │
-│                                                       server                 │
-│                                                       [default: None]        │
-│ --get                 -g      [fp|config|camera_addr  Print out a specific   │
-│                               ess|frames|sys|status|  value                  │
-│                               view_status|view_timin  [default: None]        │
-│                               g|hdf_status|writing|f                         │
-│                               rames_max|frames_writt                         │
-│                               en|frames_processed|fi                         │
-│                               le_path|file_name|acqu                         │
-│                               isition_id|processes|r                         │
-│                               ank|timeout_active|hdf                         │
-│                               _timing|aravis_status|                         │
-│                               connected|img_height|i                         │
-│                               mg_width|input_buffers                         │
-│                               |output_buffers|comple                         │
-│                               ted_buffers|failed_buf                         │
-│                               fers|underrun_buffers|                         │
-│                               aravis_timing|aravis|a                         │
-│                               ravis_config|mode|fram                         │
-│                               e_rate|frame_count|pix                         │
-│                               el_format|payload|expo                         │
-│                               sure_time|camera_id|st                         │
-│                               reaming|frames_capture                         │
-│                               d]                                             │
-│ --version             -v                              Display arvcli s       │
-│                                                       current version and    │
-│                                                       exit                   │
-│ --install-completion                                  Install completion for │
-│                                                       the current shell.     │
-│ --show-completion                                     Show completion for    │
-│                                                       the current shell, to  │
-│                                                       copy it or customize   │
-│                                                       the installation.      │
-│ --help                                                Show this message and  │
-│                                                       exit.                  │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────╮
-│ hdf      Control the file writer plugin                                      │
-│ http     send custom HTTP requests                                           │
-│ stream   Control camera frame acquisition in continuous mode                 │
-╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ### Requesting system information
@@ -96,9 +71,9 @@ Status is:
         'frames_max': 1000,
         'frames_written': 1000,
         'frames_processed': 1000,
-        'file_path': '/home/rfiodin/odin_camera_driver/temp',
+        'file_path': 'odin_camera_driver/temp',
         'file_name': 'run_6s48m15h17d4m2024y_000000.h5',
-        'acquisition_id': '',
+        'acquisition_id': ' ',
         'processes': 1,
         'rank': 0,
         'timeout_active': False,
@@ -130,14 +105,79 @@ Status is:
 }
 ```
 
-To get more specific values the user can call the ```--get``` command with one of the predefined keys:
+To get more specific values the user can call the ```--get``` command.
 
 ```shell
-$arvcli --get frames_captured
-frames_captured is:  441306
+$arvcli --get fp/config/aravis/frame_rate
+frame_rate = 5
 ```
 
-The predefined keys correspond directly to values returned by the status and config commands, but arvcli uses specific http requests for each key and parses the json file in order to return the most specific response possible.
+To change more specific values the user can call the ```--put``` command.
+
+```shell
+$arvcli --put fp/config/aravis/frame_rate
+Value = 10
+Waiting for status... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:01
+frame_rate = 10
+```
+
+In both cases the path given is parsed by the python code and an http request and json path are formulated.
+
+#### Get requests
+
+Any paths starting with the "fp" value are truncated after the 3rd value. The first part is added as part of the http request and the later parts are used to parse the json file.
+
+In the above case, the "fp/config/aravis/" is transformed into "http:/< ip_address >/api/0.1/fp/config/aravis/" and the value frame_rate is used as a json key. "sys" paths are split immediately after sys, and aravis paths are sent as http paths directly.
+
+#### Put request
+
+All put requests are either of the form "aravis/config" or "fp/config/< plugin >/" with one more path key. The additional key is then used to create a json file sent to the server together with the input variable.
+
+#### Valid path list
+
+The following is a list of example tree of paths that work with the aravis, live view and hdf plugin for the get function:
+
+```shell
+sys/
+fp/ status  / aravis
+            / view
+            / hdf
+    config  / aravis
+            / view
+            / hdf
+aravis  / status
+        / config
+```
+
+To each of this paths an additional value key can be added (eg. "frame_rate") to target a specific value. To get an accurate list of possible simply call the path as follows:
+
+```shell
+$arvcli --get fp/config/aravis
+aravis = {'ip_address': '127.0.0.1', 'camera_id': '', 'camera_serial_number': '', 'camera_model': '',
+        'exposure_time': 0.0, 'frame_rate': 0.0, 'frame_count': 1500, 'pixel_format': 'Mono8', 
+        'acquisition_mode': 'Continuous', 'status_frequency_ms': 1000, 'empty_buffers': 50,
+        'file_path': 'odin_camera_driver/temp', 'data_set_name': 'data', 'file_name': 'test'}
+```
+
+### Commands
+
+Arvcli has subcommands (eg, "--get", "--put") that take one argument and commands. Commands are more complex and have their own subcommands.
+
+To get a l;ist of subcommands for a command simply use the '--help' tag after stating the command as follows:
+
+```shell
+$arvcli connect --help
+                                                                                        
+ Usage: arvcli connect [OPTIONS]                                                        
+                                                                                        
+ Connects the AravisDetector plugin to a camera.                                                                    
+                                                                                        
+╭─ Options ────────────────────────────────────────────────────────────────────────────╮
+│ --ip_address  -ip      TEXT  ip address of the GigE cam [default: None]              │
+│ --list        -l             list all the cameras detected                           │
+│ --help                       Show this message and exit.                             │
+╰──────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 ### Frame acquisition
 
@@ -147,19 +187,19 @@ The acquisition control is done through the ```stream``` command:
 
 ```shell
 $ arvcli stream --help
-                                                                                
- Usage: arvcli stream [OPTIONS]                                                 
-                                                                                
- Control camera frame acquisition in continuous mode                            
-                                                                                
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --start  -on                start acquiring frames in continuous mode        │
-│ --stop   -off               stop acquiring frames in continuous mode         │
-│ --take   -t        INTEGER  Acquire a fixed number of frames in              │
-│                             continuous mode                                  │
-│                             [default: None]                                  │
-│ --help                      Show this message and exit.                      │
-╰──────────────────────────────────────────────────────────────────────────────╯
+                                                                                   
+ Usage: arvcli stream [OPTIONS]                                                    
+                                                                                   
+ Control camera frame acquisition in continuous mode                               
+                                                                                   
+╭─ Options ───────────────────────────────────────────────────────────────────────╮
+│ --start    -on                start acquiring frames in continuous mode         │
+│ --stop     -off               stop acquiring frames in continuous mode          │
+│ --capture  -c        INTEGER  Acquire a fixed number of frames in continuous    │
+│                               mode                                              │
+│                               [default: None]                                   │
+│ --help                        Show this message and exit.                       │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
@@ -169,34 +209,19 @@ The HDF plugin can be controlled using the ```hdf``` command. The cli allows the
 
 ```shell
 $ arvcli hdf --help
-
- Usage: arvcli hdf [OPTIONS]                                                    
-                                                                                
- Control the file writer plugin                                                 
- Args:     start (Optional[bool], optional): Starts acquiring and saving frames 
- arm (Optional[bool], optional): Prepares the hdf plugin to save files as soon  
- as                                     acquisition starts.     stop            
- (Optional[bool], optional): Stops acquiring and saving files     disarm        
- (Optional[bool], optional): Stops saving files without stopping acquisition    
- file_name (Optional[str], optional): sets the file name. Defaults to the       
- current                                          date and time as file name.   
- file_path (Optional[str], optional): sets the file path. Will reuse the last   
- value                                          specified to the server or to   
- the config value     num (Optional[int], optional): sets the number of frames  
- to save. Defaults to value                                   given in          
- configs.yaml                                                                   
-                                                                                
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --start   -on                start saving frames                             │
-│ --arm     -a                 start saving frames                             │
-│ --stop    -off               stop saving frames                              │
-│ --disarm  -da                stop saving frames                              │
-│ --file    -f        TEXT     saving file name [default: run_]                │
-│ --path    -p        TEXT     path to the directory [default: config]         │
-│ --num     -n        INTEGER  number of files to save [default: None]         │
-│ --help                       Show this message and exit.                     │
-╰──────────────────────────────────────────────────────────────────────────────╯
-
+                                                                                   
+ Usage: arvcli hdf [OPTIONS]                                                                                                                        
+                                                                                   
+╭─ Options ───────────────────────────────────────────────────────────────────────╮
+│ --start  -s                start file writer                                    │
+│ --stop   -s                stop the file writer                                 │
+│ --write  -w                start file writer and start acquisition              │
+│ --stopW  -sw               stop file writer and acquisition                     │
+│ --file   -f       TEXT     saving file name [default: None]                     │
+│ --path   -p       TEXT     path to the directory [default: None]                │
+│ --num    -n       INTEGER  number of files to save [default: None]              │
+│ --help                     Show this message and exit.                          │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 The file name defaults to a string value of the form "run_<time stamp\>" and the path and file number default to the values specified in the config file.
@@ -208,24 +233,26 @@ Arvcli uses a config.yml file to store the IP address and port of the odin-contr
 Additionally, the ```http``` command can be used to send direct put/get requests to the odin server:
 
 ```shell
- Usage: arvcli http [OPTIONS]                                                   
-                                                                                
- send custom HTTP requests                                                      
- Use this for trouble shooting and custom functions                             
- Api requests are of the following form:                                        
- /api/0.1/aravis/config/start_acquisition                                       
- /api/0.1/aravis/config/stop_acquisition /api/0.1/aravis/config/exposure_time   
- /api/0.1/fp/config/hdf/write /api/0.1/fp/config/hdf/file/path                  
- /api/0.1/fp/config/hdf/file/name /api/0.1/fp/config/hdf/master                 
- /api/0.1/view/image Args:     put (str): an HTTP request of the form:          
- /api/0.1/aravis/config/start_acquisition     get (str): an HTTP request of the 
- form:                                                                          
-                                                                                
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│         -p,-put        TEXT  send a command to the server [default: None]    │
-│         -v,-value      TEXT  value to send to server [default: None]         │
-│         -g,-get        TEXT  request information from the server             │
-│                              [default: None]                                 │
-│ --help                       Show this message and exit.                     │
-╰──────────────────────────────────────────────────────────────────────────────╯
+$ arvcli http --help
+                                                                                        
+ Usage: arvcli http [OPTIONS]                                                           
+                                                                                        
+ send custom HTTP requests                                                              
+ Use this for trouble shooting and custom functions                                     
+ Api requests are of the following form:                                                
+ /api/0.1/aravis/config/start_acquisition /api/0.1/aravis/config/stop_acquisition       
+ /api/0.1/aravis/config/exposure_time /api/0.1/fp/config/hdf/write                      
+ /api/0.1/fp/config/hdf/file/path /api/0.1/fp/config/hdf/file/name                      
+ /api/0.1/fp/config/hdf/master /api/0.1/view/image 
+ Args:
+      put (str): an HTTP request  of the form: /api/0.1/aravis/config/start_acquisition     
+      get (str): an HTTP request  of the form:                                                                           
+                                                                                        
+╭─ Options ────────────────────────────────────────────────────────────────────────────╮
+│ --put    -p      TEXT  send a command to the server [default: None]                  │
+│ --value  -v      TEXT  value to send to server [default: None]                       │
+│ --get    -g      TEXT  request information from the server [default: None]           │
+│ --help                 Show this message and exit.                                   │
+╰──────────────────────────────────────────────────────────────────────────────────────╯
+
 ```
