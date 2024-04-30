@@ -1,6 +1,6 @@
 # Build
 
-This software is a plugin extension to Odin data and requires that you install and build both Odin-data and Odin-control to be able to fully utilize this project. This page will provide instructions for installing these as well as the Aravis library.
+This software is a plugin extension to Odin data and requires that you install and build both Odin-data and Odin-control to be able to utilize this project. This page will provide instructions for installing these as well as the Aravis library.
 
 :::{note}
 This tutorial has been written for Ubuntu 22.4 Jellyfish. Compatibility with other Linux systems isn't guaranteed.
@@ -15,7 +15,7 @@ The plugin has the following direct dependencies:
 - [Odin-data v1.10.1](https://github.com/odin-detector/odin-data): Aravis-detector inherits Odin's frameProcessor plugin structure and various utilities. Additionally, the frame processor app itself is required to run the plugin.
 - [Odin-control v1.5.0](https://github.com/odin-detector/odin-control): Used as a control server. This project extends its functionality to include the aravis-detector plugin and provides a python CLI to communicate with the odin frameProcessor using the control server.
 
-Secondary dependencies:
+Sub-dependencies:
 
 - Odin-data:
   - [Boost](https://www.boost.org/) used for multithreading.

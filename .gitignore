@@ -46,3 +46,4 @@ __pycache__
 
 # Ignore for now
 config
+config/odin_server.cfg
