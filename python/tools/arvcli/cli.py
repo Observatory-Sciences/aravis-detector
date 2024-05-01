@@ -211,7 +211,7 @@ def _port_callback(val: str) -> None:
 @app.command()
 def connect(
     camera_ip: Optional[str] = typer.Option(
-        None, "-ip", "--ip_address", help="ip address of the GigE cam"
+        None, "-ip", "--ip_address", help="connect to camera with ip address"
     ),
     list: Optional[bool] = typer.Option(
         None, "-l", "--list", help="list all the cameras detected"
@@ -220,9 +220,6 @@ def connect(
     """
     Connects the AravisDetector plugin to a camera.
 
-    Args:
-        camera_ip (str): ip address of camera. Defaults to typer.Option(None, "-ip", "--ip_address")
-        list(bool). Lists all available camera.
     """
     if camera_ip is not None:
         response = put_HTTP_request(
@@ -328,18 +325,9 @@ def hdf(
     """
     Control the file writer plugin
 
-    Args:
-        start (Optional[bool], optional): Starts acquiring and saving frames
-        arm (Optional[bool], optional): Prepares the hdf plugin to save files as soon as
-                                        acquisition starts.
-        stop (Optional[bool], optional): Stops acquiring and saving files
-        disarm (Optional[bool], optional): Stops saving files without stopping acquisition
-        file_name (Optional[str], optional): sets the file name. Defaults to the current
-                                             date and time as file name.
-        file_path (Optional[str], optional): sets the file path. Will reuse the last value
-                                             specified to the server or to the config value
-        num (Optional[int], optional): sets the number of frames to save. Defaults to value
-                                      given in configs.yaml
+    path and num default to config values
+
+    name default to current time in run_seconds_minute_hour_day_month_year format
     """
     response = {}
     params = {
@@ -377,9 +365,12 @@ def hdf(
             print("[green]File writing was[/green] [red]stopped[/red]")
         return
     if num is None:
-        if num is None:
+        num = get_value("fp/config/hdf/frames")
+        if num == 0:
             num = configs["default_n_frames"]
-        print(f"[yellow]Number of frames unspecified, writing {num}[/yellow]")
+            print(f"[yellow]Number of frames unspecified, using default {num}[/yellow]")
+        else:
+            print(f"[yellow]Number of frames unspecified, using previous value {num} [/yellow]")
     if file_name is None:
         cd = time.localtime()
         file_name = (
@@ -390,12 +381,16 @@ def hdf(
             f"[yellow]File name unspecified, using: [bold]{file_name}[/bold][/yellow]"
         )
     if file_path is None:
-        file_path = get_value("fp/status/hdf/file_path")
+        file_path = get_value("fp/config/hdf/file/path")
         if file_path == "":
             file_path = configs["default_path"]
-        print(
-            f"[yellow]File path unspecified, using: [bold]{file_path}[/bold][/yellow]"
-        )
+            print(
+                f"[yellow]File path unspecified, using default: [bold]{file_path}[/bold][/yellow]"
+            )
+        else:
+            print(
+                f"[yellow]File path unspecified, using previous: [bold]{file_path}[/bold][/yellow]"
+            )
 
     params["frames"] = num
     params["file"]["name"] = file_name
@@ -436,7 +431,7 @@ def hdf(
             )
             for val in track(range(num + 1), description="Acquiring..."):
                 time.sleep(time_per_frame)
-            frames_acquired = get_value("aravis/config/frames_captured")
+            frames_acquired = get_value("aravis/status/frames_captured")
             print(f"Acquired {frames_acquired} frames")
 
         return
@@ -472,16 +467,19 @@ def http(
     Api requests are of the following form:
 
     /api/0.1/aravis/config/start_acquisition
+
     /api/0.1/aravis/config/stop_acquisition
+
     /api/0.1/aravis/config/exposure_time
+
     /api/0.1/fp/config/hdf/write
+
     /api/0.1/fp/config/hdf/file/path
+
     /api/0.1/fp/config/hdf/file/name
+
     /api/0.1/fp/config/hdf/master
-    /api/0.1/view/image
-    Args:
-        put (str): an HTTP request of the form: /api/0.1/aravis/config/start_acquisition
-        get (str): an HTTP request of the form:
+
     """
     if put:
         if value is None:
@@ -573,5 +571,9 @@ def main(
         is_eager=True,
     ),
 ) -> None:
+    """
+    Python CLI for Aravis-Detector Plugin
 
+    For command detail call arvcli <command> --help
+    """
     pass
