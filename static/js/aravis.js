@@ -52,7 +52,7 @@ $( document ).ready(function()
   setInterval(update_server_setup, 1000);
   setInterval(update_aravis, 200);
 
-  setTimeout(get_live_image, 1000);
+  setInterval(get_live_image, 1000);
 
   // Configuration items
   $('#set-exposure').on('change', function(event){
@@ -86,19 +86,8 @@ $( document ).ready(function()
 
 function get_live_image()
 {
-    var img = document.createElement("img");
-    img.onload = function(){
-      $('#live-view').html('');
-      $('#live-view').append(img);
-      // Update in 1 second
-      setTimeout(get_live_image, 1000);
-    }
-    img.onerror = function(){
-      // Simply try again in 1 second
-      setTimeout(get_live_image, 1000);
-    }
-    d = new Date();
-    img.src = '/api/' + api_version + '/view/image?' + d.getTime();
+  iframe = $('#live-view');
+  iframe.attr('src', '/api/' + api_version + '/view/image');
 }
 
 
