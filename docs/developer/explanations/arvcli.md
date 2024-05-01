@@ -2,7 +2,7 @@
 
 Arvcli is a simple CLI interface that uses [typer](https://typer.tiangolo.com/) to interface with the command line. In essence, each functionality of the CLI is compartmentalized within a function. The general commands are divided in two sections:
 
-1. Direct callback: these commands are signalled by the use of a '-' flag and use the callback functions as implementation.
+1. Options: these commands are signalled by the use of a '-' flag and use the callback functions as implementation.
 2. Commands: the commands each have their own subcommands and are created using the command decorator.
 
 The app follows the usual folder structure of a python project:
@@ -30,11 +30,16 @@ The main function has 6 different callback typer arguments:
 - ipaddress (_ipaddress_callback): changes the default config.yml value for the server address
 - port (_port_callback): changes the default config.yml value for the server port
 - version (_version_callback): prints version and exits
-- g (_get_callback): this function prints the output of the get_value function. It uses the enum functionality of typer to automatically exclude wrong keywords and print out the correct set. The enumeration used is called silly_enum and maps the cmap keys with themselves.
+- g (_get_callback): this function prints the output of the get_value function. It takes an api path then processes it into a valid http request. The json reply is then parsed to get the exact value
+- p (_get_callback): this function sets a specific value.
 
-### Get_value
+### Get and Put requests
 
-This function allows an user to access a config/status variable by name. For this it uses the cmap dictionary to map the keyword argument with the right http request, then parses the json response and returns the most relevant part of it.
+Any paths starting with the “fp” value are truncated after the 3rd value. The first part is added as part of the http request and the later parts are used to parse the json file.
+
+In the above case, the “fp/config/aravis/” is transformed into “http:/< ip_address >/api/0.1/fp/config/aravis/” and the value frame_rate is used as a json key. “sys” paths are split immediately after sys, and aravis paths are sent as http paths directly.
+
+All put requests are either of the form “aravis/config” or “fp/config/< plugin >/” with one more path key. The additional key is then used to create a json file sent to the server together with the input variable.
 
 ### Stream
 
@@ -48,11 +53,15 @@ The stream command is written within a function and has three possible subcomman
 
 The hdf command has several subcommands that allow the user to:
 
-- set a file name, defaults to run_seconds_minutes_hours_day_month_year.
-- set a file path, defaults to the value given in config.yml
-- number of frames to save.
+- start: prepares the file writer to start saving files when acquisition starts
+- stop: stops the file writer plugin
+- write: starts both file writing and acquisition
+- stopW: stops write
+- file: file name
+- path: path of the file
+- num: number of frames to save
 
-Additionally it can also start the hdf plugin with or without also starting frame acquisition.
+The arguments are passed as normal values to the function and a set of if statements determine if they are used or not. The stop functions are parsed first, then path, num and name values. If this values are None the code sends a request to the server for the last value (except for num). If that value had not been set it defaults to the config defined values. The start options are checked last.
 
 ### http
 
