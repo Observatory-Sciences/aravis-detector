@@ -372,14 +372,20 @@ def hdf(
         else:
             print(f"[yellow]Number of frames unspecified, using previous value {num} [/yellow]")
     if file_name is None:
-        cd = time.localtime()
-        file_name = (
-            f"run_{cd.tm_sec}s{cd.tm_min}m{cd.tm_hour}h"
-            + f"{cd.tm_mday}d{cd.tm_mon}m{cd.tm_year}y"
-        )
-        print(
-            f"[yellow]File name unspecified, using: [bold]{file_name}[/bold][/yellow]"
-        )
+        file_name = get_value("fp/config/hdf/file/name")
+        if file_name == "":
+            cd = time.localtime()
+            file_name = (
+                f"run_{cd.tm_sec}s{cd.tm_min}m{cd.tm_hour}h"
+                + f"{cd.tm_mday}d{cd.tm_mon}m{cd.tm_year}y"
+            )
+            print(
+                f"[yellow]File name unspecified, using default: [bold]{file_name}[/bold][/yellow]"
+            )
+        else:
+            print(
+                f"[yellow]File name unspecified, using previous: [bold]{file_name}[/bold][/yellow]"
+            )
     if file_path is None:
         file_path = get_value("fp/config/hdf/file/path")
         if file_path == "":
