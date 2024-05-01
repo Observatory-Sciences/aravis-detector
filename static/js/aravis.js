@@ -86,8 +86,8 @@ $( document ).ready(function()
 
 function get_live_image()
 {
-  iframe = $('#live-view');
-  iframe.attr('src', '/api/' + api_version + '/view/image');
+    iframe = $('#live-view');
+    iframe.attr('src', '/api/' + api_version + '/view/image');
 }
 
 
