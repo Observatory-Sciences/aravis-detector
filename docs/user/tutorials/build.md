@@ -101,6 +101,7 @@ Don't forget to modify the -j4 flag in make to however many cores you want to us
 The use of a virtual python is recommended but not necessary:
 
 ```shell
+cd $cwd
 source venv/bin/activate
 pip install -e odin-control
 odin_control
@@ -118,7 +119,7 @@ pip install opencv-python
 Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
 
 ```shell
-cd aravis
+cd $cwd/aravis
 git checkout 96cea98
 ```
 
