@@ -56,11 +56,11 @@ sudo apt install ninja-build build-essential meson libxml2-dev libglib2.0-dev \
 
 ## Building Dependencies
 
-(Optional) It's useful to save the plugin an it's dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "cwd" as the rest of the guide utilizes it. Additionally you can create a temp folder for all the saved files. To do all this navigate to your desired location for the software and run the following:
+(Optional) It's useful to save the plugin an it's dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "MAIN_DIR" as the rest of the guide utilizes it. Additionally you can create a temp folder for all the saved files. To do all this navigate to your desired location for the software and run the following:
 
 ```shell
 mkdir odin_camera_driver && cd odin_camera_driver
-cwd=$(pwd)
+MAIN_DIR=$(pwd)
 sudo apt-get update
 mkdir temp
 python3 -m venv venv
@@ -76,18 +76,18 @@ git clone https://github.com/odin-detector/odin-data
 git clone https://github.com/Observatory-Sciences/aravis-detector
 ```
 
-Similar to "cwd" short cut, the commands written here use a prefix and it's shortcut:
+Similar to "MAIN_DIR" short cut, the commands written here use a prefix and it's shortcut:
 
 ```shell
  mkdir prefix
- PREFIX=$cwd/prefix
+ PREFIX=$MAIN_DIR/prefix
 ```
 
 ### Build Odin-data
 
 ```shell
-PREFIX=$cwd/prefix
-cd $cwd/odin-data
+PREFIX=$MAIN_DIR/prefix
+cd $MAIN_DIR/odin-data
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=$PREFIX ../cpp
 make -j4 && make install
@@ -101,7 +101,7 @@ Don't forget to modify the -j4 flag in make to however many cores you want to us
 The use of a virtual python is recommended but not necessary:
 
 ```shell
-cd $cwd
+cd $MAIN_DIR
 source venv/bin/activate
 pip install -e odin-control
 odin_control
@@ -119,7 +119,7 @@ pip install opencv-python
 Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
 
 ```shell
-cd $cwd/aravis
+cd $MAIN_DIR/aravis
 git checkout 96cea98
 ```
 
@@ -147,7 +147,7 @@ This should run 7 tests with no errors and then you will activate the simulated 
 Run the following code to build the plugin library in the same directory as the rest of Odin:
 
 ```shell
- cd $cwd/aravis-detector
+ cd $MAIN_DIR/aravis-detector
  mkdir build && cd build
  cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DODINDATA_ROOT_DIR=$PREFIX ../cpp
  make -j4 && make install
@@ -157,7 +157,7 @@ Install the aravis server extension:
 
 ```shell
  source venv/bin/activate
- cd $cwd/aravis-detector
+ cd $MAIN_DIR/aravis-detector
  pip install -e python
 ```
 
@@ -165,6 +165,6 @@ Install the Python CLI:
 
 ```shell
  source venv/bin/activate
- cd $cwd/aravis-detector/python
+ cd $MAIN_DIR/aravis-detector/python
  pip install -e tools
 ```
