@@ -106,6 +106,13 @@ pip install -e odin-control
 odin_control
 ```
 
+Then, from odin-data install the python adaptor:
+
+```shell
+pip install -e odin-data/python
+pip install opencv-python
+```
+
 ### Build Aravis
 
 Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
@@ -118,7 +125,7 @@ git checkout 96cea98
 Build it using meson:
 
 ```shell
-meson setup --prefix=$INSTALL_PREFIX --build.pkg-config-path $PC_ARAVIS build 
+meson setup --prefix=$PREFIX --build.pkg-config-path=$PC_ARAVIS build 
 cd build
 ninja
 ninja install
