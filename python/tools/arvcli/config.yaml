@@ -1,0 +1,4 @@
+ip: 127.0.0.1
+port: '8888'
+default_n_frames: 100
+default_path: /home/temp

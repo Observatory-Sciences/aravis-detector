@@ -65,7 +65,7 @@ class AravisDetectorAdapter(ApiAdapter):
     @response_types('application/json', default='application/json')
     def get(self, path, request):
         """
-        Handle a HTTP GET request from a client, passing this to the Live Viewer object.
+        Handle a HTTP GET request from a client, passing this to the Aravis Detector object.
 
         :param path: The path to the resource requested by the GET request
         :param request: Additional request parameters
@@ -87,7 +87,7 @@ class AravisDetectorAdapter(ApiAdapter):
     @response_types('application/json', default='application/json')
     def put(self, path, request):
         """
-        Handle a HTTP PUT request from a client, passing it to the Live Viewer Object.
+        Handle a HTTP PUT request from a client, passing it to the Aravis Detector Object.
 
         :param path: path to the resource
         :param request: request object containing data to PUT to the resource
