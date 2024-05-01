@@ -3,7 +3,8 @@ import requests
 
 
 def put_HTTP_request(request: str, value: int, server_address: str, port: str):
-    r = requests.put(f"http://{server_address}:{port}{request}", json.dumps(value, separators=(',', ':')))
+    r = requests.put(f"http://{server_address}:{port}{request}",
+                     json.dumps(value, separators=(',', ':')))
     return r.json()
 
 
