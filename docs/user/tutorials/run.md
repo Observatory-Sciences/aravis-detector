@@ -5,7 +5,7 @@
 Odin-data can be started from the terminal similar to any other app. Since the aravis plugin skips the frame receiver, only the frame processor is needed. To start it simply run:
 
 ```shell
-$cwd/prefix/bin/frameProcessor --config $cwd/aravis-detector/examples/start_aravis.json
+$cwd/prefix/bin/frameProcessor --config $cwd/aravis-detector/docs/start_fp_example.json
 ```
 
 The ```--config``` flag specifies a JSON configuration file that sets up the frame processor. More information on the possible configurations can be found in the [FrameProcessor documentation.](https://odin-detector.github.io/odin-data/master/user/explanations/frame-processor.html)
@@ -13,7 +13,7 @@ The ```--config``` flag specifies a JSON configuration file that sets up the fra
 The default settings provided by the ```start_aravis.json``` file configure the plugin to list all available devices and then connect to the camera with the specified address. Make sure to connect any cameras before starting Odin, to do so you can follow the [guide given in explanations](../reference/camera). Additionally, the aravis camera simulator can be used to test the plugin by running:
 
 ```shell
-$cwd/aravis/src/arv-fake-gv-camera-0.8 -s GV02 -d all
+$cwd/prefix/bin/arv-fake-gv-camera-0.8 -s GV02 -d all
 ```
 
 On a successful start, the frame processor will output something similar to the following:
@@ -53,7 +53,7 @@ On a successful start, the frame processor will output something similar to the 
 To start the Odin control server run the following in the same Python environment you installed it in:
 
 ```shell
-odin-control --config $cwd/aravis-detector/config/odin_server.cfg
+odin_control --config $cwd/aravis-detector/config/odin_server.cfg
 ```
 
 By default the server GUI will be accessible on http//localhost:8888/ and the CLI tool can be installed and used as described in [tools](tools).

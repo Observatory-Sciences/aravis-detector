@@ -1,0 +1,83 @@
+[
+	{
+	  "fr_setup": {
+		"fr_ready_cnxn": "tcp://127.0.0.1:5001",
+		"fr_release_cnxn": "tcp://127.0.0.1:5002"
+	  }
+	},
+	{
+	  "plugin": {
+		"load": {
+		  "index": "aravis",
+		  "name": "AravisDetectorPlugin",
+		  "library": "prefix/lib/libAravisDetectorPlugin.so"
+		}
+	  }
+	},
+	{
+	  "plugin": {
+		"load": {
+			"index": "view",
+			"name": "LiveViewPlugin",
+			"library": "prefix/lib/libLiveViewPlugin.so"
+		}
+	  }
+	},
+	{
+	  "plugin": {
+		"load": {
+			"index": "hdf",
+			"name": "FileWriterPlugin",
+			"library": "prefix/lib/libHdf5Plugin.so"
+		}
+	  }
+	},
+	{
+		"plugin": {
+			"connect": {
+				"index": "view",
+				"connection": "aravis"
+			}
+		}
+	},
+	{
+		"plugin": {
+			"connect": {
+				"index": "hdf",
+				"connection": "aravis"
+			}
+		}
+	},
+	{
+		"view":{
+			"live_view_socket_addr": "tcp://0.0.0.0:5020",
+			"dataset_name": "data",
+			"frame_frequency": 5
+	  }
+	},
+	{
+		"aravis":{
+			"list_devices": true,
+			"compression": "none",
+			"dataset": "data",
+			"status_frequency": 1000
+	  }
+	},
+	{
+		"hdf": {
+			"dataset": {
+				"data": {
+					"datatype": "uint8",
+					"compression": "none"
+				}
+			},
+			"acquisition_id": "test",
+			"timeout_timer_period": 3000
+		}
+	},
+	{
+		"aravis": {
+		        "ip_address": "169.254.186.47"
+    		}
+	}
+]
