@@ -87,4 +87,4 @@ jobs:
         run: pip install -e python
       
       - name: Run Integration test
-        run: pytest test/run_test.py
+        run: pytest ${cwd}test/run_test.py
