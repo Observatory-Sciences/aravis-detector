@@ -99,128 +99,54 @@
 							<div class="col-xs-1">&nbsp;</div>
 						</div>
 						<div class="row sidebar-row vertical-align">
-								<div class="col-xs-10">
-									<table>
-										<tr>
-											<td width="120px">Camera ID:</td>
-											<td width="150px" align="right"><div id="camera-id"></div></td>
-										</tr>
-										<tr>
-											<td width="120px">Exposure (s):</td>
-											<td width="150px" align="right"><div id="get-exposure"></div></td><td width="10px"></td>
-											<td width="50px"><input type="text" id="set-exposure" size="5"></input></td>
-										</tr>
-										<tr>
-											<td width="120px">Frame Rate (Hz):</td>
-											<td width="150px" align="right"><div id="get-rate"></div></td><td width="10px"></td>
-											<td width="50px"><input type="text" id="set-rate" size="5"></input></td>
-										</tr>
-										<!--<tr>
-											<td width="120px">Mode:</td>
-											<td width="50px" align="right"><div id="get-mode"></div></td><td width="10px"></td>
-											<td width="50px"><select id="set-mode">
-												<option value="0">Single</option>
-												<option value="1">Multiple</option>
-												<option value="2">Continuous</option>
-											</select></td>
-										</tr>-->
-										<tr>
-											<td width="120px">Num Frames:</td>
-											<td width="50px" align="right"><div id="get-num-frames"></div></td><td width="10px"></td>
-											<td width="50px"><input type="text" id="set-num-frames" size="5"></input></td>
-										</tr>
-										<tr>
-											<td width="120px">Pixel Format:</td>
-											<td width="50px" align="right"><div id="get-pixel-format"></div></td><td width="10px"></td>
-											<td width="50px"><select id="set-pixel-format">
-												<option value="0">Mono8</option>
-												<option value="1">Mono8</option>
-												<option value="2">Mono8</option>
-												<option value="3">Mono8</option>
-											</select></td>
-										</tr>
-										<tr>
-											<td width="120px">Acquisition:</td>
-											<td width="50px" align="right"><div id="get-acq-state"></div></td><td width="10px"></td>
-											<td width="150px">
-												<button id="start-acquisition">Start</button>
-												<button id="stop-acquisition">Stop</button>
-											</td>
-										</tr>
-										<tr>
-											<td width="120px">Frames Captured:</td>
-											<td width="50px" align="right"><div id="get-frames-captured"></div></td><td width="10px"></td>
-										</tr>
-									</table>
-								</div>
-							</div>
-	
-
-<!--							<div id="api-version" class="col-xs-3 status vertical-align">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Adapters Loaded:</div>
-							
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Start Time:</div>
-							<div id="server-start-time" class="col-xs-3 status vertical-align">&nbsp;</div>
-							<div class="col-xs-3">Up Time:</div>
-							<div id="server-up-time" class="col-xs-3 status vertical-align">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Server Username:</div>
-							<div id="server-username" class="col-xs-5 status vertical-align">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Hardware Connection:</div>
-							<div class="col-xs-5 status vertical-align">
+							<div class="col-xs-10">
 								<table>
-									<tr><td>Address:</td><td align="center" id="server-hw-address" width="150px"></td></tr>
-									<tr><td>Port:</td><td align="center" id="server-hw-port"></td></tr>
-									<tr><td>Connected:</td><td align="center" id="server-hw-connected"></td></tr>
-									<tr><td></td><td align="center"><button id="server-hw-reconnect">Reconnect</button></td></tr>
+									<tr>
+										<td width="120px">Camera ID:</td>
+										<td width="150px" align="right"><div id="camera-id"></div></td>
+									</tr>
+									<tr>
+										<td width="120px">Exposure (s):</td>
+										<td width="150px" align="right"><div id="get-exposure"></div></td><td width="10px"></td>
+										<td width="50px"><input type="text" id="set-exposure" size="5"></input></td>
+									</tr>
+									<tr>
+										<td width="120px">Frame Rate (Hz):</td>
+										<td width="150px" align="right"><div id="get-rate"></div></td><td width="10px"></td>
+										<td width="50px"><input type="text" id="set-rate" size="5"></input></td>
+									</tr>
+									<tr>
+										<td width="120px">Num Frames:</td>
+										<td width="50px" align="right"><div id="get-num-frames"></div></td><td width="10px"></td>
+										<td width="50px"><input type="text" id="set-num-frames" size="5"></input></td>
+									</tr>
+									<tr>
+										<td width="120px">Pixel Format:</td>
+										<td width="50px" align="right"><div id="get-pixel-format"></div></td><td width="10px"></td>
+										<td width="50px"><select id="set-pixel-format">
+											<option value="0">Mono8</option>
+										</select></td>
+									</tr>
+									<tr>
+										<td width="120px">Acquisition:</td>
+										<td width="50px" align="right"><div id="get-acq-state"></div></td><td width="10px"></td>
+										<td width="150px">
+											<button id="start-acquisition">Start</button>
+											<button id="stop-acquisition">Stop</button>
+										</td>
+									</tr>
+									<tr>
+										<td width="120px">Frames Captured:</td>
+										<td width="50px" align="right"><div id="get-frames-captured"></div></td><td width="10px"></td>
+									</tr>
+									<tr>
+										<td width="120px">Errors:</td>
+										<td colspan="3" width="50px" align="right"><textarea id="get-errors" readonly="true" rows="10" cols="50"></textarea></td>
+										<td><button id="clear-errors">Clear</button></td>
+									</tr>
 								</table>
 							</div>
 						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Database Connection:</div>
-							<div class="col-xs-5 status vertical-align">
-								<table>
-									<tr><td>Address:</td><td align="center" id="server-db-address" width="150px"></td></tr>
-									<tr><td>Port:</td><td align="center" id="server-db-port"></td></tr>
-									<tr><td>Name:</td><td align="center" id="server-db-name"></td></tr>
-									<tr><td>Connected:</td><td align="center" id="server-db-connected"></td></tr>
-									<tr><td></td><td align="center"><button id="server-db-reconnect">Reconnect</button></td></tr>
-								</table>
-							</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">Auto-read Monitors (10 Hz):</div>
-							<div class="col-xs-5 status vertical-align">
-								<span id="server-ar-status"></span>
-								<span><button id="server-ar-start">Start</button></span>
-								<span><button id="server-ar-stop">Stop</button></span>
-							</div>
-						</div>
-						<div class="row sidebar-row vertical-align">
-							<div class="col-xs-3">&nbsp;</div>
-						</div>-->
 					</div> <!-- container-fluid -->
 				</div> <!--  well sidebar-nav-fixed -->
 			</div> <!-- span3 -->
@@ -307,7 +233,7 @@
 						<div class="row sidebar-title">
 							<h3>Live View</h3>
 						</div>
-						<iframe width="1024px" height="1024px" id="live-view"></iframe>
+						<div width="1024px" height="1024px" id="live-view"></div>
 					</div>
 				</div>
 			</div>

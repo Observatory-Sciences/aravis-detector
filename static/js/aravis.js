@@ -2,11 +2,13 @@ api_version = '0.1';
 monitor_names = [];
 monitor_desc = {};
 current_page = "home-view";
+img1 = null;
+img2 = null;
 
 aravis = {
     api_version: '0.1',
     current_page: '.home-view',
-    status: {}
+    status: {},
 };
 
 aravis_modes = [
@@ -51,8 +53,31 @@ $( document ).ready(function()
 
   setInterval(update_server_setup, 1000);
   setInterval(update_aravis, 200);
+  setTimeout(get_live_image, 1000);
+  setInterval(update_errors, 500);
 
-  setInterval(get_live_image, 1000);
+  img1 = document.createElement("img");
+  img1.onload = function(){
+    $('#live-view').html('');
+    $('#live-view').append(img1);
+    // Update in 1 second
+    setTimeout(get_live_image2, 1000);
+  }
+  img1.onerror = function(){
+    // Simply try again in 1 second
+    setTimeout(get_live_image2, 1000);
+  }
+  img2 = document.createElement("img");
+  img2.onload = function(){
+    $('#live-view').html('');
+    $('#live-view').append(img2);
+    // Update in 1 second
+    setTimeout(get_live_image, 1000);
+  }
+  img2.onerror = function(){
+    // Simply try again in 1 second
+    setTimeout(get_live_image, 1000);
+  }
 
   // Configuration items
   $('#set-exposure').on('change', function(event){
@@ -76,6 +101,9 @@ $( document ).ready(function()
   $('#stop-acquisition').on('click', function(event){
     stop_acquisition();
   });
+  $('#live-refresh').on('click', function(event){
+    get_live_image();
+  });
 
   $(window).on('hashchange', function(){
 		// On every hash change the render function is called with the new hash.
@@ -86,10 +114,15 @@ $( document ).ready(function()
 
 function get_live_image()
 {
-    iframe = $('#live-view');
-    iframe.attr('src', '/api/' + api_version + '/view/image');
+    d = new Date();
+    img1.src = '/api/' + api_version + '/view/image?' + d.getTime();
 }
 
+function get_live_image2()
+{
+    d = new Date();
+    img2.src = '/api/' + api_version + '/view/image?' + d.getTime();
+}
 
 function write_exposure()
 {
@@ -145,24 +178,37 @@ function update_api_adapters() {
 }
 
 function update_aravis() {
-    $.getJSON('/api/' + api_version + '/aravis', function(response) {
-        $('#camera-id').html(response.status.camera_id.value);
-        $('#get-exposure').html(response.config.exposure_time.value);
-        $('#get-rate').html(response.config.frame_rate.value);
-        $('#get-num-frames').html(response.config.frame_count.value);
-        $('#get-mode').html(response.config.mode.value);
-        mode = response.config.mode.value
-        for (i=0; i < aravis_modes.length; i++){
-          if (mode == aravis_modes[i]){
-            $('#set-mode').val(""+i);
-          }
+  $.getJSON('/api/' + api_version + '/aravis', function(response) {
+      $('#camera-id').html(response.status.camera_id.value);
+      $('#get-exposure').html(response.config.exposure_time.value);
+      $('#get-rate').html(response.config.frame_rate.value);
+      $('#get-num-frames').html(response.config.frame_count.value);
+      $('#get-mode').html(response.config.mode.value);
+      mode = response.config.mode.value
+      for (i=0; i < aravis_modes.length; i++){
+        if (mode == aravis_modes[i]){
+          $('#set-mode').val(""+i);
         }
-        $('#get-pixel-format').html(response.config.pixel_format.value);
-        $('#get-acq-state').html(led_html(response.status.streaming.value,'green', 20));
-        $('#get-frames-captured').html(response.status.frames_captured.value);
-    });
+      }
+      $('#get-pixel-format').html(response.config.pixel_format.value);
+      $('#get-acq-state').html(led_html(response.status.streaming.value,'green', 20));
+      $('#get-frames-captured').html(response.status.frames_captured.value);
+  });
 }
-  
+
+function update_errors() {
+  $.getJSON('/api/' + api_version + '/fp/status/client_error/0', function(response) {
+      errors = response.value
+      val = "";
+      if (errors != null){
+        for (i=0; i < errors.length; i++){
+          val += errors[i] + '\n';
+        }
+      }
+      $('#get-errors').val(val);
+  });
+}
+
 function update_server_setup() {
     $.getJSON('/api/' + api_version + '/sys', function(response) {
         $('#odin-version').html(response.odin_version);
