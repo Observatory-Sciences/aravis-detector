@@ -73,7 +73,7 @@ jobs:
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          meson setup --prefix=${INSTALL_PREFIX} --build.pkg-config-path "$PKG_CONFIG_PATH" build
+          meson setup --prefix=${INSTALL_PREFIX} --build.pkg-config-path="$PKG_CONFIG_PATH" build
           ninja -v -C build install
 
       - name: Build Aravis Plugin
@@ -85,3 +85,6 @@ jobs:
 
       - name: Build AravisDetector client
         run: pip install -e python
+      
+      - name: Run Integration test
+        run: pytest test/run_test.py

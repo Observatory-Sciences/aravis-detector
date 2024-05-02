@@ -1,0 +1,25 @@
+[
+	{
+	  "fr_setup": {
+		"fr_ready_cnxn": "tcp://127.0.0.1:5001",
+		"fr_release_cnxn": "tcp://127.0.0.1:5002"
+	  }
+	},
+	{
+	  "plugin": {
+		"load": {
+		  "index": "aravis",
+		  "name": "AravisDetectorPlugin",
+		  "library": "/home/gsc/Github/RFI_Odin/prefix/lib/libAravisDetectorPlugin.so"
+		}
+	  }
+	},
+	{
+		"aravis":{
+			"list_devices": true,
+			"compression": "none",
+			"dataset": "data",
+			"status_frequency": 1000
+	  }
+	}
+]
