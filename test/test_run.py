@@ -7,13 +7,22 @@ odin-data tools
 Because this is an integration test, to properly run it the project files have to be in the
 right folder structure and installed.
 
-To do this:
+Note: the aravis-detector directory can now also be the source dir.
 
-0. make a prefix directory in the main directory (aravis-detector should be a subdir in main)
-1. install Odin Data in a prefix
-2. install Aravis in the same prefix with camera included
-3. install Aravis-Detector plugin in the same prefix
-4. Install Odin Data and Aravis Detector python tools in the same venv
+The two structures are both valid:
+
+Source_dir
+    - aravis-detector
+        - test
+    - prefix
+    - ...
+
+Source_dir
+    - test
+    - prefix
+    - ...
+
+Make sure both the Frame processor and fake camera are installed in prefix/bin
 
 If you follow the build instructions you should already have all of this installed
 
@@ -38,16 +47,28 @@ class TestIntegration:
     Then it uses the odin-data Ipc messages to communicate with it.
     """
     # Find the paths for prefix and configs
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    plugin_dir, test_tail = os.path.split(current_dir)
-    source_dir, arv_tail = os.path.split(plugin_dir)
+    current_dir = os.path.dirname(os.path.realpath(__file__))  # source_dir/aravis-detector/test
+    plugin_dir, test_tail = os.path.split(current_dir)  # source_dir/aravis-detector
+    source_dir, arv_tail = os.path.split(plugin_dir)  # source_dir
 
     # Start instances of frameProcessor (with the correct plugins) and Fake Camera
-    fp_app = subprocess.Popen([
-            f"{source_dir}/prefix/bin/frameProcessor",
-            "--ctrl", "tcp://0.0.0.0:5004",
-            "--config", f"{current_dir}/test_plugin.json"
-        ])
+    try:
+        fp_app = subprocess.Popen([
+                f"{source_dir}/prefix/bin/frameProcessor",
+                "--ctrl", "tcp://0.0.0.0:5004",
+                "--config", f"{current_dir}/test_plugin.json"
+            ])
+    except FileNotFoundError:
+        # if the install was a done in the same directory (like workflows do) this will
+        # change paths so it only goes on directory above (exits test)
+        current_dir = os.path.dirname(os.path.realpath(__file__))  # source_dir/test
+        source_dir, arv_tail = os.path.split(current_dir)  # source_dir
+        fp_app = subprocess.Popen([
+                f"{source_dir}/prefix/bin/frameProcessor",
+                "--ctrl", "tcp://0.0.0.0:5004",
+                "--config", f"{current_dir}/test_plugin.json"
+            ])
+
     fake_cam = subprocess.Popen([
         f"{source_dir}/prefix/bin/arv-fake-gv-camera-0.8",
         "-s", "GV02", "-d", "all"
@@ -77,7 +98,7 @@ class TestIntegration:
 
         Returns:
             reply: Ipc Message object with info from the frame processor
-        
+
         Raises:
             TimeoutError: when the response takes longer than expected
         """
@@ -97,7 +118,7 @@ class TestIntegration:
         """
         Send config parameter to connect to the fake camera
 
-        Checks the reply for errors and confirms the connected camera 
+        Checks the reply for errors and confirms the connected camera
         has the intended ip address.
         """
         config_msg = IpcMessage('cmd', 'configure', id=self._next_id())
@@ -144,7 +165,7 @@ class TestIntegration:
         """
         Send config parameter to connect to the fake camera
 
-        Checks the reply for errors and confirms the connected camera 
+        Checks the reply for errors and confirms the connected camera
         has the intended ip address.
         """
         self._send_config("ip_address", "127.0.0.1")
