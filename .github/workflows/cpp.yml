@@ -50,6 +50,7 @@ jobs:
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
+          pip install -e python
           cd ..
 
       - name: Build Odin Control
