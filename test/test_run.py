@@ -51,7 +51,19 @@ class TestIntegration:
     plugin_dir, test_tail = os.path.split(current_dir)  # source_dir/aravis-detector
     source_dir, arv_tail = os.path.split(plugin_dir)  # source_dir
 
-    # Start instances of frameProcessor (with the correct plugins) and Fake Camera
+    setup_plugin = ''' [{"plugin": {
+                        "load": {
+                                "index": "aravis",
+                                "name": "AravisDetectorPlugin",
+                    "library": "''' + source_dir + '''/prefix/lib/libAravisDetectorPlugin.so"}}},
+                        {"aravis": {
+                                "compression": "none",
+                                "dataset": "data",
+                                "status_frequency": 1000}}] '''
+
+    with open(f"{current_dir}/test_plugin.json", 'w') as file:
+        file.write(setup_plugin)
+
     try:
         fp_app = subprocess.Popen([
                 f"{source_dir}/prefix/bin/frameProcessor",
@@ -63,6 +75,19 @@ class TestIntegration:
         # change paths so it only goes on directory above (exits test)
         current_dir = os.path.dirname(os.path.realpath(__file__))  # source_dir/test
         source_dir, arv_tail = os.path.split(current_dir)  # source_dir
+        setup_plugin = ''' [{"plugin": {
+                    "load": {
+                            "index": "aravis",
+                            "name": "AravisDetectorPlugin",
+                    "library": "''' + source_dir + '''/prefix/lib/libAravisDetectorPlugin.so"}}},
+                    {"aravis": {
+                            "compression": "none",
+                            "dataset": "data",
+                            "status_frequency": 1000}}] '''
+
+        with open(f"{current_dir}/test_plugin.json", 'w') as file:
+            file.write(setup_plugin)
+
         fp_app = subprocess.Popen([
                 f"{source_dir}/prefix/bin/frameProcessor",
                 "--ctrl", "tcp://0.0.0.0:5004",
