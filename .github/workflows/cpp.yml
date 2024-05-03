@@ -74,8 +74,9 @@ jobs:
           git clone https://github.com/AravisProject/aravis
           cd aravis
           git checkout 96cea98
-          meson setup --prefix=${INSTALL_PREFIX} --build.pkg-config-path="$PKG_CONFIG_PATH" build
-          ninja -v -C build install
+          meson setup --prefix=${INSTALL_PREFIX} --build.pkg-config-path=$PC_ARAVIS build
+          cd build
+          ninja && ninja install
 
       - name: Build Aravis Plugin
         run: |
