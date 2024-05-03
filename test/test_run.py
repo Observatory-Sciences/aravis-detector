@@ -75,8 +75,10 @@ class TestIntegration:
     fp_app = subprocess.Popen([
             f"{source_dir}/prefix/bin/frameProcessor",
             "--ctrl", "tcp://0.0.0.0:5004",
-            "--config", f"{current_dir}/test_plugin.json"
+            "--config", f"{current_dir}/test_plugin.json",
+            "--debug-level", "999"
         ])
+
     fake_cam = subprocess.Popen([
         f"{source_dir}/prefix/bin/arv-fake-gv-camera-0.8",
         "-s", "GV02", "-d", "all"
@@ -132,12 +134,6 @@ class TestIntegration:
         config_msg = IpcMessage('cmd', 'configure', id=self._next_id())
         config_msg.set_param(param_name='aravis', param_value={param_name: param_val})
         self.ctrl_channel.send(config_msg.encode())
-
-    def test_start(self):
-        """
-        print start
-        """
-        print(self.fp_app)
 
     def test_status(self):
         """
@@ -221,7 +217,6 @@ class TestIntegration:
 
 if __name__ == "__main__":
     ap = TestIntegration()
-    ap.test_start()
     ap.test_config()
     ap.test_status()
     ap.test_connect_camera()
