@@ -51,49 +51,32 @@ class TestIntegration:
     plugin_dir, test_tail = os.path.split(current_dir)  # source_dir/aravis-detector
     source_dir, arv_tail = os.path.split(plugin_dir)  # source_dir
 
-    setup_plugin = ''' [{"plugin": {
-                        "load": {
-                                "index": "aravis",
-                                "name": "AravisDetectorPlugin",
-                    "library": "''' + source_dir + '''/prefix/lib/libAravisDetectorPlugin.so"}}},
-                        {"aravis": {
-                                "compression": "none",
-                                "dataset": "data",
-                                "status_frequency": 1000}}] '''
-
-    with open(f"{current_dir}/test_plugin.json", 'w') as file:
-        file.write(setup_plugin)
-
-    try:
-        fp_app = subprocess.Popen([
-                f"{source_dir}/prefix/bin/frameProcessor",
-                "--ctrl", "tcp://0.0.0.0:5004",
-                "--config", f"{current_dir}/test_plugin.json"
-            ])
-    except FileNotFoundError:
-        # if the install was a done in the same directory (like workflows do) this will
-        # change paths so it only goes on directory above (exits test)
+    # Double check that the file exists and try different path
+    if not os.path.isfile(f"{source_dir}/prefix/bin/frameProcessor"):
+        # if the install was a done in the same directory /aravis-detector/ this will
+        # change paths so it only goes on directory above /test/
         current_dir = os.path.dirname(os.path.realpath(__file__))  # source_dir/test
         source_dir, arv_tail = os.path.split(current_dir)  # source_dir
-        setup_plugin = ''' [{"plugin": {
-                    "load": {
-                            "index": "aravis",
-                            "name": "AravisDetectorPlugin",
-                    "library": "''' + source_dir + '''/prefix/lib/libAravisDetectorPlugin.so"}}},
-                    {"aravis": {
-                            "compression": "none",
-                            "dataset": "data",
-                            "status_frequency": 1000}}] '''
 
-        with open(f"{current_dir}/test_plugin.json", 'w') as file:
-            file.write(setup_plugin)
+        for file in ["/bin/frameProcessor", "/lib/libAravisDetectorPlugin.so"]:
+            if not os.path.isfile(f"{source_dir}/prefix{file}"):
+                raise FileNotFoundError(f"Test setup process failed to find {file} in the source \
+                                        directory: {source_dir} or {os.path.split(plugin_dir)}")
 
-        fp_app = subprocess.Popen([
-                f"{source_dir}/prefix/bin/frameProcessor",
-                "--ctrl", "tcp://0.0.0.0:5004",
-                "--config", f"{current_dir}/test_plugin.json"
-            ])
+    # change the config file to the correct path
+    with open(f"{current_dir}/test_plugin.json") as config_file:
+        fp_configs = json.load(config_file)
+        fp_configs[0]["plugin"]["load"]["library"] = f"{source_dir}" +\
+                                                     "/prefix/lib/libAravisDetectorPlugin.so"
+    with open(f"{current_dir}/test_plugin.json", "w") as config_file:
+        json.dump(fp_configs, config_file)
 
+    # start fp and camera
+    fp_app = subprocess.Popen([
+            f"{source_dir}/prefix/bin/frameProcessor",
+            "--ctrl", "tcp://0.0.0.0:5004",
+            "--config", f"{current_dir}/test_plugin.json"
+        ])
     fake_cam = subprocess.Popen([
         f"{source_dir}/prefix/bin/arv-fake-gv-camera-0.8",
         "-s", "GV02", "-d", "all"
@@ -149,6 +132,12 @@ class TestIntegration:
         config_msg = IpcMessage('cmd', 'configure', id=self._next_id())
         config_msg.set_param(param_name='aravis', param_value={param_name: param_val})
         self.ctrl_channel.send(config_msg.encode())
+
+    def test_start(self):
+        """
+        print start
+        """
+        print(self.fp_app)
 
     def test_status(self):
         """
@@ -232,6 +221,7 @@ class TestIntegration:
 
 if __name__ == "__main__":
     ap = TestIntegration()
+    ap.test_start()
     ap.test_config()
     ap.test_status()
     ap.test_connect_camera()
