@@ -39,17 +39,11 @@ jobs:
         name: install odin data
         run: |
           git clone https://github.com/odin-detector/odin-data.git && cd odin-data
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
           cd ..
-
-      - name: Build Odin Control
-        run: |
-          git clone https://github.com/odin-detector/odin-control
-          pip install -e odin-control
 
       - name: Cache Aravis
         id: cache-aravis
@@ -68,7 +62,6 @@ jobs:
       - name: Python libraries     
         run: |
           pip install -r requirements.txt
-          pip install -e ${cwd}/odin-data/python 
   
       - if: ${{steps.cache-aravis.outputs.cache-hit != 'true' }}
         name: install aravis
@@ -88,8 +81,7 @@ jobs:
           ls -la ${INSTALL_PREFIX}
 
       - name: Build AravisDetector client
-        run: | 
-          pip install -e python
+        run: pip install -e python
 
       - name: Run Integration test
         run: pytest ${cwd}/test/test_run.py
