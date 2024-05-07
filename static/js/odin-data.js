@@ -108,6 +108,9 @@ $(document).ready(function()
       update_fp_params();
     });
     $('#set-fp-path').on('change', function(event){
-      update_fp_params();
+        update_fp_params();
     });
-});
+    $('#clear-errors').on('click', function(event){
+        send_fp_command('clear_errors', 1);
+    });
+  });

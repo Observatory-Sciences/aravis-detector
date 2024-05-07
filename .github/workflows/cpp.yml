@@ -80,8 +80,11 @@ jobs:
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
 
-      - name: Build AravisDetector client
-        run: pip install -e python
+      - name: Build AravisDetector adapter and tools
+        run: |
+        pip install -e python
+        cd python
+        pip install -e tools
 
       - name: Run Integration test
         run: pytest ${cwd}/test/test_run.py
