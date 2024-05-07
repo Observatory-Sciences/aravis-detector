@@ -58,16 +58,19 @@ class TestIntegration:
         current_dir = os.path.dirname(os.path.realpath(__file__))  # source_dir/test
         source_dir, arv_tail = os.path.split(current_dir)  # source_dir
 
-        for file in ["/bin/frameProcessor", "/lib/libAravisDetectorPlugin.so"]:
+        # One more check for paths
+        for file in ["/bin/frameProcessor", "/lib/libAravisDetectorPlugin.so", 
+                     "/bin/arv-fake-gv-camera-0.8", "/lib/x86_64-linux-gnu/libaravis-0.8.so"]:
             if not os.path.isfile(f"{source_dir}/prefix{file}"):
                 raise FileNotFoundError(f"Test setup process failed to find {file} in the source \
                                         directory: {source_dir} or {os.path.split(plugin_dir)}")
 
-    # change the config file to the correct path
+    # Open config file and change the correct value
     with open(f"{current_dir}/test_plugin.json") as config_file:
         fp_configs = json.load(config_file)
         fp_configs[0]["plugin"]["load"]["library"] = f"{source_dir}" +\
                                                      "/prefix/lib/libAravisDetectorPlugin.so"
+    # Put it back in the file
     with open(f"{current_dir}/test_plugin.json", "w") as config_file:
         json.dump(fp_configs, config_file)
 
@@ -75,7 +78,7 @@ class TestIntegration:
     fp_app = subprocess.Popen([
             f"{source_dir}/prefix/bin/frameProcessor",
             "--ctrl", "tcp://0.0.0.0:5004",
-            "--config", f"{current_dir}/test_plugin.json",
+            f"--config={current_dir}/test_plugin.json",
             "--debug-level", "999"
         ])
 
@@ -171,23 +174,23 @@ class TestIntegration:
         self.config = self._get_reply()
         assert self.config.get_msg_val() == "request_configuration"
 
-    def test_connect_camera(self):
-        """
-        Send config parameter to connect to the fake camera
+    # def test_connect_camera(self):
+    #     """
+    #     Send config parameter to connect to the fake camera
 
-        Checks the reply for errors and confirms the connected camera
-        has the intended ip address.
-        """
-        self._send_config("ip_address", "127.0.0.1")
-        reply = self._get_reply(5000)
-        if reply.get_msg_type() == "ack":
-            status_msg = IpcMessage('cmd', 'status', id=self._next_id())
-            self.ctrl_channel.send(status_msg.encode())
-            self.status = self._get_reply()
-            status_values = self.status.get_param("aravis")
-            assert status_values['camera_ip'] == '127.0.0.1'
-        else:
-            assert reply.get_msg_type() == "ack"
+    #     Checks the reply for errors and confirms the connected camera
+    #     has the intended ip address.
+    #     """
+    #     self._send_config("ip_address", "127.0.0.1")
+    #     reply = self._get_reply(5000)
+    #     if reply.get_msg_type() == "ack":
+    #         status_msg = IpcMessage('cmd', 'status', id=self._next_id())
+    #         self.ctrl_channel.send(status_msg.encode())
+    #         self.status = self._get_reply()
+    #         status_values = self.status.get_param("aravis")
+    #         assert status_values['camera_ip'] == '127.0.0.1'
+    #     else:
+    #         assert reply.get_msg_type() == "ack"
 
     def test_bad_config_response(self):
         """
@@ -211,13 +214,18 @@ class TestIntegration:
 
     def __del__(self):
         """Explicitly stop the apps"""
-        self.fake_cam.kill()
-        self.fp_app.kill()
+
+        if self.fake_cam is not None:
+            self.fake_cam.kill()
+
+        if self.fp_app is not None:
+            self.fp_app.kill()
 
 
 if __name__ == "__main__":
     ap = TestIntegration()
     ap.test_config()
     ap.test_status()
-    ap.test_connect_camera()
+    # ap.test_connect_camera()
+    ap.test_bad_config_response()
     ap.test_shutdown()

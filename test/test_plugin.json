@@ -1,1 +1,1 @@
-[{"plugin": {"load": {"index": "aravis", "name": "AravisDetectorPlugin", "library": ""}}}]
+[{"plugin": {"load": {"index": "aravis", "name": "AravisDetectorPlugin", "library": ""}}}, {"aravis": {"compression": "none", "dataset": "data", "status_frequency": 1000}}]

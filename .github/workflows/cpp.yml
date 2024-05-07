@@ -50,7 +50,6 @@ jobs:
           cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
-          pip install -e ${cwd}/odin-data/python
           cd ..
 
       - name: Build Odin Control
@@ -81,14 +80,15 @@ jobs:
       - name: Build Aravis Plugin
         run: |
           mkdir plugin_build && cd plugin_build
-          cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} ../cpp
+          cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DODINDATA_ROOT_DIR=${INSTALL_PREFIX} -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON ../cpp
           make -j8 VERBOSE=1 && make install VERBOSE=1
           ls -la ${INSTALL_PREFIX}
 
       - name: Build AravisDetector client
-        run: pip install -e python
-      
+        run: | 
+          pip install -e python
+          git clone https://github.com/odin-detector/odin-data.git
+          pip install -e ${cwd}/odin-data/python 
+
       - name: Run Integration test
-        run: |
-          python3 ${cwd}/test/test_run.py
-          pytest ${cwd}/test/test_run.py
+        run: pytest ${cwd}/test/test_run.py
