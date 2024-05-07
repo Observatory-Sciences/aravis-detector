@@ -18,7 +18,7 @@ jobs:
           pip install sphinx myst_parser
 
       - name: Generate Doxygen Documentation
-        run: docs/doxygen.sh
+        run: doxygen docs/Doxyfile
         shell: bash
 
       - name: Sanitize ref name for docs version
