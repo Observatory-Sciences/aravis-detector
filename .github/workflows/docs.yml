@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install -y doxygen
-          pip install sphinx myst_parser
+          pip install -U sphinx
 
       - name: Generate Doxygen Documentation
         run: |
