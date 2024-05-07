@@ -87,7 +87,6 @@ jobs:
       - name: Build AravisDetector client
         run: | 
           pip install -e python
-          git clone https://github.com/odin-detector/odin-data.git
           pip install -e ${cwd}/odin-data/python 
 
       - name: Run Integration test
