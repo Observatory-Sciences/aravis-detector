@@ -1,0 +1,40 @@
+name: documentation
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt install -y doxygen
+          pip install sphinx myst_parser
+
+      - name: Generate Doxygen Documentation
+        run: docs/doxygen.sh
+        shell: bash
+
+      - name: Sanitize ref name for docs version
+        run: echo "DOCS_VERSION=${GITHUB_REF_NAME//[^A-Za-z0-9._-]/_}" >> $GITHUB_ENV
+      
+      - name: Sphinx build
+        run: |
+          sphinx-build  docs/ docs/build/html
+
+      - name: Move to versioned directory
+        run: mv docs/build/html .github/pages/$DOCS_VERSION
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .github/pages
+          force_orphan: true
