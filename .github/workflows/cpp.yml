@@ -14,12 +14,6 @@ jobs:
       - uses: actions/checkout@v4        
         with:
           fetch-depth: 0
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: 'pip' 
-      - run: pip install -r requirements.txt
       
       - name: install general dependencies # Can't cache this without breaking paths :/
         run: |
@@ -67,6 +61,15 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name}}
           restore-keys: ${{ runner.os }}-build-${{ env.cache-name}}
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip' 
+      - name: Python libraries     
+        run: |
+          pip install -r requirements.txt
+          pip install -e ${cwd}/odin-data/python 
+  
       - if: ${{steps.cache-aravis.outputs.cache-hit != 'true' }}
         name: install aravis
         run: |
@@ -87,7 +90,6 @@ jobs:
       - name: Build AravisDetector client
         run: | 
           pip install -e python
-          pip install -e ${cwd}/odin-data/python 
 
       - name: Run Integration test
         run: pytest ${cwd}/test/test_run.py
