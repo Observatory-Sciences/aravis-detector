@@ -6,8 +6,6 @@ permissions:
   contents: write
 
 env:
-  INSTALL_PREFIX: ${{ github.workspace }}/prefix
-  TEMP_: ${{github.workspace}}/temp
   cwd: ${{github.workspace}}
 
 jobs:
@@ -19,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r docs/doc_requirements.txt
+          pip install ./python[dev]
 
       - name: Generate Doxygen Documentation
         run: |
