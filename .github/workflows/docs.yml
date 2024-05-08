@@ -30,17 +30,12 @@ jobs:
       - name: Sphinx build
         run: |
           sphinx-build  docs/ docs/build/html
-
-      - name: Move to versioned directory
-        run: |
-          mkdir -p ${cwd}/.github/pages
-          mv docs/build/html ${cwd}/.github/pages
-          ls ${cwd}/.github/pages
+          ls ${cwd}/docs/build/html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: github/pages
+          publish_dir: docs/build/html
           force_orphan: true
