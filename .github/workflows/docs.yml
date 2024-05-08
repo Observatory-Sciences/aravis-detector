@@ -5,6 +5,11 @@ on: [push, workflow_dispatch]
 permissions:
   contents: write
 
+env:
+  INSTALL_PREFIX: ${{ github.workspace }}/prefix
+  TEMP_: ${{github.workspace}}/temp
+  cwd: ${{github.workspace}}
+
 jobs:
   docs:
     runs-on: ubuntu-latest
@@ -28,12 +33,12 @@ jobs:
 
       - name: Move to versioned directory
         run: |
-          mkdir -p .github/pages
-          mv docs/build/html .github/pages
+          mkdir -p ${cwd}.github/pages
+          mv docs/build/html ${cwd}.github/pages
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .github/pages
+          publish_dir: ${cwd}.github/pages
           force_orphan: true
