@@ -28,6 +28,7 @@ jobs:
       - name: Sphinx build
         run: |
           sphinx-build  docs/ docs/build/html
+          mv ${cwd}/docs/switcher.json ${cwd}/docs/build/html/switcher.json
           ls ${cwd}/docs/build/html
 
       - name: Deploy to GitHub Pages
