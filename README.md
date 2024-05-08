@@ -5,6 +5,8 @@
 
 This project provides an [Odin Data](https://github.com/odin-detector/odin-data) plugin that controls [GenICam](https://www.genicam.org) devices, an [Odin Control](https://github.com/odin-detector/odin-control) server extension and a Python CLI tool. The plugin is ran within the the frame processor app in odin data and acquires buffers directly from the camera, circumventing the need for the frame receiver app. The Genicam interface is handled through the use of the [Aravis](https://github.com/AravisProject/aravis) library and each buffer captured from the camera passed through the normal Odin frame processor plugin chain making the detector compatible with other plugins designed to enhance the functionality of Odin Data.
 
+https://observatory-sciences.github.io/aravis-detector/
+
 ---
 
 - [Aravis detector](#aravis-detector)
@@ -174,6 +176,8 @@ Install the Python CLI:
 ```
 
 ## Docs
+
+Online documentation is available at: https://observatory-sciences.github.io/aravis-detector/
 
 To install the documentation run the following (preferably in a venv)
 
