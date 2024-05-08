@@ -161,9 +161,9 @@ aravis = {'ip_address': '127.0.0.1', 'camera_id': '', 'camera_serial_number': ''
 
 ### Commands
 
-Arvcli has subcommands (eg, "--get", "--put") that take one argument and commands. Commands are more complex and have their own subcommands.
+Arvcli has subcommands (eg, `--get`, `--put`) that take one argument and commands. Commands are more complex and have their own subcommands.
 
-To get a l;ist of subcommands for a command simply use the '--help' tag after stating the command as follows:
+To get a list of subcommands for a command simply use the `--help` tag after stating the command as follows:
 
 ```shell
 $arvcli connect --help
