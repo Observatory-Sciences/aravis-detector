@@ -140,7 +140,7 @@ html_theme = "pydata_sphinx_theme"
 github_repo = project
 github_user = "Observatory-Sciences"
 
-switcher_json = f"https://{github_user}.github.io/{github_repo}/switcher.json"
+switcher_json = f"https://{github_user}.github.io/{github_repo}/tree/docs/docs/switcher.json"
 switcher_exists = requests.get(switcher_json).ok
 if not switcher_exists:
     print(
