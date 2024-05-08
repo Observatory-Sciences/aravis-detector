@@ -9,8 +9,8 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
 
       - name: Install dependencies
         run: |
@@ -21,9 +21,6 @@ jobs:
           sudo apt install -y doxygen
           mkdir -p docs/build/doxygen
           doxygen docs/Doxyfile
-
-      - name: Sanitize ref name for docs version
-        run: echo "DOCS_VERSION=${GITHUB_REF_NAME//[^A-Za-z0-9._-]/_}" >> $GITHUB_ENV
       
       - name: Sphinx build
         run: |
@@ -31,12 +28,11 @@ jobs:
 
       - name: Move to versioned directory
         run: |
-          mkdir -p .github/pages/$DOCS_VERSION
-          mv docs/build/html .github/pages/$DOCS_VERSION
+          mkdir -p .github/pages
+          mv docs/build/html .github/pages
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'ref/heads/docs' }}
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .github/pages
