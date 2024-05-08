@@ -3,7 +3,7 @@
 This software is a plugin extension to Odin data and requires that you install and build both Odin-data and Odin-control to be able to utilize this project. This page will provide instructions for installing these as well as the Aravis library.
 
 :::{note}
-This tutorial has been written for Ubuntu 22.4 Jellyfish. Compatibility with other Linux systems isn't guaranteed.
+This tutorial has been written for Ubuntu 22.04 Jellyfish. Compatibility with other Linux systems isn't guaranteed.
 :::
 
 ## External Software Dependencies
