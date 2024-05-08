@@ -14,11 +14,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt install -y doxygen
-          pip install -U sphinx
+          pip install -r docs/doc_requirements.txt
 
       - name: Generate Doxygen Documentation
         run: |
+          sudo apt install -y doxygen
           mkdir docs/build
           mkdir docs/build/doxygen
           doxygen docs/Doxyfile
