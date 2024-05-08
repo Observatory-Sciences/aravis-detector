@@ -73,7 +73,6 @@ sudo apt install ninja-build build-essential meson libxml2-dev libglib2.0-dev \
 
 ```shell
 mkdir odin_camera_driver && cd odin_camera_driver
-cwd=$(pwd)
 sudo apt-get update
 mkdir temp
 python3 -m venv venv
