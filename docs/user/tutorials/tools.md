@@ -4,7 +4,14 @@ As of version 0.0.1 prerelease the only available python tool is the Client Line
 
 ## ArvCLI
 
-Aravis CLI allows the user to control the frame processor through the use of the command line interface. It also provides the user with an example of how to send http requests to the odin server. It can be installed using ```pip install python/tools -e``` from the aravis detector directory.
+Aravis CLI allows the user to control the frame processor through the use of the command line interface. It also provides the user with an example of how to send http requests to the odin server. It can be installed into the virtualenv from the aravis detector directory. The environment should again be setup as described in the Run Tutorial:
+
+```shell
+export PATH=$MAIN_DIR/prefix/bin:$PATH
+source $MAIN_DIR/venv/bin/activate
+```
+
+Then ```arvcli``` can be installed with: ```pip install python/tools -e```
 
 The following options are available through the CLI:
 
