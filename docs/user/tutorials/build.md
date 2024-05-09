@@ -153,7 +153,7 @@ Run the following code to build the plugin library in the same directory as the 
  make -j4 && make install
 ```
 
-Install the aravis server extension:
+Install the aravis server extension into the python virtualenv:
 
 ```shell
  source venv/bin/activate
