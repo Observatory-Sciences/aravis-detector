@@ -22,7 +22,7 @@ The ```--config``` flag specifies a JSON configuration file that sets up the fra
 The default settings provided by the ```start_aravis.json``` file configure the plugin to list all available devices and then connect to the camera with the specified address. Make sure to connect any cameras before starting Odin, to do so you can follow the [guide given in explanations](../reference/camera). Additionally, the aravis camera simulator can be used to test the plugin by running:
 
 ```shell
-$cwd/prefix/bin/arv-fake-gv-camera-0.8 -s GV02 -d all
+arv-fake-gv-camera-0.8 -s GV02 -d all
 ```
 
 On a successful start, the frame processor will output something similar to the following:
