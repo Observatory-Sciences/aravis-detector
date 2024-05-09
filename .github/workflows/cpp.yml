@@ -82,9 +82,9 @@ jobs:
 
       - name: Build AravisDetector adapter and tools
         run: |
-        pip install -e python
-        cd python
-        pip install -e tools
+          pip install -e python
+          cd python
+          pip install -e tools
 
       - name: Run Integration test
         run: pytest ${cwd}/test/test_run.py
