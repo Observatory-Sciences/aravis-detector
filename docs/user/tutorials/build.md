@@ -1,32 +1,17 @@
-# Aravis detector
+# Build
 
-![[Code CI](https://github.com/Observatory-Sciences/aravis-detector/actions/workflows/cpp.yml/badge.svg)](https://github.com/Observatory-Sciences/aravis-detector/actions/workflows/cpp.yml/badge.svg)
-[![Apache License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+This software is a plugin extension to Odin data and requires that you install and build both Odin-data and Odin-control to be able to utilize this project. This page will provide instructions for installing these as well as the Aravis library.
 
-This project provides an [Odin Data](https://github.com/odin-detector/odin-data) plugin that controls [GenICam](https://www.genicam.org) devices, an [Odin Control](https://github.com/odin-detector/odin-control) server extension and a Python CLI tool. The plugin is ran within the the frame processor app in odin data and acquires buffers directly from the camera, circumventing the need for the frame receiver app. The Genicam interface is handled through the use of the [Aravis](https://github.com/AravisProject/aravis) library and each buffer captured from the camera passed through the normal Odin frame processor plugin chain making the detector compatible with other plugins designed to enhance the functionality of Odin Data.
+:::{note}
+This tutorial has been written for Ubuntu 22.04 Jellyfish. Compatibility with other Linux systems isn't guaranteed.
+:::
 
-https://observatory-sciences.github.io/aravis-detector/
-
----
-
-- [Aravis detector](#aravis-detector)
-  - [Dependencies](#dependencies)
-  - [Install](#install)
-    - [Building Dependencies](#building-dependencies)
-      - [Build Odin-data](#build-odin-data)
-      - [Install Odin Control](#install-odin-control)
-      - [Build Aravis](#build-aravis)
-      - [Build aravis-detector](#build-aravis-detector)
-  - [Docs](#docs)
-  
----
-
-## Dependencies
+## External Software Dependencies
 
 The plugin has the following direct dependencies:
 
 - [Aravis v0.8.31](https://github.com/AravisProject/aravis): used to interface with genicam cameras.
-- [Cmake >= v2.9](https://cmake.org/): used to generate the make files.
+- [Cmake >= v2.9](https://cmake.org/cmake/help/v2.8.0/cmake.html): used to generate the make files.
 - [Odin-data v1.10.1](https://github.com/odin-detector/odin-data): Aravis-detector inherits Odin's frameProcessor plugin structure and various utilities. Additionally, the frame processor app itself is required to run the plugin.
 - [Odin-control v1.5.0](https://github.com/odin-detector/odin-control): Used as a control server. This project extends its functionality to include the aravis-detector plugin and provides a python CLI to communicate with the odin frameProcessor using the control server.
 
@@ -42,7 +27,7 @@ Sub-dependencies:
   - [GLib - 2.0](https://docs.gtk.org/glib/)
   - [GObject - 2.0](https://docs.gtk.org/gobject/)
 
-## Install
+## Installing sub-dependencies
 
 To build all sub-dependencies you can run the following in your shell:
 
@@ -69,12 +54,13 @@ sudo apt install ninja-build build-essential meson libxml2-dev libglib2.0-dev \
  libgirepository1.0-dev gettext
 ```
 
-### Building Dependencies
+## Building Dependencies
 
-(Optional) It's useful to save the plugin an its dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "ODIN" as the rest of the guide utilizes it. Additionally you can create a temp folder for all the saved files. To do all this navigate to your desired location for the software and run the following:
+It's useful to store the plugin sources and its dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "MAIN_DIR" as the rest of the guide utilizes it. Additionally you can create a temp folder for saving data files when testing. To do all this navigate to your desired location for the software and run the following:
 
 ```shell
 mkdir odin_camera_driver && cd odin_camera_driver
+MAIN_DIR=$(pwd)
 sudo apt-get update
 mkdir temp
 python3 -m venv venv
@@ -90,18 +76,18 @@ git clone https://github.com/odin-detector/odin-data
 git clone https://github.com/Observatory-Sciences/aravis-detector
 ```
 
-Similar to "cwd" short cut, the commands written here use a prefix and it's shortcut:
+Similar to "MAIN_DIR" short cut, the commands written here use a prefix and it's shortcut:
 
 ```shell
- mkdir prefix
- PREFIX=$cwd/prefix
+ mkdir prefixhttp://www.cmake.org
+ PREFIX=$MAIN_DIR/prefix
 ```
 
-#### Build Odin-data
+### Build Odin-data
 
 ```shell
-PREFIX=$cwd/prefix
-cd $cwd/odin-data
+PREFIX=$MAIN_DIR/prefix
+cd $MAIN_DIR/odin-data
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=$PREFIX ../cpp
 make -j4 && make install
@@ -110,29 +96,37 @@ ls -la $PREFIX
 
 Don't forget to modify the -j4 flag in make to however many cores you want to use (or leave it out altogether).
 
-#### Install Odin Control
+### Install Odin Control
 
-The use of a virtual python is recommended but not necessary:
+The use of a virtual python is highly recommended:
 
 ```shell
+cd $MAIN_DIR
 source venv/bin/activate
 pip install -e odin-control
 odin_control
 ```
 
-#### Build Aravis
-
-Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
+Then, from odin-data install the python adaptor:
 
 ```shell
-cd aravis
-git checkout 96cea98
+pip install -e odin-data/python
+pip install opencv-python
+```
+
+### Build Aravis
+
+Install [Aravis](https://aravisproject.github.io/aravis/aravis-stable/building.html) and switch to version 0.8.30:
+
+```shell
+cd $MAIN_DIR/aravis
+git checkout 0.8.30
 ```
 
 Build it using meson:
 
 ```shell
-meson setup --prefix=$INSTALL_PREFIX --build.pkg-config-path $PC_ARAVIS build 
+meson setup --prefix=$PREFIX --build.pkg-config-path=$PC_ARAVIS build 
 cd build
 ninja
 ninja install
@@ -146,44 +140,31 @@ cd src
 arv-fake-gv-camera-0.8 -s GV02 -d all
 ```
 
-This should run 7 tests with no errors and then you will activate the simulated camera provided by Aravis. To connect to the camera you can use the aravis app. If connected to a genicam you shou1ld be able to see it listed as well.
+This should run 7 tests with no errors and then you will activate the simulated camera provided by Aravis. To connect to the camera you can use the aravis app. If connected to a genicam you should be able to see it listed as well.
 
-#### Build aravis-detector
+### Build aravis-detector
 
 Run the following code to build the plugin library in the same directory as the rest of Odin:
 
 ```shell
- cd $cwd/aravis-detector
+ cd $MAIN_DIR/aravis-detector
  mkdir build && cd build
  cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DODINDATA_ROOT_DIR=$PREFIX ../cpp
  make -j4 && make install
 ```
 
-Install the aravis server extension:
+Install the aravis server extension into the python virtualenv:
 
 ```shell
  source venv/bin/activate
- cd $cwd/aravis-detector
+ cd $MAIN_DIR/aravis-detector
  pip install -e python
 ```
 
-Install the Python CLI:
+Install the Python CLI into the virtualenv:
 
 ```shell
  source venv/bin/activate
- cd $cwd/aravis-detector/python
+ cd $MAIN_DIR/aravis-detector/python
  pip install -e tools
 ```
-
-## Docs
-
-Online documentation is available at: https://observatory-sciences.github.io/aravis-detector/
-
-To install the documentation run the following (preferably in a venv)
-
-```shell
-pip install python[dev]
-sphinx-autobuild -ET docs/ docs/build/html
-```
-
-The server should then be available at http://localhost:8000/

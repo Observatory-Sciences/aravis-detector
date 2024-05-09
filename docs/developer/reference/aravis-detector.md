@@ -1,0 +1,4 @@
+# AravisDetectorPlugin
+
+```{doxygenclass} FrameProcessor::AravisDetectorPlugin
+```
