@@ -16,4 +16,4 @@ The Genicam standard provides modern cameras with a standard programming interfa
 Remember to carefully read the provided installation guide when setting up a new device
 :::
 
-After connecting the camera to the ethernet port on your device go to Settings/Network and add a new Wired connection. Change the MTU value from automatic to 9000 (This is required for Jumbo packets, otherwise the overhead on each packet can start causing issues with data transfer) and the iv4 method to link-local only.
+After connecting the camera to the ethernet port on your device go to Settings/Network and add a new Wired connection. Change the MTU value from automatic to 9000 (This is required for Jumbo packets, otherwise the overhead on each packet can start causing issues with data transfer) and the ipv4 method to link-local only.
