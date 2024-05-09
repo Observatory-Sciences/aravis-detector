@@ -11,7 +11,7 @@ This tutorial has been written for Ubuntu 22.04 Jellyfish. Compatibility with ot
 The plugin has the following direct dependencies:
 
 - [Aravis v0.8.31](https://github.com/AravisProject/aravis): used to interface with genicam cameras.
-- [Cmake v2.8](https://cmake.org/cmake/help/v2.8.0/cmake.html): used to generate the make files.
+- [Cmake >= v2.9](https://cmake.org/cmake/help/v2.8.0/cmake.html): used to generate the make files.
 - [Odin-data v1.10.1](https://github.com/odin-detector/odin-data): Aravis-detector inherits Odin's frameProcessor plugin structure and various utilities. Additionally, the frame processor app itself is required to run the plugin.
 - [Odin-control v1.5.0](https://github.com/odin-detector/odin-control): Used as a control server. This project extends its functionality to include the aravis-detector plugin and provides a python CLI to communicate with the odin frameProcessor using the control server.
 
