@@ -116,7 +116,7 @@ pip install opencv-python
 
 ### Build Aravis
 
-Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switch to version 0.8.30:
+Install [Aravis](https://aravisproject.github.io/aravis/aravis-stable/building.html) and switch to version 0.8.30:
 
 ```shell
 cd $MAIN_DIR/aravis
