@@ -56,7 +56,7 @@ sudo apt install ninja-build build-essential meson libxml2-dev libglib2.0-dev \
 
 ## Building Dependencies
 
-(Optional) It's useful to save the plugin an it's dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "MAIN_DIR" as the rest of the guide utilizes it. Additionally you can create a temp folder for all the saved files. To do all this navigate to your desired location for the software and run the following:
+It's useful to store the plugin sources and its dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name "MAIN_DIR" as the rest of the guide utilizes it. Additionally you can create a temp folder for saving data files when testing. To do all this navigate to your desired location for the software and run the following:
 
 ```shell
 mkdir odin_camera_driver && cd odin_camera_driver
