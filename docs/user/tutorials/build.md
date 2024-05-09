@@ -161,7 +161,7 @@ Install the aravis server extension into the python virtualenv:
  pip install -e python
 ```
 
-Install the Python CLI:
+Install the Python CLI into the virtualenv:
 
 ```shell
  source venv/bin/activate
