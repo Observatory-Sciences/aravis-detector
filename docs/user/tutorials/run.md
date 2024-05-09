@@ -59,7 +59,7 @@ On a successful start, the frame processor will output something similar to the 
 
 ## Start the control server
 
-To start the Odin control server run the following in the same Python environment you installed it in:
+To start the Odin control server run the following `odin_control` command, assuming that the python virtualenv is loaded as the environment described above:
 
 ```shell
 odin_control --config $cwd/aravis-detector/config/odin_server.cfg
