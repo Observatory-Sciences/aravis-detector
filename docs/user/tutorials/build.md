@@ -120,7 +120,7 @@ Install [Aravis](https://aravisproject.github.io/aravis/building.html) and switc
 
 ```shell
 cd $MAIN_DIR/aravis
-git checkout 96cea98
+git checkout 0.8.30
 ```
 
 Build it using meson:
