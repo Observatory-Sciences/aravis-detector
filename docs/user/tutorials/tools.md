@@ -166,7 +166,7 @@ Arvcli has subcommands (eg, `--get`, `--put`) that take one argument and command
 To get a list of subcommands for a command simply use the `--help` tag after stating the command as follows:
 
 ```shell
-$arvcli connect --help
+arvcli connect --help
                                                                                         
  Usage: arvcli connect [OPTIONS]                                                        
                                                                                         
