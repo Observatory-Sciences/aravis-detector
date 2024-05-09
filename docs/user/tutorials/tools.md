@@ -159,7 +159,7 @@ aravis  / status
 To each of this paths an additional value key can be added (eg. "frame_rate") to target a specific value. To get an accurate list of possible simply call the path as follows:
 
 ```shell
-$arvcli --get fp/config/aravis
+arvcli --get fp/config/aravis
 aravis = {'ip_address': '127.0.0.1', 'camera_id': '', 'camera_serial_number': '', 'camera_model': '',
         'exposure_time': 0.0, 'frame_rate': 0.0, 'frame_count': 1500, 'pixel_format': 'Mono8', 
         'acquisition_mode': 'Continuous', 'status_frequency_ms': 1000, 'empty_buffers': 50,
