@@ -50,7 +50,7 @@ namespace FrameProcessor
 
   const double      AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME = 1000.0;
   const double      AravisDetectorPlugin::DEFAULT_FRAME_RATE    = 5;
-  const double      AravisDetectorPlugin::DEFAULT_FRAME_COUNT   = 0;
+  const unsigned int AravisDetectorPlugin::DEFAULT_FRAME_COUNT  = 0;
   const std::string AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT  = "Mono8";
   const std::string AravisDetectorPlugin::DEFAULT_AQUISIT_MODE  = "Continuous";
   const size_t      AravisDetectorPlugin::DEFAULT_STATUS_FREQ   = 1000;

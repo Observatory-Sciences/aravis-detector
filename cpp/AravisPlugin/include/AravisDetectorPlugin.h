@@ -71,7 +71,7 @@ public:
     static const double      DEFAULT_EXPOSURE_TIME; ///< Exposure time in microseconds
     static const size_t      DEFAULT_STATUS_FREQ;   ///< Time between status checks in miliseconds
     static const double      DEFAULT_FRAME_RATE;    ///< Frame rate in hertz
-    static const double      DEFAULT_FRAME_COUNT;   ///< Frame count
+    static const unsigned int DEFAULT_FRAME_COUNT;   ///< Frame count
     static const int         DEFAULT_EMPTY_BUFF;    ///< Number of empty buffers used to initialize the stream 
 
     /** Flags*/
