@@ -115,7 +115,7 @@ Status is:
 To get more specific values the user can call the ```--get``` command.
 
 ```shell
-$arvcli --get fp/config/aravis/frame_rate
+arvcli --get fp/config/aravis/frame_rate
 frame_rate = 5
 ```
 
