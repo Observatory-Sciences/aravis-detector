@@ -2,7 +2,16 @@
 
 ## Connect Aravis-detector plugin to Odin-data
 
-Odin-data can be started from the terminal similar to any other app. Since the aravis plugin skips the frame receiver, only the frame processor is needed. To start it simply run:
+Odin-data can be started from the terminal similar to any other app. However, it is useful to first setup the terminal environment to include the Odin and Aravis-detector binaries on the path as well as loading the python virtual environment. Assuming the `MAIN_DIR` environment variable from the build is still defined, the environment can be configured as:
+
+```shell
+export PATH=$MAIN_DIR/prefix/bin:$PATH
+source $MAIN_DIR/venv/bin/activate
+```
+
+The above commands can optionally also be added to the users ```~/.bashrc``` file to automatically load the environment in every terminal session.
+
+Since the aravis-detector Odin plugin does not use the frame receiver, only the frame processor is needed.:
 
 ```shell
 $cwd/prefix/bin/frameProcessor --config $cwd/aravis-detector/docs/start_fp_example.json
