@@ -4,7 +4,7 @@ This page provides an overview of the standards and libraries used to communicat
 
 ## Aravis
 
-The plugin uses the latest stable release of Aravis (0.8.30) to interface with genicam cameras. The library provides a large support of genicam features. For more details please consult the [Aravis documentation page](https://aravisproject.github.io/aravis/aravis-stable/) and the [developer page](../../developer/index.md).
+The plugin uses the latest stable release of Aravis (0.8.30) to interface with genicam cameras. The library provides a large support of genicam features. For more details please consult the [Aravis documentation](https://aravisproject.github.io/aravis/aravis-stable/) and the [aravis-detector developer docs](../../developer/index.md).
 
 ## The Gen\<I>Cam Standard
 
