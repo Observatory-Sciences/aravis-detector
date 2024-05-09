@@ -78,7 +78,7 @@ The recommended way to change plugin configuration is through the use of the odi
 
 ## Supported genicam features
 
-As of version 0.0.1, pre-release, the following features are implemented in the Aravis Plugin:
+The following features are implemented in the Aravis Plugin:
 
 | Feature | Plugin support | API implementation | Notes|
 |---------|----------------|--------------------|------|
