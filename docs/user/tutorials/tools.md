@@ -122,7 +122,7 @@ frame_rate = 5
 To change more specific values the user can call the ```--put``` command.
 
 ```shell
-$arvcli --put fp/config/aravis/frame_rate
+arvcli --put fp/config/aravis/frame_rate
 Value = 10
 Waiting for status... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:01
 frame_rate = 10
