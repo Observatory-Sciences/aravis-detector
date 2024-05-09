@@ -57,8 +57,8 @@ The following list is a complete set of available plugin configuration and their
 | Config | Description| Default value |
 |--------|------------|---------------|
 | ip_address | Connects to the camera with the specified IP address | 127.0.0.1 |
-| exposure_time | Sets the exposure time to the given value | 1000.0 us |
-| frame_rate | Sets the frame rate to the given value | 5 Hz|
+| exposure_time | Sets the exposure time to the given value in microseconds | 1000.0 |
+| frame_rate | Sets the frame rate to the given value in Hz | 5 |
 | frame_count | Sets a limit to the number of buffers acquired in continuos mode. 0 for no limit | 0|
 | pixel_format | Sets the pixel format used by the camera | Mono8 |
 | acquisition_mode | Sets the camera's acquisition mode. Not fully implemented | Continuous |
