@@ -14,7 +14,7 @@ The above commands can optionally also be added to the users ```~/.bashrc``` fil
 Since the aravis-detector Odin plugin does not use the frame receiver, only the frame processor is needed.:
 
 ```shell
-$cwd/prefix/bin/frameProcessor --config $cwd/aravis-detector/docs/start_fp_example.json
+frameProcessor --config $MAIN_DIR/aravis-detector/docs/start_fp_example.json
 ```
 
 The ```--config``` flag specifies a JSON configuration file that sets up the frame processor. More information on the possible configurations can be found in the [FrameProcessor documentation.](https://odin-detector.github.io/odin-data/master/user/explanations/frame-processor.html)
