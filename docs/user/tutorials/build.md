@@ -98,7 +98,7 @@ Don't forget to modify the -j4 flag in make to however many cores you want to us
 
 ### Install Odin Control
 
-The use of a virtual python is recommended but not necessary:
+The use of a virtual python is highly recommended:
 
 ```shell
 cd $MAIN_DIR
