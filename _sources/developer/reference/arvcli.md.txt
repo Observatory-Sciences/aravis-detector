@@ -1,0 +1,4 @@
+# Python CLI
+
+```{doxygennamespace} arvcli
+```

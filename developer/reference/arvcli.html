@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Python CLI &#8212; aravis-detector 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer/reference/arvcli';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.2';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://Observatory-Sciences.github.io/aravis-detector/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="AravisDetectorPlugin" href="aravis-detector.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/favicon.ico" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../_static/favicon.ico" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">aravis-detector</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user/index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user/index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../explanations/index.html">Explanations</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../explanations/aravis-detector.html">AravisDetectorPlugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../explanations/arvcli.html">Python CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Reference</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aravis-detector.html">AravisDetectorPlugin</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Python CLI</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Developer Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Python CLI</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="python-cli">
+<h1>Python CLI<a class="headerlink" href="#python-cli" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="arvcli">
+<span class="target" id="namespacearvcli"></span><em class="property"><span class="pre">module</span> </em><span class="sig-name descname"><span class="pre">arvcli</span></span><a class="headerlink" href="#arvcli" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AravisDetector</span> <span class="n">CLI</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-variables">Variables</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="arvcli.__app_name__">
+<span class="target" id="namespacearvcli_1a7610d81cb57eac11378e6bcfcd22dae9"></span><span class="sig-name descname"><span class="pre">__app_name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;arvcli&quot;</span></em><a class="headerlink" href="#arvcli.__app_name__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="arvcli.__version__">
+<span class="target" id="namespacearvcli_1a590c3fb87ad60759c7eae194419487bc"></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;0.0.1&quot;</span></em><a class="headerlink" href="#arvcli.__version__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="arvcli.__main__">
+<span class="target" id="namespacearvcli_1_1____main____"></span><em class="property"><span class="pre">module</span> </em><span class="sig-name descname"><span class="pre">__main__</span></span><a class="headerlink" href="#arvcli.__main__" title="Link to this definition">#</a></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.__main__.main">
+<span class="target" id="namespacearvcli_1_1____main_____1a62585e5b6305e16e372adb447eeed0af"></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.__main__.main" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="arvcli.cli">
+<span class="target" id="namespacearvcli_1_1cli"></span><em class="property"><span class="pre">module</span> </em><span class="sig-name descname"><span class="pre">cli</span></span><a class="headerlink" href="#arvcli.cli" title="Link to this definition">#</a></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.convert_type">
+<span class="target" id="namespacearvcli_1_1cli_1aaabffe0871377f04421839826dd4d613"></span><span class="sig-name descname"><span class="pre">convert_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.convert_type" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Converts</span> <span class="n">a</span> <span class="n">string</span> <span class="n">to</span> <span class="n">the</span> <span class="n">closest</span> <span class="nb">type</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._version_callback">
+<span class="target" id="namespacearvcli_1_1cli_1a6b8e75c664cf37346397ef396fc6e5be"></span><span class="sig-name descname"><span class="pre">_version_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._version_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span> <span class="n">current</span> <span class="n">cli</span> <span class="n">version</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._get_callback">
+<span class="target" id="namespacearvcli_1_1cli_1aacbadb33e79d0c3276459bc8b492d2f3"></span><span class="sig-name descname"><span class="pre">_get_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">path=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._get_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Callback</span> <span class="n">function</span> <span class="n">that</span> <span class="n">wraps</span> <span class="n">get_value</span>
+
+<span class="n">Prints</span> <span class="n">out</span> <span class="n">the</span> <span class="n">value</span> <span class="n">returned</span> <span class="n">by</span> <span class="n">get_value</span> <span class="ow">and</span> <span class="n">exits</span><span class="o">.</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">key</span><span class="p">:</span> <span class="p">(</span><span class="n">silly_enum</span><span class="p">):</span> <span class="n">a</span> <span class="n">cmd_map</span> <span class="n">key</span> <span class="p">(</span><span class="n">maps</span> <span class="n">cli</span> <span class="n">command</span> <span class="n">to</span> <span class="n">http</span> <span class="n">request</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._put_callback">
+<span class="target" id="namespacearvcli_1_1cli_1a45c9d70dce391bbb8b8d8c7d59b34d04"></span><span class="sig-name descname"><span class="pre">_put_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">path=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._put_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Callback</span> <span class="n">function</span> <span class="n">that</span> <span class="n">wraps</span> <span class="n">put_value</span>
+
+<span class="n">Prints</span> <span class="n">out</span> <span class="n">the</span> <span class="n">value</span> <span class="n">returned</span> <span class="n">by</span> <span class="n">put_value</span> <span class="ow">and</span> <span class="n">exits</span><span class="o">.</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">key</span><span class="p">:</span> <span class="p">(</span><span class="n">silly_enum</span><span class="p">):</span> <span class="n">a</span> <span class="n">cmd_map</span> <span class="n">key</span> <span class="p">(</span><span class="n">maps</span> <span class="n">cli</span> <span class="n">command</span> <span class="n">to</span> <span class="n">http</span> <span class="n">request</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.get_value">
+<span class="target" id="namespacearvcli_1_1cli_1a0244a60e2708f6c0c3cc4bdb088ec277"></span><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">path_temp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.get_value" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Get</span> <span class="n">a</span> <span class="n">frame</span> <span class="n">processor</span> <span class="n">value</span> <span class="n">using</span> <span class="n">a</span> <span class="n">path</span>
+
+<span class="n">Separates</span> <span class="n">the</span> <span class="n">path</span> <span class="n">into</span> <span class="n">the</span> <span class="n">http</span> <span class="n">request</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">json</span> <span class="n">request</span>
+<span class="n">Sends</span> <span class="n">a</span> <span class="n">put</span> <span class="n">request</span>
+<span class="n">Parses</span> <span class="n">the</span> <span class="n">json</span> <span class="n">response</span>
+<span class="n">Returns</span> <span class="n">the</span> <span class="n">target</span> <span class="n">value</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">path_temp</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="o">/</span><span class="n">fp</span><span class="o">/</span><span class="n">status</span><span class="o">/</span><span class="n">variable</span>
+
+<span class="n">Returns</span><span class="p">:</span>
+    <span class="n">dictionary</span><span class="o">/</span><span class="n">single</span> <span class="n">value</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.put_value">
+<span class="target" id="namespacearvcli_1_1cli_1ae86de8392ad132d195cc9d513d27b6db"></span><span class="sig-name descname"><span class="pre">put_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">path_temp=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">value=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.put_value" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Workflow</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="n">aravis</span><span class="o">/</span><span class="n">configure</span><span class="o">/&lt;</span><span class="n">target</span><span class="o">&gt;</span> <span class="n">then</span> <span class="n">does</span> <span class="n">a</span> <span class="n">direct</span> <span class="n">call</span>
+
+<span class="n">otherwise</span> <span class="n">it</span> <span class="n">separates</span> <span class="n">it</span> <span class="n">into</span> <span class="n">a</span> <span class="n">http</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">json</span> <span class="n">tree</span>
+<span class="n">then</span> <span class="n">send</span> <span class="n">the</span> <span class="n">json</span> <span class="n">tree</span> <span class="k">as</span> <span class="n">the</span> <span class="n">http</span> <span class="n">put</span> <span class="n">request</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._status_callback">
+<span class="target" id="namespacearvcli_1_1cli_1af9a43cbad5878f95ceb47fdd26469449"></span><span class="sig-name descname"><span class="pre">_status_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._status_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span> <span class="n">the</span> <span class="n">server</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">json</span> <span class="nb">format</span> <span class="ow">and</span> <span class="n">exits</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">val</span> <span class="p">(</span><span class="nb">bool</span><span class="p">):</span> <span class="n">true</span> <span class="n">when</span> <span class="n">called</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._config_callback">
+<span class="target" id="namespacearvcli_1_1cli_1acaac7437933184a108a2b1ad50bdadfb"></span><span class="sig-name descname"><span class="pre">_config_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._config_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span> <span class="n">the</span> <span class="n">server</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">json</span> <span class="nb">format</span> <span class="ow">and</span> <span class="n">exits</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">val</span> <span class="p">(</span><span class="nb">bool</span><span class="p">):</span> <span class="n">true</span> <span class="n">when</span> <span class="n">called</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._ipaddress_callback">
+<span class="target" id="namespacearvcli_1_1cli_1a2deca169df9932b3addd4b1828742b14"></span><span class="sig-name descname"><span class="pre">_ipaddress_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._ipaddress_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sets</span> <span class="n">the</span> <span class="n">ip</span> <span class="n">address</span> <span class="n">of</span> <span class="n">the</span> <span class="n">odin</span> <span class="n">server</span>
+
+<span class="n">Requires</span> <span class="n">a</span> <span class="n">command</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">val</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">ip</span> <span class="n">address</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli._port_callback">
+<span class="target" id="namespacearvcli_1_1cli_1ad94f7ec13f50c96029275b82061afd53"></span><span class="sig-name descname"><span class="pre">_port_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli._port_callback" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sets</span> <span class="n">the</span> <span class="n">port</span> <span class="n">of</span> <span class="n">the</span> <span class="n">odin</span> <span class="n">server</span>
+
+<span class="n">Requires</span> <span class="n">a</span> <span class="n">command</span>
+
+<span class="n">Args</span><span class="p">:</span>
+    <span class="n">val</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">port</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.connect">
+<span class="target" id="namespacearvcli_1_1cli_1ad70e15beddc91c15d11245a0e46a333c"></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">camera_ip=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-ip&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--ip_address&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;connect</span> <span class="pre">to</span> <span class="pre">camera</span> <span class="pre">with</span> <span class="pre">ip</span> <span class="pre">address&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">list=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-l&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--list&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;list</span> <span class="pre">all</span> <span class="pre">the</span> <span class="pre">cameras</span> <span class="pre">detected&quot;)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.connect" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Connects</span> <span class="n">the</span> <span class="n">AravisDetector</span> <span class="n">plugin</span> <span class="n">to</span> <span class="n">a</span> <span class="n">camera</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.stream">
+<span class="target" id="namespacearvcli_1_1cli_1a86cc23fdba7a664b3e626bf78e2aa585"></span><span class="sig-name descname"><span class="pre">stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">start=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-on&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--start&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;start</span> <span class="pre">acquiring</span> <span class="pre">frames</span> <span class="pre">in</span> <span class="pre">continuous</span> <span class="pre">mode&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">stop=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-off&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--stop&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;stop</span> <span class="pre">acquiring</span> <span class="pre">frames</span> <span class="pre">in</span> <span class="pre">continuous</span> <span class="pre">mode&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[int]</span> <span class="pre">n_frames=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-c&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--capture&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Acquire</span> <span class="pre">a</span> <span class="pre">fixed</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">frames</span> <span class="pre">in</span> <span class="pre">continuous</span> <span class="pre">mode&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.stream" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Control</span> <span class="n">camera</span> <span class="n">frame</span> <span class="n">acquisition</span> <span class="ow">in</span> <span class="n">continuous</span> <span class="n">mode</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.hdf">
+<span class="target" id="namespacearvcli_1_1cli_1a97b35e2d544d631b365e5c86ff160685"></span><span class="sig-name descname"><span class="pre">hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">start=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-s&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--start&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;start</span> <span class="pre">file</span> <span class="pre">writer&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">stop=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-s&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--stop&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;stop</span> <span class="pre">the</span> <span class="pre">file</span> <span class="pre">writer&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">start_writing=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-w&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--write&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;start</span> <span class="pre">file</span> <span class="pre">writer</span> <span class="pre">and</span> <span class="pre">start</span> <span class="pre">acquisition&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">stop_writing=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-sw&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--stopW&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;stop</span> <span class="pre">file</span> <span class="pre">writer</span> <span class="pre">and</span> <span class="pre">acquisition&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">file_name=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-f&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--file&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;saving</span> <span class="pre">file</span> <span class="pre">name&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">file_path=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-p&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--path&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">directory&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[int]</span> <span class="pre">num=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-n&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--num&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;number</span> <span class="pre">of</span> <span class="pre">files</span> <span class="pre">to</span> <span class="pre">save&quot;)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.hdf" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Control</span> <span class="n">the</span> <span class="n">file</span> <span class="n">writer</span> <span class="n">plugin</span>
+
+<span class="n">path</span> <span class="ow">and</span> <span class="n">num</span> <span class="n">default</span> <span class="n">to</span> <span class="n">config</span> <span class="n">values</span>
+
+<span class="n">name</span> <span class="n">default</span> <span class="n">to</span> <span class="n">current</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">run_seconds_minute_hour_day_month_year</span> <span class="nb">format</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.http">
+<span class="target" id="namespacearvcli_1_1cli_1adfe62cb79421cac3144f09442b6214fa"></span><span class="sig-name descname"><span class="pre">http</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">put=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-p&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--put&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;send</span> <span class="pre">a</span> <span class="pre">command</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">server&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">value=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-v&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--value&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;value</span> <span class="pre">to</span> <span class="pre">send</span> <span class="pre">to</span> <span class="pre">server&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">get=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-g&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--get&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;request</span> <span class="pre">information</span> <span class="pre">from</span> <span class="pre">the</span> <span class="pre">server&quot;)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.http" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">send</span> <span class="n">custom</span> <span class="n">HTTP</span> <span class="n">requests</span>
+
+<span class="n">Use</span> <span class="n">this</span> <span class="k">for</span> <span class="n">trouble</span> <span class="n">shooting</span> <span class="ow">and</span> <span class="n">custom</span> <span class="n">functions</span>
+
+<span class="n">Api</span> <span class="n">requests</span> <span class="n">are</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">form</span><span class="p">:</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">aravis</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">start_acquisition</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">aravis</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">stop_acquisition</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">aravis</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">exposure_time</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">fp</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">hdf</span><span class="o">/</span><span class="n">write</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">fp</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">hdf</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">path</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">fp</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">hdf</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">name</span>
+
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">fp</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">hdf</span><span class="o">/</span><span class="n">master</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.initiate_config">
+<span class="target" id="namespacearvcli_1_1cli_1a85a2a0fac11ef71f4782ba7a687bd974"></span><span class="sig-name descname"><span class="pre">initiate_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.initiate_config" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Read</span> <span class="n">config</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">create</span> <span class="k">global</span> <span class="n">variable</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.cli.main">
+<span class="target" id="namespacearvcli_1_1cli_1a0bdc60ebec99c8f4db6da5a06a952c2f"></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">status=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--status&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-s&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Print</span> <span class="pre">current</span> <span class="pre">status</span> <span class="pre">values</span> <span class="pre">of</span> <span class="pre">all</span> <span class="pre">plugins&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_status_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">config=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--config&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-c&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Print</span> <span class="pre">current</span> <span class="pre">config</span> <span class="pre">values</span> <span class="pre">of</span> <span class="pre">all</span> <span class="pre">plugins&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_config_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">ipaddress=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--ip&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-i&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Specify</span> <span class="pre">an</span> <span class="pre">ip</span> <span class="pre">address</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">server&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_ipaddress_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_eager=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">port=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--port&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-po&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Specify</span> <span class="pre">a</span> <span class="pre">port</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">server&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_port_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_eager=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">g=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--get&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-g&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=(&quot;Print</span> <span class="pre">a</span> <span class="pre">specific</span> <span class="pre">value.</span> <span class="pre">Paths</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">form:</span> <span class="pre">fp/{status/</span> <span class="pre">config</span> <span class="pre">/</span> <span class="pre">aravis}/&quot;+&quot;&lt;target&gt;</span> <span class="pre">or</span> <span class="pre">aravis/{config/status}/&lt;target&gt;&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_get_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[str]</span> <span class="pre">p=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--put&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-p&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=(&quot;Change</span> <span class="pre">a</span> <span class="pre">specific</span> <span class="pre">value.</span> <span class="pre">Paths</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">&quot;+&quot;form:</span> <span class="pre">fp/config/aravis/&lt;target&gt;</span> <span class="pre">or</span> <span class="pre">aravis/config/&lt;target&gt;&quot;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_put_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Optional[bool]</span> <span class="pre">version=typer.Option(None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;--version&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&quot;-v&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help=&quot;Display</span> <span class="pre">arvcli's</span> <span class="pre">current</span> <span class="pre">version</span> <span class="pre">and</span> <span class="pre">exit&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback=_version_callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_eager=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.cli.main" title="Link to this definition">#</a></dt>
+<dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Python</span> <span class="n">CLI</span> <span class="k">for</span> <span class="n">Aravis</span><span class="o">-</span><span class="n">Detector</span> <span class="n">Plugin</span>
+
+<span class="n">For</span> <span class="n">command</span> <span class="n">detail</span> <span class="n">call</span> <span class="n">arvcli</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-variables">Variables</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="arvcli.cli.APP_NAME">
+<span class="target" id="namespacearvcli_1_1cli_1a0061391c6ca15be4a4b2a7fcbf9d1fcb"></span><span class="sig-name descname"><span class="pre">APP_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;arvcli&quot;</span></em><a class="headerlink" href="#arvcli.cli.APP_NAME" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="arvcli.cli.app">
+<span class="target" id="namespacearvcli_1_1cli_1af060873f54c6029e41a31501172765cf"></span><span class="sig-name descname"><span class="pre">app</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">typer.Typer()</span></em><a class="headerlink" href="#arvcli.cli.app" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="arvcli.control">
+<span class="target" id="namespacearvcli_1_1control"></span><em class="property"><span class="pre">module</span> </em><span class="sig-name descname"><span class="pre">control</span></span><a class="headerlink" href="#arvcli.control" title="Link to this definition">#</a></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.control.put_HTTP_request">
+<span class="target" id="namespacearvcli_1_1control_1a81617cb6eec457b21742fc9bc9d12759"></span><span class="sig-name descname"><span class="pre">put_HTTP_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span> <span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">server_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.control.put_HTTP_request" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arvcli.control.get_HTTP_request">
+<span class="target" id="namespacearvcli_1_1control_1a7986c0a771d45807321b984c6d610c7d"></span><span class="sig-name descname"><span class="pre">get_HTTP_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">server_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span> <span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arvcli.control.get_HTTP_request" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="aravis-detector.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">AravisDetectorPlugin</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli"><code class="docutils literal notranslate"><span class="pre">arvcli</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.__app_name__"><code class="docutils literal notranslate"><span class="pre">arvcli.__app_name__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.__version__"><code class="docutils literal notranslate"><span class="pre">arvcli.__version__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.__main__"><code class="docutils literal notranslate"><span class="pre">arvcli.__main__</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.__main__.main"><code class="docutils literal notranslate"><span class="pre">arvcli.__main__.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli"><code class="docutils literal notranslate"><span class="pre">arvcli.cli</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.convert_type"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.convert_type()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._version_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._version_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._get_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._get_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._put_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._put_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.get_value"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.get_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.put_value"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.put_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._status_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._status_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._config_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._config_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._ipaddress_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._ipaddress_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli._port_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._port_callback()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.connect"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.connect()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.stream"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.stream()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.hdf"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.hdf()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.http"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.http()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.initiate_config"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.initiate_config()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.main"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.main()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.APP_NAME"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.APP_NAME</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.cli.app"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.app</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.control"><code class="docutils literal notranslate"><span class="pre">arvcli.control</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.control.put_HTTP_request"><code class="docutils literal notranslate"><span class="pre">arvcli.control.put_HTTP_request()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#arvcli.control.get_HTTP_request"><code class="docutils literal notranslate"><span class="pre">arvcli.control.get_HTTP_request()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/Observatory-Sciences/aravis-detector/edit/0.0.1/docs/developer/reference/arvcli.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/developer/reference/arvcli.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

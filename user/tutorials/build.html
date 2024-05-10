@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Build &#8212; aravis-detector 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user/tutorials/build';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.2';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://Observatory-Sciences.github.io/aravis-detector/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run" href="run.html" />
+    <link rel="prev" title="Tutorials" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/favicon.ico" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../_static/favicon.ico" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">aravis-detector</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer/index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer/index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Tutorials</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">Python Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../explanations/index.html">Explanations</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../explanations/aravis-detector.html">Aravis-detector</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">Reference</a><input checked class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/camera.html">Technical Camera Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Build</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="build">
+<h1>Build<a class="headerlink" href="#build" title="Link to this heading">#</a></h1>
+<p>This software is a plugin extension to Odin data and requires that you install and build both Odin-data and Odin-control to be able to utilize this project. This page will provide instructions for installing these as well as the Aravis library.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial has been written for Ubuntu 22.04 Jellyfish. Compatibility with other Linux systems isn’t guaranteed.</p>
+</div>
+<section id="external-software-dependencies">
+<h2>External Software Dependencies<a class="headerlink" href="#external-software-dependencies" title="Link to this heading">#</a></h2>
+<p>The plugin has the following direct dependencies:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/AravisProject/aravis">Aravis v0.8.31</a>: used to interface with genicam cameras.</p></li>
+<li><p><a class="reference external" href="https://cmake.org/cmake/help/v2.8.0/cmake.html">Cmake &gt;= v2.9</a>: used to generate the make files.</p></li>
+<li><p><a class="reference external" href="https://github.com/odin-detector/odin-data">Odin-data v1.10.1</a>: Aravis-detector inherits Odin’s frameProcessor plugin structure and various utilities. Additionally, the frame processor app itself is required to run the plugin.</p></li>
+<li><p><a class="reference external" href="https://github.com/odin-detector/odin-control">Odin-control v1.5.0</a>: Used as a control server. This project extends its functionality to include the aravis-detector plugin and provides a python CLI to communicate with the odin frameProcessor using the control server.</p></li>
+</ul>
+<p>Sub-dependencies:</p>
+<ul class="simple">
+<li><p>Odin-data:</p>
+<ul>
+<li><p><a class="reference external" href="https://www.boost.org/">Boost</a> used for multithreading.</p></li>
+<li><p><a class="reference external" href="https://zeromq.org/">ZeroMQ</a> asynchronous message library.</p></li>
+<li><p><a class="reference external" href="https://logging.apache.org/log4cxx/latest_stable/">Log4CXX</a>  message logs.</p></li>
+<li><p><a class="reference external" href="https://www.hdfgroup.org/HDF5">HDF5</a> used in the file saver plugin.</p></li>
+</ul>
+</li>
+<li><p>Aravis:</p>
+<ul>
+<li><p><a class="reference external" href="https://mesonbuild.com/">Meson</a>: build system</p></li>
+<li><p><a class="reference external" href="https://docs.gtk.org/glib/">GLib - 2.0</a></p></li>
+<li><p><a class="reference external" href="https://docs.gtk.org/gobject/">GObject - 2.0</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="installing-sub-dependencies">
+<h2>Installing sub-dependencies<a class="headerlink" href="#installing-sub-dependencies" title="Link to this heading">#</a></h2>
+<p>To build all sub-dependencies you can run the following in your shell:</p>
+<p>Odin Data:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>cmake<span class="w"> </span>python3.10-venv
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libboost-program-options-dev<span class="w"> </span>libboost-filesystem-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libboost-date-time-dev<span class="w"> </span>libboost-dev<span class="w"> </span>libboost-system-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libboost-test-dev<span class="w"> </span>libboost-thread-dev<span class="w"> </span>libboost-regex-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libzmq3-dev<span class="w"> </span>libpcap-dev<span class="w"> </span>liblog4cxx-dev<span class="w"> </span>libblosc-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libhdf5-dev<span class="w"> </span>librdkafka-dev
+</pre></div>
+</div>
+<p>Aravis:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ninja-build<span class="w"> </span>build-essential<span class="w"> </span>meson<span class="w"> </span>libxml2-dev<span class="w"> </span>libglib2.0-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libusb-1.0-0-dev<span class="w"> </span>gobject-introspection<span class="w"> </span>libgtk-3-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>gtk-doc-tools<span class="w"> </span>xsltproc<span class="w"> </span>libgstreamer1.0-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libgstreamer-plugins-base1.0-dev<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>libgstreamer-plugins-good1.0-dev<span class="se">\</span>
+<span class="w"> </span>libgirepository1.0-dev<span class="w"> </span>gettext
+</pre></div>
+</div>
+</section>
+<section id="building-dependencies">
+<h2>Building Dependencies<a class="headerlink" href="#building-dependencies" title="Link to this heading">#</a></h2>
+<p>It’s useful to store the plugin sources and its dependencies in same folder and create a virtual environment for the python server. Create a shortcut to this folder under the name “MAIN_DIR” as the rest of the guide utilizes it. Additionally you can create a temp folder for saving data files when testing. To do all this navigate to your desired location for the software and run the following:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>odin_camera_driver<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>odin_camera_driver
+<span class="nv">MAIN_DIR</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+mkdir<span class="w"> </span>temp
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>/path/to/venv/bin/activate
+</pre></div>
+</div>
+<p>For the next step make sure you have installed <a class="reference external" href="https://git-scm.com/">git</a>. It’s important to use git clone for the odin-data library as you want to maintain the git history for versioning purposes. If you decide not to do this, you can download the tar version from git an unpack and build it, but after that you need to navigate into the build directory, include and manually edit the version.h file to a version of the form 1.1.1 , the exact numbers are not important. Do the same for Aravis-detector. Or simply run:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AravisProject/aravis
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/odin-detector/odin-control
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/odin-detector/odin-data
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Observatory-Sciences/aravis-detector
+</pre></div>
+</div>
+<p>Similar to “MAIN_DIR” short cut, the commands written here use a prefix and it’s shortcut:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w"> </span>mkdir<span class="w"> </span>prefixhttp://www.cmake.org
+<span class="w"> </span><span class="nv">PREFIX</span><span class="o">=</span><span class="nv">$MAIN_DIR</span>/prefix
+</pre></div>
+</div>
+<section id="build-odin-data">
+<h3>Build Odin-data<a class="headerlink" href="#build-odin-data" title="Link to this heading">#</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">PREFIX</span><span class="o">=</span><span class="nv">$MAIN_DIR</span>/prefix
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>/odin-data
+mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="nv">$PREFIX</span><span class="w"> </span>../cpp
+make<span class="w"> </span>-j4<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>install
+ls<span class="w"> </span>-la<span class="w"> </span><span class="nv">$PREFIX</span>
+</pre></div>
+</div>
+<p>Don’t forget to modify the -j4 flag in make to however many cores you want to use (or leave it out altogether).</p>
+</section>
+<section id="install-odin-control">
+<h3>Install Odin Control<a class="headerlink" href="#install-odin-control" title="Link to this heading">#</a></h3>
+<p>The use of a virtual python is highly recommended:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>odin-control
+odin_control
+</pre></div>
+</div>
+<p>Then, from odin-data install the python adaptor:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>odin-data/python
+pip<span class="w"> </span>install<span class="w"> </span>opencv-python
+</pre></div>
+</div>
+</section>
+<section id="build-aravis">
+<h3>Build Aravis<a class="headerlink" href="#build-aravis" title="Link to this heading">#</a></h3>
+<p>Install <a class="reference external" href="https://aravisproject.github.io/aravis/aravis-stable/building.html">Aravis</a> and switch to version 0.8.30:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>/aravis
+git<span class="w"> </span>checkout<span class="w"> </span><span class="m">0</span>.8.30
+</pre></div>
+</div>
+<p>Build it using meson:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>meson<span class="w"> </span>setup<span class="w"> </span>--prefix<span class="o">=</span><span class="nv">$PREFIX</span><span class="w"> </span>--build.pkg-config-path<span class="o">=</span><span class="nv">$PC_ARAVIS</span><span class="w"> </span>build<span class="w"> </span>
+<span class="nb">cd</span><span class="w"> </span>build
+ninja
+ninja<span class="w"> </span>install
+</pre></div>
+</div>
+<p>To test your build:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>meson<span class="w"> </span><span class="nb">test</span>
+<span class="nb">cd</span><span class="w"> </span>src
+arv-fake-gv-camera-0.8<span class="w"> </span>-s<span class="w"> </span>GV02<span class="w"> </span>-d<span class="w"> </span>all
+</pre></div>
+</div>
+<p>This should run 7 tests with no errors and then you will activate the simulated camera provided by Aravis. To connect to the camera you can use the aravis app. If connected to a genicam you should be able to see it listed as well.</p>
+</section>
+<section id="build-aravis-detector">
+<h3>Build aravis-detector<a class="headerlink" href="#build-aravis-detector" title="Link to this heading">#</a></h3>
+<p>Run the following code to build the plugin library in the same directory as the rest of Odin:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>/aravis-detector
+<span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="nv">$PREFIX</span><span class="w"> </span>-DODINDATA_ROOT_DIR<span class="o">=</span><span class="nv">$PREFIX</span><span class="w"> </span>../cpp
+<span class="w"> </span>make<span class="w"> </span>-j4<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+<p>Install the aravis server extension into the python virtualenv:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>/aravis-detector
+<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>python
+</pre></div>
+</div>
+<p>Install the Python CLI into the virtualenv:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$MAIN_DIR</span>/aravis-detector/python
+<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>tools
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Tutorials</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="run.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Run</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-software-dependencies">External Software Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-sub-dependencies">Installing sub-dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-dependencies">Building Dependencies</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-odin-data">Build Odin-data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-odin-control">Install Odin Control</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-aravis">Build Aravis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-aravis-detector">Build aravis-detector</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/Observatory-Sciences/aravis-detector/edit/0.0.1/docs/user/tutorials/build.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/user/tutorials/build.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

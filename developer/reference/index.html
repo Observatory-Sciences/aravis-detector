@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Reference &#8212; aravis-detector 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer/reference/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.2';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://Observatory-Sciences.github.io/aravis-detector/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="AravisDetectorPlugin" href="aravis-detector.html" />
+    <link rel="prev" title="Python CLI" href="../explanations/arvcli.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/favicon.ico" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../_static/favicon.ico" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">aravis-detector</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user/index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user/index.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Developer Guide
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/Observatory-Sciences/aravis-detector/releases">
+                    Release Notes
+                  </a>
+                </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Observatory-Sciences/aravis-detector" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../explanations/index.html">Explanations</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../explanations/aravis-detector.html">AravisDetectorPlugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../explanations/arvcli.html">Python CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Reference</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="aravis-detector.html">AravisDetectorPlugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arvcli.html">Python CLI</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Developer Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Reference</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="reference">
+<h1>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aravis-detector.html">AravisDetectorPlugin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPluginE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20AravisDetectorPluginEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::AravisDetectorPlugin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPluginD0Ev"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::~AravisDetectorPlugin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13process_frameEN5boost10shared_ptrI5FrameEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::process_frame()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin9configureERN8OdinData10IpcMessageERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::configure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20requestConfigurationERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::requestConfiguration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin6statusERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::status()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16reset_statisticsEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::reset_statistics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11status_taskEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::status_task()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15callback_accessEP9ArvStream"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::callback_access()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17get_version_majorEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_version_major()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17get_version_minorEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_version_minor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17get_version_patchEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_version_patch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17get_version_shortEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_version_short()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16get_version_longEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_version_long()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17DEFAULT_CAMERA_IPE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_CAMERA_IP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20DEFAULT_PIXEL_FORMATE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_PIXEL_FORMAT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17DEFAULT_CAMERA_IDE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_CAMERA_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin21DEFAULT_CAMERA_SERIALE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_CAMERA_SERIAL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20DEFAULT_CAMERA_MODELE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_CAMERA_MODEL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17DEFAULT_FILE_PATHE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_FILE_PATH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15DEFAULT_DATASETE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_DATASET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17DEFAULT_FILE_NAMEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_FILE_NAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20DEFAULT_AQUISIT_MODEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_AQUISIT_MODE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin21DEFAULT_EXPOSURE_TIMEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_EXPOSURE_TIME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19DEFAULT_STATUS_FREQE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_STATUS_FREQ</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18DEFAULT_FRAME_RATEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_FRAME_RATE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19DEFAULT_FRAME_COUNTE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_FRAME_COUNT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18DEFAULT_EMPTY_BUFFE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DEFAULT_EMPTY_BUFF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12START_STREAME"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::START_STREAM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11STOP_STREAME"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::STOP_STREAM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12LIST_DEVICESE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::LIST_DEVICES</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14ACQUIRE_BUFFERE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::ACQUIRE_BUFFER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11READ_CONFIGE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::READ_CONFIG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16CONFIG_CAMERA_IPE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_CAMERA_IP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15CONFIG_EXPOSUREE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_EXPOSURE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17CONFIG_FRAME_RATEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_FRAME_RATE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18CONFIG_FRAME_COUNTE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_FRAME_COUNT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19CONFIG_PIXEL_FORMATE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_PIXEL_FORMAT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin23CONFIG_ACQUISITION_MODEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_ACQUISITION_MODE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15CONFIG_CALLBACKE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_CALLBACK</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18CONFIG_STATUS_FREQE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_STATUS_FREQ</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17CONFIG_EMPTY_BUFFE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_EMPTY_BUFF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16CONFIG_CAMERA_IDE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_CAMERA_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20CONFIG_CAMERA_SERIALE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_CAMERA_SERIAL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19CONFIG_CAMERA_MODELE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::CONFIG_CAMERA_MODEL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13DATA_SET_NAMEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::DATA_SET_NAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin9FILE_NAMEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::FILE_NAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16COMPRESSION_TYPEE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::COMPRESSION_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15TEMP_FILES_PATHE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::TEMP_FILES_PATH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin9log_errorENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::log_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin9log_errorENSt6stringE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::log_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11log_warningENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::log_warning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11log_warningENSt6stringE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::log_warning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin10get_configE7int32_t"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13set_file_nameENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_file_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13set_file_pathENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_file_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16set_dataset_nameENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_dataset_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20set_compression_typeENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_compression_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin25set_status_poll_frequencyE6size_tRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_status_poll_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin21connect_aravis_cameraENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::connect_aravis_camera()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16check_connectionEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::check_connection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19find_aravis_camerasERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::find_aravis_cameras()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17get_camera_serialEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_camera_serial()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13get_camera_idEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_camera_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20set_acquisition_modeENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_acquisition_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin20get_acquisition_modeEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_acquisition_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12set_exposureEdRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_exposure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin19get_exposure_boundsEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_exposure_bounds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12get_exposureEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_exposure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14set_frame_rateEdRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_frame_rate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin21get_frame_rate_boundsEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_frame_rate_bounds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14get_frame_rateEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_frame_rate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16set_pixel_formatENSt6stringERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_pixel_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin27get_available_pixel_formatsEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_available_pixel_formats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16get_pixel_formatEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_pixel_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14get_frame_sizeEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_frame_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12start_streamERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::start_stream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin11stop_streamERN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::stop_stream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16auto_stop_streamEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::auto_stop_stream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15set_frame_countEjRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_frame_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17set_empty_buffersEiRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::set_empty_buffers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16acquire_n_bufferEjRN8OdinData10IpcMessageE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::acquire_n_buffer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14acquire_bufferEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::acquire_buffer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15buffer_is_validEP9ArvBuffer"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::buffer_is_valid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14process_bufferEP9ArvBuffer"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::process_buffer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16get_stream_stateEv"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::get_stream_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16save_genicam_xmlENSt6stringE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::save_genicam_xml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin24pixel_format_to_datatypeENSt6stringE"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::pixel_format_to_datatype()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin7logger_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::logger_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin7thread_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::thread_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin8working_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::working_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin10streaming_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::streaming_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17camera_connected_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_connected_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15status_freq_ms_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::status_freq_ms_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15temp_file_path_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::temp_file_path_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin7camera_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18connected_devices_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::connected_devices_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18available_cameras_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::available_cameras_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin10camera_id_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_id_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14camera_serial_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_serial_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15camera_address_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_address_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13camera_model_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::camera_model_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17exposure_time_us_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::exposure_time_us_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18min_exposure_time_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::min_exposure_time_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18max_exposure_time_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::max_exposure_time_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14frame_rate_hz_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::frame_rate_hz_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15min_frame_rate_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::min_frame_rate_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15max_frame_rate_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::max_frame_rate_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16n_pixel_formats_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_pixel_formats_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin24available_pixel_formats_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::available_pixel_formats_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13pixel_format_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::pixel_format_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17acquisition_mode_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::acquisition_mode_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin8payload_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::payload_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin12frame_count_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::frame_count_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin7stream_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::stream_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin10data_type_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::data_type_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17compression_type_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::compression_type_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14data_set_name_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::data_set_name_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin8file_id_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::file_id_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin18image_data_offset_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::image_data_offset_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14n_frames_made_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_frames_made_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16n_empty_buffers_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_empty_buffers_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin13n_input_buff_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_input_buff_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14n_output_buff_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_output_buff_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17n_completed_buff_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_completed_buff_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin14n_failed_buff_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_failed_buff_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16n_underrun_buff_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::n_underrun_buff_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin16image_height_px_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::image_height_px_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin15image_width_px_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::image_width_px_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aravis-detector.html#_CPPv4N14FrameProcessor20AravisDetectorPlugin17frame_dimensions_E"><code class="docutils literal notranslate"><span class="pre">AravisDetectorPlugin::frame_dimensions_</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="arvcli.html">Python CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="arvcli.html#arvcli"><code class="docutils literal notranslate"><span class="pre">arvcli</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arvcli.html#arvcli.__app_name__"><code class="docutils literal notranslate"><span class="pre">arvcli.__app_name__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="arvcli.html#arvcli.__version__"><code class="docutils literal notranslate"><span class="pre">arvcli.__version__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="arvcli.html#arvcli.__main__"><code class="docutils literal notranslate"><span class="pre">arvcli.__main__</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.__main__.main"><code class="docutils literal notranslate"><span class="pre">arvcli.__main__.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="arvcli.html#arvcli.cli"><code class="docutils literal notranslate"><span class="pre">arvcli.cli</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.convert_type"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.convert_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._version_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._version_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._get_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._get_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._put_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._put_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.get_value"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.put_value"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.put_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._status_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._status_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._config_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._config_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._ipaddress_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._ipaddress_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli._port_callback"><code class="docutils literal notranslate"><span class="pre">arvcli.cli._port_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.connect"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.stream"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.stream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.hdf"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.http"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.http()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.initiate_config"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.initiate_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.main"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.APP_NAME"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.APP_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.cli.app"><code class="docutils literal notranslate"><span class="pre">arvcli.cli.app</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="arvcli.html#arvcli.control"><code class="docutils literal notranslate"><span class="pre">arvcli.control</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.control.put_HTTP_request"><code class="docutils literal notranslate"><span class="pre">arvcli.control.put_HTTP_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="arvcli.html#arvcli.control.get_HTTP_request"><code class="docutils literal notranslate"><span class="pre">arvcli.control.get_HTTP_request()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../explanations/arvcli.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Python CLI</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="aravis-detector.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">AravisDetectorPlugin</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/Observatory-Sciences/aravis-detector/edit/0.0.1/docs/developer/reference/index.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/developer/reference/index.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
