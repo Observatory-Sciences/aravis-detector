@@ -37,8 +37,6 @@ set(ARAVIS_VERSIONED "aravis-0.8")
 
 message ("\nLooking for ARAVIS headers and libraries")
 
-set(ARAVIS_ROOT_DIR "/usr/local")
-
 if (ARAVIS_ROOT_DIR) 
     message (STATUS "Root dir: ${ARAVIS_ROOT_DIR}")
 endif ()

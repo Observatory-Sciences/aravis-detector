@@ -1,2 +1,5 @@
 meson
 ninja 
+opencv-python
+pytest
+git+https://github.com/odin-detector/odin-data#subdirectory=python
